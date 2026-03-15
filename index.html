@@ -1,845 +1,1293 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
+    <title>WellAI – Health & Diabetes Tracker</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WellAI — Трекер здоровья</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: #e2e8f0; overflow: hidden; height: 100dvh; }
-        
-        /* Главный контейнер (светлый фон) */
-        .app-container {
-            max-width: 430px;
-            margin: 0 auto;
-            height: 100dvh;
-            position: relative;
-            overflow: hidden;
-            background: #F8F9FB;
-        }
-
-        .screen {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-bottom: 100px;
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease;
-            scrollbar-width: none;
-        }
-        .screen::-webkit-scrollbar { display: none; }
-        .screen.active { transform: translateX(0); opacity: 1; z-index: 2; }
-        .screen.left { transform: translateX(-100%); opacity: 0; z-index: 1; }
-        .screen.right { transform: translateX(100%); opacity: 0; z-index: 1; }
-
-        /* Белые карточки с мягкой тенью */
-        .card-white {
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.03);
-        }
-
-        /* Цветные карточки как на макете */
-        .card-blue { background: #D1F0ED; border-radius: 24px; }
-        .card-green { background: #E2F9A8; border-radius: 24px; }
-        .card-cyan { background: #D9F7F8; border-radius: 24px; }
-        .card-lime { background: #D7FE63; border-radius: 24px; }
-
-        /* Навигация */
-        .bottom-nav {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            z-index: 50;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid #f1f5f9;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        .nav-item {
-            transition: all 0.3s ease;
-            position: relative;
-            color: #94a3b8;
-        }
-        .nav-item.active { color: #1e293b; }
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            top: -8px; left: 40%; right: 40%;
-            height: 4px;
-            background: #D7FE63;
-            border-radius: 0 0 4px 4px;
-        }
-
-        /* Кольца прогресса */
-        .progress-ring { transform: rotate(-90deg); }
-        .progress-ring__circle {
-            transition: stroke-dashoffset 1s ease-in-out;
-            stroke: #D7FE63;
-        }
-        .progress-ring__circle.blue { stroke: #38bdf8; }
-
-        /* Выбор дня */
-        .day-selector {
-            transition: all 0.3s ease;
-            color: #64748b;
-        }
-        .day-selector.selected {
-            background: #D1F0ED;
-            color: #0f172a;
-            font-weight: bold;
-        }
-
-        /* Анимации */
-        .fade-in { animation: fadeIn 0.6s ease forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .slide-up { animation: slideUp 0.5s ease forwards; }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .pulse-dot { animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        /* Инпуты */
-        input[type="text"], input[type="number"] {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            color: #0f172a;
-            border-radius: 12px;
-            padding: 12px 16px;
-            outline: none;
-            width: 100%;
-        }
-        input:focus { border-color: #D7FE63; }
-
-        /* Оверлеи и модалки */
-        .overlay-bg {
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
-        }
+        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #F8F9FB; margin: 0; padding: 0; overflow-x: hidden; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes ringProgress { from { stroke-dashoffset: 314; } }
+        @keyframes fillWater { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+        .animate-slideLeft { animation: slideLeft 0.3s ease-out forwards; }
+        .animate-slideRight { animation: slideRight 0.3s ease-out forwards; }
+        .animate-scaleIn { animation: scaleIn 0.3s ease-out forwards; }
+        .animate-slideUp { animation: slideUp 0.35s ease-out forwards; }
+        .animate-pulse-soft { animation: pulse 2s ease-in-out infinite; }
+        .stagger-1 { animation-delay: 0.05s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.15s; opacity: 0; }
+        .stagger-4 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-5 { animation-delay: 0.25s; opacity: 0; }
+        .progress-ring-circle { transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .swipe-item { transition: transform 0.2s ease-out; touch-action: pan-y; }
+        .btn-press { transition: transform 0.1s ease; }
+        .btn-press:active { transform: scale(0.96); }
+        .glass-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: #E5E7EB; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #D7FE63; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { color: #1a1a1a; }
+        .nav-item.active .nav-dot { opacity: 1; transform: scaleX(1); }
+        .nav-dot { opacity: 0; transform: scaleX(0); transition: all 0.2s ease; }
     </style>
 </head>
 <body>
-    <div class="app-container" id="app">
-        
-        <div class="screen active" id="screen-dashboard">
-            <div class="px-6 pt-8">
-                <div class="flex items-center justify-between mb-8 fade-in">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-bold text-lg overflow-hidden">
-                            <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Hailey" alt="Avatar" class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <p class="text-slate-900 font-bold text-lg">Hello, Hailey!</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <button onclick="openSearch()" class="text-slate-900 hover:text-slate-600">
-                            <i class="fa-solid fa-magnifying-glass text-lg"></i>
-                        </button>
-                        <button onclick="openNotifications()" class="text-slate-900 hover:text-slate-600 relative">
-                            <i class="fa-regular fa-bell text-lg"></i>
-                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full pulse-dot"></span>
-                        </button>
-                    </div>
-                </div>
+    <div id="root"></div>
+    <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback, useMemo, createContext, useContext } = React;
 
-                <div class="card-blue p-6 mb-6 fade-in" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="bg-white rounded-md p-1.5 shadow-sm">
-                            <i class="fa-regular fa-clock text-slate-700 text-xs"></i>
-                        </div>
-                        <span class="text-slate-700 font-medium text-sm">Your Progress</span>
-                    </div>
-                    
-                    <div class="flex items-center justify-between mt-2">
-                        <div>
-                            <p class="text-5xl font-bold text-slate-900 mb-2">91%</p>
-                            <button class="flex items-center gap-1 text-slate-600 text-sm bg-white/50 px-3 py-1.5 rounded-full">
-                                19 September <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                            </button>
-                        </div>
-                        <div class="relative">
-                            <svg class="progress-ring" width="100" height="100">
-                                <circle cx="50" cy="50" r="42" stroke="white" stroke-width="8" fill="none"/>
-                                <circle class="progress-ring__circle" cx="50" cy="50" r="42" stroke="#D7FE63" stroke-width="8" fill="none" 
-                                    stroke-dasharray="264" stroke-dashoffset="23.7" stroke-linecap="round"/>
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-white rounded-full m-2 shadow-sm">
-                                <span class="text-slate-900 font-bold text-lg">1350</span>
-                                <span class="text-slate-500 text-[10px]">Calories</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="card-white p-5 fade-in" style="animation-delay: 0.2s">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-slate-500 text-xs leading-tight">Current<br>Weight</span>
-                            <i class="fa-solid fa-bolt text-slate-300"></i>
-                        </div>
-                        <p class="text-slate-900 font-bold text-xl mb-1">78.5 <span class="text-sm font-normal text-slate-500">Kg</span></p>
-                        <div class="flex items-center gap-1">
-                            <i class="fa-regular fa-circle-down text-slate-400 text-[10px]"></i>
-                            <span class="text-slate-500 text-xs">3 Kg (-3.8%)</span>
-                        </div>
-                    </div>
-                    <div class="card-white p-5 fade-in" style="animation-delay: 0.25s">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-slate-500 text-xs leading-tight">Today's<br>Calories</span>
-                            <i class="fa-solid fa-fire text-slate-300"></i>
-                        </div>
-                        <p class="text-slate-900 font-bold text-xl mb-1">1278 <span class="text-sm font-normal text-slate-500">Kcal</span></p>
-                        <div class="flex items-center gap-1">
-                            <i class="fa-regular fa-circle-up text-slate-400 text-[10px]"></i>
-                            <span class="text-slate-500 text-xs">+ 5.6%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-green p-5 mb-4 fade-in" style="animation-delay: 0.3s">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                <i class="fa-regular fa-sun text-slate-700 text-xs"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-slate-900 font-bold text-sm">Breakfast</h3>
-                                <p class="text-slate-600 text-[10px]">350 calories</p>
-                            </div>
-                        </div>
-                        <button class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-slate-700">
-                            <i class="fa-solid fa-plus text-xs"></i>
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-4 gap-2 mb-4">
-                        <div>
-                            <p class="text-slate-600 text-[10px]">Proteins</p>
-                            <p class="text-slate-900 font-bold text-sm">62.5</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-600 text-[10px]">Fats</p>
-                            <p class="text-slate-900 font-bold text-sm">23.6</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-600 text-[10px]">Carbs</p>
-                            <p class="text-slate-900 font-bold text-sm">45.7</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-600 text-[10px]">RDC</p>
-                            <p class="text-slate-900 font-bold text-sm">14%</p>
-                        </div>
-                    </div>
-                    <button class="bg-white rounded-full px-4 py-1.5 text-xs text-slate-700 font-medium flex items-center gap-2">
-                        Today <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="screen right" id="screen-calories">
-            <div class="px-6 pt-8">
-                <div class="flex items-center justify-between mb-8">
-                    <button onclick="navigateTo('dashboard')" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-900">
-                        <i class="fa-solid fa-chevron-left text-sm"></i>
-                    </button>
-                    <div class="flex items-center gap-4">
-                        <button onclick="openSearch()" class="text-slate-900">
-                            <i class="fa-solid fa-magnifying-glass text-lg"></i>
-                        </button>
-                        <button onclick="openNotifications()" class="text-slate-900 relative">
-                            <i class="fa-regular fa-bell text-lg"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <h1 class="text-slate-900 font-bold text-2xl mb-4">Calories</h1>
-
-                <div class="card-white p-5 mb-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-slate-600 text-sm">Week Days</span>
-                        <i class="fa-regular fa-calendar text-slate-400"></i>
-                    </div>
-                    <div class="flex justify-between mb-2">
-                        <span class="text-slate-400 text-xs w-8 text-center">M</span>
-                        <span class="text-slate-400 text-xs w-8 text-center">T</span>
-                        <span class="text-slate-900 font-bold text-xs w-8 text-center">W</span>
-                        <span class="text-slate-400 text-xs w-8 text-center">T</span>
-                        <span class="text-slate-400 text-xs w-8 text-center">F</span>
-                        <span class="text-slate-400 text-xs w-8 text-center">S</span>
-                        <span class="text-slate-400 text-xs w-8 text-center">S</span>
-                    </div>
-                    <div class="flex justify-between items-center" id="daySelector">
-                        <button class="day-selector w-8 h-8 rounded-full flex items-center justify-center text-sm" data-day="12">12</button>
-                        <button class="day-selector w-8 h-8 rounded-full flex items-center justify-center text-sm" data-day="13">13</button>
-                        <button class="day-selector w-8 h-8 rounded-full flex items-center justify-center text-sm selected shadow-sm" data-day="14">14</button>
-                        <button class="day-selector w-8 h-8 rounded-full flex items-center justify-center text-sm" data-day="15">15</button>
-                        <button class="day-selector w-8 h-8 rounded-full flex items-center justify-center text-sm" data-day="16">16</button>
-                        <button class="day-selector w-8 h-8 rounded-full flex items-center justify-center text-sm" data-day="17">17</button>
-                        <button class="day-selector w-8 h-8 rounded-full flex items-center justify-center text-sm" data-day="18">18</button>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <p class="text-slate-500 text-sm mb-1">Calorie left</p>
-                    <div class="flex items-baseline gap-1 mb-3">
-                        <p class="text-slate-900 font-bold text-4xl" id="calorieLeft">1230</p>
-                        <p class="text-slate-500 text-sm">kcal</p>
-                    </div>
-                    <div class="flex h-3 rounded-full overflow-hidden w-2/3">
-                        <div class="bg-cyan-200 h-full w-[40%]"></div>
-                        <div class="bg-lime-200 h-full w-[30%]"></div>
-                        <div class="bg-yellow-200 h-full w-[10%]"></div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-6" id="foodList">
-                    <div class="card-cyan p-4 relative food-item">
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-slate-900 font-bold text-sm">Taco</h3>
-                            <button onclick="removeFood(this)" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <div class="flex gap-2 items-center">
-                                <div class="w-1 h-6 bg-cyan-400 rounded-full"></div>
-                                <div>
-                                    <p class="text-slate-900 font-bold text-xs">635</p>
-                                    <p class="text-slate-500 text-[10px]">Calories</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-2 items-center">
-                                <div class="w-1 h-6 bg-cyan-400 rounded-full"></div>
-                                <div>
-                                    <p class="text-slate-900 font-bold text-xs">72g</p>
-                                    <p class="text-slate-500 text-[10px]">Carbs</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-100 rounded-[24px] p-4 relative food-item">
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-slate-900 font-bold text-sm">Donut</h3>
-                            <button onclick="removeFood(this)" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <div class="flex gap-2 items-center">
-                                <div class="w-1 h-6 bg-slate-300 rounded-full"></div>
-                                <div>
-                                    <p class="text-slate-900 font-bold text-xs">256</p>
-                                    <p class="text-slate-500 text-[10px]">Calories</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-2 items-center">
-                                <div class="w-1 h-6 bg-slate-300 rounded-full"></div>
-                                <div>
-                                    <p class="text-slate-900 font-bold text-xs">34g</p>
-                                    <p class="text-slate-500 text-[10px]">Carbs</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <button onclick="showCalorieSummary()" class="w-full card-lime text-slate-900 font-bold py-4 mt-2 mb-6 flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-sm">
-                    <i class="fa-solid fa-calculator"></i> Calorie count <i class="fa-solid fa-angle-right text-xs ml-1"></i><i class="fa-solid fa-angle-right text-xs"></i><i class="fa-solid fa-angle-right text-xs"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="screen right" id="screen-boards">
-            <div class="px-6 pt-8">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
-                            <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Hailey" alt="Avatar" class="w-full h-full object-cover">
-                        </div>
-                        <span class="text-slate-900 font-bold text-sm">Hello, Hailey!</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <button onclick="openSearch()" class="text-slate-900"><i class="fa-solid fa-magnifying-glass"></i></button>
-                        <button onclick="openNotifications()" class="text-slate-900"><i class="fa-regular fa-bell"></i></button>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-end mb-6">
-                    <h1 class="text-slate-900 font-bold text-2xl leading-tight">Hailey, your boards<br>looks so good!</h1>
-                    <button class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-600">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="card-white p-5 flex flex-col items-center justify-center">
-                        <p class="text-slate-900 font-bold text-sm w-full text-left mb-2">Calories</p>
-                        <div class="relative w-24 h-24 mt-2">
-                            <svg class="w-full h-full" viewBox="0 0 100 100">
-                                <path d="M 20 80 A 40 40 0 1 1 80 80" fill="none" stroke="#f1f5f9" stroke-width="8" stroke-linecap="round"/>
-                                <path d="M 20 80 A 40 40 0 0 1 80 20" fill="none" stroke="#fdba74" stroke-width="8" stroke-linecap="round"/>
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center mt-2">
-                                <span class="text-slate-900 font-bold text-xl">520</span>
-                                <span class="text-slate-500 text-[10px]">Kcal</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-blue p-5">
-                        <p class="text-slate-900 font-bold text-sm mb-4">Water</p>
-                        <div class="flex justify-between items-end h-16">
-                            <div class="w-1.5 bg-white rounded-full h-[40%]"></div>
-                            <div class="w-1.5 bg-white rounded-full h-[60%]"></div>
-                            <div class="w-1.5 bg-white rounded-full h-[80%]"></div>
-                            <div class="w-1.5 bg-white rounded-full h-[100%]"></div>
-                            <div class="w-1.5 bg-white/50 rounded-full h-[50%]"></div>
-                            <div class="w-1.5 bg-white/50 rounded-full h-[30%]"></div>
-                            <div class="w-1.5 bg-white/50 rounded-full h-[20%]"></div>
-                        </div>
-                        <div class="flex justify-between mt-2 text-[8px] text-slate-400 font-medium uppercase">
-                            <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex justify-between gap-2 mb-8">
-                    <div class="flex flex-col items-center gap-2">
-                        <div class="w-12 h-24 bg-white rounded-full p-1 relative flex flex-col justify-end shadow-sm border border-slate-50">
-                            <div class="w-full bg-[#D7FE63] rounded-full flex items-center justify-center absolute bottom-1 h-[70%] z-0"></div>
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center absolute top-1 z-10 shadow-sm">
-                                <span class="text-slate-900 font-bold text-[10px]">1230</span>
-                            </div>
-                        </div>
-                        <span class="text-slate-500 text-xs font-medium">Cal</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-2">
-                        <div class="w-12 h-24 bg-white rounded-full p-1 relative flex flex-col justify-end shadow-sm border border-slate-50">
-                            <div class="w-full bg-[#D7FE63] rounded-full flex items-center justify-center absolute bottom-1 h-[60%] z-0"></div>
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center absolute top-1 z-10 shadow-sm">
-                                <span class="text-slate-900 font-bold text-[10px]">61.4</span>
-                            </div>
-                        </div>
-                        <span class="text-slate-500 text-xs font-medium">Prot</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-2">
-                        <div class="w-12 h-24 bg-white rounded-full p-1 relative flex flex-col justify-end shadow-sm border border-slate-50">
-                            <div class="w-full bg-[#D7FE63] rounded-full flex items-center justify-center absolute bottom-1 h-[40%] z-0"></div>
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center absolute top-1 z-10 shadow-sm">
-                                <span class="text-slate-900 font-bold text-[10px]">27.5</span>
-                            </div>
-                        </div>
-                        <span class="text-slate-500 text-xs font-medium">Carb</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-2">
-                        <div class="w-12 h-24 bg-white rounded-full p-1 relative flex flex-col justify-end shadow-sm border border-slate-50">
-                            <div class="w-full bg-[#D7FE63] rounded-full flex items-center justify-center absolute bottom-1 h-[50%] z-0"></div>
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center absolute top-1 z-10 shadow-sm">
-                                <span class="text-slate-900 font-bold text-[10px]">43.8</span>
-                            </div>
-                        </div>
-                        <span class="text-slate-500 text-xs font-medium">Fats</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-2">
-                        <div class="w-12 h-24 bg-white rounded-full p-1 relative flex flex-col justify-end shadow-sm border border-slate-50">
-                            <div class="w-full bg-[#D7FE63] rounded-full flex items-center justify-center absolute bottom-1 h-[30%] z-0"></div>
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center absolute top-1 z-10 shadow-sm">
-                                <span class="text-slate-900 font-bold text-[10px]">32%</span>
-                            </div>
-                        </div>
-                        <span class="text-slate-500 text-xs font-medium">RDC</span>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between mt-4">
-                    <p class="text-slate-900 font-bold text-sm leading-tight max-w-[150px]">You can share your board with your friends</p>
-                    <div class="flex items-center gap-3">
-                        <button class="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center text-slate-600 bg-white">
-                            <i class="fa-solid fa-plus text-xs"></i>
-                        </button>
-                        <div class="flex flex-col items-center gap-1">
-                            <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Nick" class="w-10 h-10 rounded-full bg-orange-100">
-                            <span class="text-slate-600 text-[10px]">Nick</span>
-                        </div>
-                        <div class="flex flex-col items-center gap-1">
-                            <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Steffy" class="w-10 h-10 rounded-full bg-purple-100">
-                            <span class="text-slate-600 text-[10px]">Steffy</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="screen right" id="screen-profile">
-            <div class="px-6 pt-8">
-                <div class="flex items-center justify-between mb-8">
-                    <button onclick="navigateTo('dashboard')" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-900">
-                        <i class="fa-solid fa-chevron-left text-sm"></i>
-                    </button>
-                    <h1 class="text-slate-900 font-bold text-xl">Профиль / Настройки</h1>
-                    <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-900">
-                        <i class="fa-solid fa-gear text-sm"></i>
-                    </button>
-                </div>
-
-                <div class="flex flex-col items-center mb-8">
-                    <div class="w-24 h-24 rounded-full bg-slate-200 flex items-center justify-center mb-4 overflow-hidden border-4 border-white shadow-sm">
-                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Hailey" class="w-full h-full object-cover">
-                    </div>
-                    <h2 class="text-slate-900 font-bold text-xl">Hailey Johnson</h2>
-                    <p class="text-slate-500 text-sm">MVP Пользователь</p>
-                </div>
-
-                <div class="card-white p-5 space-y-4 mb-6">
-                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                        <span class="text-slate-600">Язык приложения</span>
-                        <select class="bg-slate-50 border-none text-slate-900 text-sm rounded-lg py-1 px-2 font-medium outline-none">
-                            <span class="text-slate-900 font-medium">RU</span>
-                            <option>EN</option>
-                            <option>KK</option>
-                        </select>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                        <span class="text-slate-600">Цель</span>
-                        <span class="text-slate-900 font-medium">Поддержание</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-600">Норма калорий</span>
-                        <span class="text-slate-900 font-medium bg-[#D7FE63] px-2 py-0.5 rounded-md">2000 kcal</span>
-                    </div>
-                </div>
-
-                <button class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl active:scale-95 transition-transform">
-                    Пересчитать норму (ИИ)
-                </button>
-            </div>
-        </div>
-
-        <div class="bottom-nav px-8 py-4">
-            <div class="flex justify-between items-center bg-white rounded-full px-6 py-2 shadow-sm border border-slate-100">
-                <button class="nav-item active flex flex-col items-center gap-1 p-2" onclick="navigateTo('dashboard')">
-                    <i class="fa-solid fa-user text-lg"></i>
-                </button>
-                <button class="nav-item flex flex-col items-center gap-1 p-2" onclick="navigateTo('calories')">
-                    <i class="fa-regular fa-calendar-check text-lg"></i>
-                </button>
-                <button class="nav-item flex flex-col items-center gap-1 p-2" onclick="navigateTo('boards')">
-                    <i class="fa-solid fa-chart-pie text-lg"></i>
-                </button>
-                <button class="nav-item flex flex-col items-center gap-1 p-2" onclick="navigateTo('profile')">
-                    <i class="fa-solid fa-gear text-lg"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="search-overlay overlay-bg" id="searchOverlay">
-            <div class="flex items-center gap-3 mb-5">
-                <button onclick="closeSearch()" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-900 flex-shrink-0 shadow-sm">
-                    <i class="fa-solid fa-arrow-left text-sm"></i>
-                </button>
-                <input type="text" id="searchInput" placeholder="Поиск (текст или голос)..." class="flex-1 shadow-sm" oninput="searchFood(this.value)">
-                <button class="w-10 h-10 rounded-full bg-[#D7FE63] flex items-center justify-center text-slate-900 flex-shrink-0 shadow-sm">
-                    <i class="fa-solid fa-camera"></i>
-                </button>
-            </div>
-            <div id="searchResults" class="flex-1 overflow-y-auto pb-20"></div>
-        </div>
-
-        <div class="fixed inset-0 overlay-bg z-[99]" style="display:none;" id="notifBackdrop" onclick="closeNotifications()"></div>
-        <div class="fixed top-0 right-0 bottom-0 w-[85%] max-w-[360px] bg-white z-[100] transform translate-x-full transition-transform duration-300 overflow-y-auto" id="notifPanel">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-slate-900 font-bold text-xl">Уведомления</h2>
-                    <button onclick="closeNotifications()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
-                        <i class="fa-solid fa-xmark text-sm"></i>
-                    </button>
-                </div>
-                <div class="space-y-4">
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                        <p class="text-slate-900 text-sm font-bold">ИИ составил план! 🤖</p>
-                        <p class="text-slate-600 text-xs mt-1">Ваш план питания на сегодня готов.</p>
-                    </div>
-                    <div class="bg-[#D7FE63]/30 rounded-2xl p-4 border border-[#D7FE63]/50">
-                        <p class="text-slate-900 text-sm font-bold">Отличный прогресс! 🎉</p>
-                        <p class="text-slate-600 text-xs mt-1">Вы достигли 91% дневной цели</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="fixed inset-0 overlay-bg z-[100] flex items-end justify-center" id="addFoodModal" style="display:none">
-            <div class="w-full max-w-[430px] bg-white rounded-t-[32px] p-6 shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-                <h2 class="text-slate-900 font-bold text-xl mb-4">Ручное добавление</h2>
-                <div class="space-y-4 mb-6">
-                    <input type="text" id="foodName" placeholder="Название продукта">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="number" id="foodCalories" placeholder="Калории (kcal)">
-                        <input type="number" id="foodCarbs" placeholder="Углеводы (g)">
-                    </div>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="closeAddFood()" class="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 font-bold">Отмена</button>
-                    <button onclick="addFood()" class="flex-1 py-4 rounded-2xl bg-[#D7FE63] text-slate-900 font-bold shadow-sm">Добавить</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="fixed inset-0 overlay-bg z-[100] flex items-center justify-center p-5" id="calorieSummaryModal" style="display:none">
-            <div class="w-full max-w-[380px] bg-white rounded-[32px] p-6 shadow-xl" onclick="event.stopPropagation()">
-                <div class="text-center mb-6">
-                    <div class="w-16 h-16 rounded-full bg-[#D7FE63] flex items-center justify-center mx-auto mb-4 shadow-sm">
-                        <i class="fa-solid fa-robot text-slate-900 text-2xl"></i>
-                    </div>
-                    <h2 class="text-slate-900 font-bold text-xl">Сводка от ИИ</h2>
-                </div>
-                <div class="space-y-3 mb-6" id="summaryContent">
-                    </div>
-                <button onclick="closeSummary()" class="w-full py-4 rounded-2xl bg-slate-900 text-white font-bold shadow-sm">Отлично</button>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        // ===== NAVIGATION =====
-        const screens = {
-            dashboard: document.getElementById('screen-dashboard'),
-            calories: document.getElementById('screen-calories'),
-            boards: document.getElementById('screen-boards'),
-            profile: document.getElementById('screen-profile')
-        };
-        const screenOrder = ['dashboard', 'calories', 'boards', 'profile'];
-        let currentScreen = 'dashboard';
-
-        function navigateTo(target) {
-            if (target === currentScreen) return;
-            const currentIdx = screenOrder.indexOf(currentScreen);
-            const targetIdx = screenOrder.indexOf(target);
-            const goingRight = targetIdx > currentIdx;
-
-            screens[currentScreen].classList.remove('active');
-            screens[currentScreen].classList.add(goingRight ? 'left' : 'right');
-
-            screens[target].classList.remove('left', 'right');
-            screens[target].offsetHeight; // Reflow
-            screens[target].classList.add('active');
-            currentScreen = target;
-
-            document.querySelectorAll('.nav-item').forEach((item, i) => {
-                item.classList.toggle('active', screenOrder[i] === target);
-            });
-            screens[target].scrollTop = 0;
+    // ==================== i18n ====================
+    const translations = {
+        en: {
+            welcome: "Welcome to WellAI",
+            subtitle: "Your intelligent health companion",
+            getStarted: "Get Started",
+            next: "Next",
+            back: "Back",
+            finish: "Finish Setup",
+            name: "What's your name?",
+            namePlaceholder: "Enter your name",
+            age: "How old are you?",
+            gender: "Gender",
+            male: "Male",
+            female: "Female",
+            other: "Other",
+            weight: "Weight (kg)",
+            height: "Height (cm)",
+            activityLevel: "Activity Level",
+            sedentary: "Sedentary",
+            light: "Light",
+            moderate: "Moderate",
+            active: "Active",
+            veryActive: "Very Active",
+            goal: "Your Goal",
+            loseWeight: "Lose Weight",
+            maintain: "Maintain",
+            gainWeight: "Gain Weight",
+            dietMode: "Diet Mode",
+            standard: "Standard Mode",
+            standardDesc: "Balanced nutrition tracking",
+            carbControl: "Carb Control",
+            carbControlDesc: "Diabetes-friendly tracking",
+            dashboard: "Dashboard",
+            tracker: "Tracker",
+            analytics: "Analytics",
+            settings: "Settings",
+            calories: "Calories",
+            protein: "Protein",
+            fat: "Fat",
+            carbs: "Carbs",
+            consumed: "consumed",
+            remaining: "remaining",
+            dailyCarbLimit: "Daily Carb Limit",
+            carbsConsumed: "Carbs Consumed",
+            addFood: "Add Food",
+            search: "Search food...",
+            noFood: "No food logged yet",
+            tapToAdd: "Tap + to add food",
+            highCarbs: "⚠️ High Carbs",
+            portionAlert: "⚠️ Portion Alert",
+            glycemicLoad: "GL",
+            delete: "Delete",
+            water: "Water",
+            glasses: "glasses",
+            progress: "Progress",
+            macros: "Macronutrients",
+            profile: "Profile",
+            language: "Language",
+            editProfile: "Edit Profile",
+            save: "Save",
+            cancel: "Cancel",
+            today: "Today",
+            kcal: "kcal",
+            g: "g",
+            of: "of",
+            goodMorning: "Good Morning",
+            goodAfternoon: "Good Afternoon",
+            goodEvening: "Good Evening",
+            letsTrack: "Let's track your nutrition",
+            weekDays: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+            months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+            per100g: "per 100g",
+            serving: "serving",
+            carbWarning: "This item is high in carbs for your diet plan",
+            resetData: "Reset All Data",
+            confirmReset: "Are you sure? This will delete all your data.",
+            yes: "Yes",
+            no: "No",
+        },
+        ru: {
+            welcome: "Добро пожаловать в WellAI",
+            subtitle: "Ваш умный помощник здоровья",
+            getStarted: "Начать",
+            next: "Далее",
+            back: "Назад",
+            finish: "Завершить",
+            name: "Как вас зовут?",
+            namePlaceholder: "Введите имя",
+            age: "Сколько вам лет?",
+            gender: "Пол",
+            male: "Мужской",
+            female: "Женский",
+            other: "Другой",
+            weight: "Вес (кг)",
+            height: "Рост (см)",
+            activityLevel: "Уровень активности",
+            sedentary: "Сидячий",
+            light: "Лёгкий",
+            moderate: "Умеренный",
+            active: "Активный",
+            veryActive: "Очень активный",
+            goal: "Ваша цель",
+            loseWeight: "Похудеть",
+            maintain: "Поддержать",
+            gainWeight: "Набрать вес",
+            dietMode: "Режим питания",
+            standard: "Стандартный",
+            standardDesc: "Сбалансированное питание",
+            carbControl: "Контроль углеводов",
+            carbControlDesc: "Для диабетиков",
+            dashboard: "Главная",
+            tracker: "Трекер",
+            analytics: "Аналитика",
+            settings: "Настройки",
+            calories: "Калории",
+            protein: "Белки",
+            fat: "Жиры",
+            carbs: "Углеводы",
+            consumed: "потреблено",
+            remaining: "осталось",
+            dailyCarbLimit: "Лимит углеводов",
+            carbsConsumed: "Углеводов потреблено",
+            addFood: "Добавить еду",
+            search: "Поиск еды...",
+            noFood: "Еда не добавлена",
+            tapToAdd: "Нажмите + чтобы добавить",
+            highCarbs: "⚠️ Много углеводов",
+            portionAlert: "⚠️ Большая порция",
+            glycemicLoad: "ГН",
+            delete: "Удалить",
+            water: "Вода",
+            glasses: "стаканов",
+            progress: "Прогресс",
+            macros: "Макронутриенты",
+            profile: "Профиль",
+            language: "Язык",
+            editProfile: "Редактировать",
+            save: "Сохранить",
+            cancel: "Отмена",
+            today: "Сегодня",
+            kcal: "ккал",
+            g: "г",
+            of: "из",
+            goodMorning: "Доброе утро",
+            goodAfternoon: "Добрый день",
+            goodEvening: "Добрый вечер",
+            letsTrack: "Отслеживайте питание",
+            weekDays: ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"],
+            months: ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"],
+            per100g: "на 100г",
+            serving: "порция",
+            carbWarning: "Этот продукт содержит много углеводов",
+            resetData: "Сбросить данные",
+            confirmReset: "Вы уверены? Все данные будут удалены.",
+            yes: "Да",
+            no: "Нет",
+        },
+        kk: {
+            welcome: "WellAI-ға қош келдіңіз",
+            subtitle: "Сіздің денсаулық көмекшіңіз",
+            getStarted: "Бастау",
+            next: "Келесі",
+            back: "Артқа",
+            finish: "Аяқтау",
+            name: "Сіздің атыңыз?",
+            namePlaceholder: "Атыңызды енгізіңіз",
+            age: "Жасыңыз?",
+            gender: "Жынысы",
+            male: "Ер",
+            female: "Әйел",
+            other: "Басқа",
+            weight: "Салмақ (кг)",
+            height: "Бой (см)",
+            activityLevel: "Белсенділік деңгейі",
+            sedentary: "Отырықшы",
+            light: "Жеңіл",
+            moderate: "Орташа",
+            active: "Белсенді",
+            veryActive: "Өте белсенді",
+            goal: "Мақсатыңыз",
+            loseWeight: "Арықтау",
+            maintain: "Сақтау",
+            gainWeight: "Салмақ қосу",
+            dietMode: "Тамақтану режимі",
+            standard: "Стандартты",
+            standardDesc: "Теңдестірілген тамақтану",
+            carbControl: "Көмірсу бақылау",
+            carbControlDesc: "Диабет үшін",
+            dashboard: "Басты",
+            tracker: "Трекер",
+            analytics: "Талдау",
+            settings: "Баптау",
+            calories: "Калория",
+            protein: "Ақуыз",
+            fat: "Май",
+            carbs: "Көмірсу",
+            consumed: "тұтынылды",
+            remaining: "қалды",
+            dailyCarbLimit: "Көмірсу лимиті",
+            carbsConsumed: "Көмірсу тұтынылды",
+            addFood: "Тамақ қосу",
+            search: "Тамақ іздеу...",
+            noFood: "Тамақ қосылмаған",
+            tapToAdd: "Қосу үшін + басыңыз",
+            highCarbs: "⚠️ Көп көмірсу",
+            portionAlert: "⚠️ Үлкен порция",
+            glycemicLoad: "ГЖ",
+            delete: "Жою",
+            water: "Су",
+            glasses: "стақан",
+            progress: "Прогресс",
+            macros: "Макронутриенттер",
+            profile: "Профиль",
+            language: "Тіл",
+            editProfile: "Өзгерту",
+            save: "Сақтау",
+            cancel: "Бас тарту",
+            today: "Бүгін",
+            kcal: "ккал",
+            g: "г",
+            of: "ішінен",
+            goodMorning: "Қайырлы таң",
+            goodAfternoon: "Қайырлы күн",
+            goodEvening: "Қайырлы кеш",
+            letsTrack: "Тамақтануды бақылаңыз",
+            weekDays: ["Дс","Сс","Ср","Бс","Жм","Сн","Жс"],
+            months: ["Қаң","Ақп","Нау","Сәу","Мам","Мау","Шіл","Там","Қыр","Қаз","Қар","Жел"],
+            per100g: "100г-ға",
+            serving: "порция",
+            carbWarning: "Бұл тағамда көмірсу көп",
+            resetData: "Деректерді жою",
+            confirmReset: "Сенімдісіз бе? Барлық деректер жойылады.",
+            yes: "Иә",
+            no: "Жоқ",
         }
+    };
 
-        // ===== DAY SELECTOR =====
-        document.querySelectorAll('.day-selector').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.day-selector').forEach(b => {
-                    b.classList.remove('selected', 'shadow-sm');
-                });
-                this.classList.add('selected', 'shadow-sm');
-                
-                // Рандом для демо
-                const cal = Math.floor(Math.random() * 800) + 800;
-                document.getElementById('calorieLeft').textContent = cal;
-            });
+    // ==================== Food Database ====================
+    const foodDatabase = [
+        { id: 1, name: { en: "Chicken Breast", ru: "Куриная грудка", kk: "Тауық төсі" }, calories: 165, protein: 31, fat: 3.6, carbs: 0, gl: 0, icon: "🍗", serving: 150 },
+        { id: 2, name: { en: "Brown Rice", ru: "Бурый рис", kk: "Қоңыр күріш" }, calories: 216, protein: 5, fat: 1.8, carbs: 45, gl: 18, icon: "🍚", serving: 200 },
+        { id: 3, name: { en: "Salmon Fillet", ru: "Филе лосося", kk: "Лосось филесі" }, calories: 208, protein: 20, fat: 13, carbs: 0, gl: 0, icon: "🐟", serving: 150 },
+        { id: 4, name: { en: "Banana", ru: "Банан", kk: "Банан" }, calories: 89, protein: 1.1, fat: 0.3, carbs: 23, gl: 12, icon: "🍌", serving: 120 },
+        { id: 5, name: { en: "Greek Yogurt", ru: "Греческий йогурт", kk: "Грек йогурты" }, calories: 100, protein: 17, fat: 0.7, carbs: 6, gl: 3, icon: "🥛", serving: 200 },
+        { id: 6, name: { en: "Oatmeal", ru: "Овсянка", kk: "Сұлы ботқасы" }, calories: 154, protein: 5, fat: 2.6, carbs: 27, gl: 11, icon: "🥣", serving: 200 },
+        { id: 7, name: { en: "Egg (boiled)", ru: "Яйцо (варёное)", kk: "Жұмыртқа (пісірілген)" }, calories: 78, protein: 6, fat: 5, carbs: 0.6, gl: 0, icon: "🥚", serving: 50 },
+        { id: 8, name: { en: "Apple", ru: "Яблоко", kk: "Алма" }, calories: 52, protein: 0.3, fat: 0.2, carbs: 14, gl: 6, icon: "🍎", serving: 180 },
+        { id: 9, name: { en: "Avocado", ru: "Авокадо", kk: "Авокадо" }, calories: 160, protein: 2, fat: 15, carbs: 9, gl: 1, icon: "🥑", serving: 150 },
+        { id: 10, name: { en: "Sweet Potato", ru: "Батат", kk: "Тәтті картоп" }, calories: 103, protein: 2, fat: 0.1, carbs: 24, gl: 10, icon: "🍠", serving: 150 },
+        { id: 11, name: { en: "Broccoli", ru: "Брокколи", kk: "Брокколи" }, calories: 55, protein: 3.7, fat: 0.6, carbs: 11, gl: 2, icon: "🥦", serving: 150 },
+        { id: 12, name: { en: "White Bread", ru: "Белый хлеб", kk: "Ақ нан" }, calories: 265, protein: 9, fat: 3.2, carbs: 49, gl: 25, icon: "🍞", serving: 60 },
+        { id: 13, name: { en: "Pasta", ru: "Паста", kk: "Паста" }, calories: 220, protein: 8, fat: 1.3, carbs: 43, gl: 20, icon: "🍝", serving: 200 },
+        { id: 14, name: { en: "Almonds", ru: "Миндаль", kk: "Бадам" }, calories: 164, protein: 6, fat: 14, carbs: 6, gl: 1, icon: "🥜", serving: 28 },
+        { id: 15, name: { en: "Cottage Cheese", ru: "Творог", kk: "Сүзбе" }, calories: 98, protein: 11, fat: 4.3, carbs: 3.4, gl: 1, icon: "🧀", serving: 150 },
+        { id: 16, name: { en: "Orange Juice", ru: "Апельсиновый сок", kk: "Апельсин шырыны" }, calories: 112, protein: 1.7, fat: 0.5, carbs: 26, gl: 15, icon: "🧃", serving: 250 },
+        { id: 17, name: { en: "Steak (beef)", ru: "Стейк (говядина)", kk: "Стейк (сиыр)" }, calories: 271, protein: 26, fat: 18, carbs: 0, gl: 0, icon: "🥩", serving: 200 },
+        { id: 18, name: { en: "Chocolate Bar", ru: "Шоколадка", kk: "Шоколад" }, calories: 546, protein: 5, fat: 31, carbs: 60, gl: 30, icon: "🍫", serving: 50 },
+        { id: 19, name: { en: "Salad (mixed)", ru: "Салат (микс)", kk: "Салат (аралас)" }, calories: 45, protein: 2.5, fat: 0.5, carbs: 8, gl: 2, icon: "🥗", serving: 200 },
+        { id: 20, name: { en: "Coffee (latte)", ru: "Кофе (латте)", kk: "Кофе (латте)" }, calories: 135, protein: 7, fat: 5, carbs: 14, gl: 5, icon: "☕", serving: 350 },
+    ];
+
+    // ==================== Context ====================
+    const AppContext = createContext();
+
+    // ==================== Helper Functions ====================
+    function calculateBMR(profile) {
+        const { weight, height, age, gender } = profile;
+        if (gender === 'male') return 10 * weight + 6.25 * height - 5 * age + 5;
+        if (gender === 'female') return 10 * weight + 6.25 * height - 5 * age - 161;
+        return 10 * weight + 6.25 * height - 5 * age - 78;
+    }
+
+    function calculateTDEE(profile) {
+        const bmr = calculateBMR(profile);
+        const multipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, veryActive: 1.9 };
+        let tdee = bmr * (multipliers[profile.activityLevel] || 1.55);
+        if (profile.goal === 'lose') tdee -= 500;
+        if (profile.goal === 'gain') tdee += 400;
+        return Math.round(tdee);
+    }
+
+    function calculateMacros(calories) {
+        return {
+            protein: Math.round((calories * 0.3) / 4),
+            fat: Math.round((calories * 0.25) / 9),
+            carbs: Math.round((calories * 0.45) / 4),
+        };
+    }
+
+    function calculateCarbLimit(profile) {
+        const tdee = calculateTDEE(profile);
+        return Math.round((tdee * 0.35) / 4);
+    }
+
+    function getGreeting(t) {
+        const h = new Date().getHours();
+        if (h < 12) return t.goodMorning;
+        if (h < 18) return t.goodAfternoon;
+        return t.goodEvening;
+    }
+
+    function getDateKey(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    // ==================== Progress Ring Component ====================
+    function ProgressRing({ progress, size = 160, strokeWidth = 12, color = "#D7FE63", bgColor = "#E5E7EB", children }) {
+        const radius = (size - strokeWidth) / 2;
+        const circumference = 2 * Math.PI * radius;
+        const clampedProgress = Math.min(Math.max(progress, 0), 100);
+        const offset = circumference - (clampedProgress / 100) * circumference;
+
+        return (
+            <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+                <svg width={size} height={size} className="transform -rotate-90">
+                    <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={bgColor} strokeWidth={strokeWidth} />
+                    <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={color}
+                        strokeWidth={strokeWidth} strokeLinecap="round"
+                        strokeDasharray={circumference} strokeDashoffset={offset}
+                        className="progress-ring-circle" style={{ animation: 'ringProgress 1s ease-out' }} />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">{children}</div>
+            </div>
+        );
+    }
+
+    // ==================== Swipeable Item ====================
+    function SwipeableItem({ children, onDelete }) {
+        const ref = useRef(null);
+        const startX = useRef(0);
+        const currentX = useRef(0);
+        const [offset, setOffset] = useState(0);
+        const [showDelete, setShowDelete] = useState(false);
+
+        const handleTouchStart = (e) => {
+            startX.current = e.touches[0].clientX;
+            currentX.current = 0;
+        };
+
+        const handleTouchMove = (e) => {
+            const diff = e.touches[0].clientX - startX.current;
+            if (diff < 0) {
+                currentX.current = diff;
+                setOffset(Math.max(diff, -80));
+            }
+        };
+
+        const handleTouchEnd = () => {
+            if (currentX.current < -40) {
+                setOffset(-80);
+                setShowDelete(true);
+            } else {
+                setOffset(0);
+                setShowDelete(false);
+            }
+        };
+
+        return (
+            <div className="relative overflow-hidden rounded-2xl mb-3">
+                {showDelete && (
+                    <div className="absolute right-0 top-0 bottom-0 w-20 bg-red-500 flex items-center justify-center rounded-r-2xl cursor-pointer btn-press"
+                        onClick={() => { onDelete(); setOffset(0); setShowDelete(false); }}>
+                        <i className="fa-solid fa-trash text-white text-lg"></i>
+                    </div>
+                )}
+                <div ref={ref} className="swipe-item relative z-10"
+                    style={{ transform: `translateX(${offset}px)` }}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}>
+                    {children}
+                </div>
+            </div>
+        );
+    }
+
+    // ==================== Onboarding ====================
+    function Onboarding({ onComplete }) {
+        const { lang } = useContext(AppContext);
+        const t = translations[lang];
+        const [step, setStep] = useState(0);
+        const [direction, setDirection] = useState('right');
+        const [profile, setProfile] = useState({
+            name: '', age: 25, gender: 'male', weight: 70, height: 170,
+            activityLevel: 'moderate', goal: 'maintain', dietMode: 'standard'
         });
 
-        // ===== SEARCH & DB =====
-        const foodDatabase = [
-            { name: 'Борщ с говядиной', emoji: '🍲', cal: 320, carbs: 18 },
-            { name: 'Куриная грудка', emoji: '🍗', cal: 165, carbs: 0 },
-            { name: 'Рис', emoji: '🍚', cal: 130, carbs: 28 },
-            { name: 'Тако', emoji: '🌮', cal: 635, carbs: 72 },
-            { name: 'Пончик', emoji: '🍩', cal: 256, carbs: 34 },
-            { name: 'Салат Цезарь', emoji: '🥗', cal: 180, carbs: 12 },
+        const updateProfile = (key, value) => setProfile(p => ({ ...p, [key]: value }));
+
+        const goNext = () => { setDirection('right'); setStep(s => s + 1); };
+        const goBack = () => { setDirection('left'); setStep(s => s - 1); };
+
+        const animClass = direction === 'right' ? 'animate-slideLeft' : 'animate-slideRight';
+
+        const steps = [
+            // Welcome
+            () => (
+                <div className="flex flex-col items-center justify-center min-h-[70vh] text-center animate-fadeIn">
+                    <div className="w-24 h-24 bg-[#D7FE63] rounded-3xl flex items-center justify-center mb-6 shadow-lg animate-pulse-soft">
+                        <span className="text-4xl">🧠</span>
+                    </div>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-3">{t.welcome}</h1>
+                    <p className="text-gray-500 mb-10 text-lg">{t.subtitle}</p>
+                    <button onClick={goNext}
+                        className="w-full bg-[#1a1a1a] text-white py-4 rounded-2xl font-semibold text-lg btn-press hover:bg-gray-800 transition-colors">
+                        {t.getStarted}
+                    </button>
+                </div>
+            ),
+            // Name
+            () => (
+                <div className={`${animClass}`}>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.name}</h2>
+                    <p className="text-gray-400 mb-8">Step 1/7</p>
+                    <input type="text" value={profile.name} onChange={e => updateProfile('name', e.target.value)}
+                        placeholder={t.namePlaceholder}
+                        className="w-full bg-white border-2 border-gray-100 rounded-2xl px-5 py-4 text-lg font-medium focus:border-[#D7FE63] focus:outline-none transition-colors" />
+                </div>
+            ),
+            // Age & Gender
+            () => (
+                <div className={`${animClass}`}>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.age} & {t.gender}</h2>
+                    <p className="text-gray-400 mb-8">Step 2/7</p>
+                    <div className="mb-6">
+                        <label className="text-sm font-medium text-gray-500 mb-2 block">{t.age}: {profile.age}</label>
+                        <input type="range" min="10" max="100" value={profile.age}
+                            onChange={e => updateProfile('age', parseInt(e.target.value))}
+                            className="w-full" />
+                    </div>
+                    <label className="text-sm font-medium text-gray-500 mb-3 block">{t.gender}</label>
+                    <div className="grid grid-cols-3 gap-3">
+                        {['male','female','other'].map(g => (
+                            <button key={g} onClick={() => updateProfile('gender', g)}
+                                className={`py-3 rounded-2xl font-medium text-sm btn-press transition-all ${
+                                    profile.gender === g ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-white text-gray-600 border border-gray-100'
+                                }`}>
+                                {t[g]}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            ),
+            // Weight & Height
+            () => (
+                <div className={`${animClass}`}>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.weight} & {t.height}</h2>
+                    <p className="text-gray-400 mb-8">Step 3/7</p>
+                    <div className="mb-6">
+                        <label className="text-sm font-medium text-gray-500 mb-2 block">{t.weight}: {profile.weight} kg</label>
+                        <input type="range" min="30" max="200" value={profile.weight}
+                            onChange={e => updateProfile('weight', parseInt(e.target.value))} className="w-full" />
+                    </div>
+                    <div>
+                        <label className="text-sm font-medium text-gray-500 mb-2 block">{t.height}: {profile.height} cm</label>
+                        <input type="range" min="100" max="220" value={profile.height}
+                            onChange={e => updateProfile('height', parseInt(e.target.value))} className="w-full" />
+                    </div>
+                </div>
+            ),
+            // Activity
+            () => (
+                <div className={`${animClass}`}>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.activityLevel}</h2>
+                    <p className="text-gray-400 mb-6">Step 4/7</p>
+                    <div className="space-y-3">
+                        {['sedentary','light','moderate','active','veryActive'].map((level, i) => (
+                            <button key={level} onClick={() => updateProfile('activityLevel', level)}
+                                className={`w-full py-4 px-5 rounded-2xl font-medium text-left btn-press transition-all flex items-center gap-3 ${
+                                    profile.activityLevel === level ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-white text-gray-600 border border-gray-100'
+                                }`}>
+                                <span className="text-xl">{['🪑','🚶','🏃','💪','🔥'][i]}</span>
+                                {t[level]}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            ),
+            // Goal
+            () => (
+                <div className={`${animClass}`}>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.goal}</h2>
+                    <p className="text-gray-400 mb-6">Step 5/7</p>
+                    <div className="space-y-3">
+                        {[{k:'lose',icon:'📉'},{k:'maintain',icon:'⚖️'},{k:'gain',icon:'📈'}].map(({k,icon}) => (
+                            <button key={k} onClick={() => updateProfile('goal', k)}
+                                className={`w-full py-5 px-5 rounded-2xl font-medium text-left btn-press transition-all flex items-center gap-4 ${
+                                    profile.goal === k ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-white text-gray-600 border border-gray-100'
+                                }`}>
+                                <span className="text-2xl">{icon}</span>
+                                <span className="text-lg">{k === 'lose' ? t.loseWeight : k === 'maintain' ? t.maintain : t.gainWeight}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            ),
+            // Diet Mode
+            () => (
+                <div className={`${animClass}`}>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.dietMode}</h2>
+                    <p className="text-gray-400 mb-6">Step 6/7</p>
+                    <div className="space-y-4">
+                        <button onClick={() => updateProfile('dietMode', 'standard')}
+                            className={`w-full p-5 rounded-2xl text-left btn-press transition-all ${
+                                profile.dietMode === 'standard' ? 'bg-[#D7FE63] shadow-md ring-2 ring-[#c5ec4e]' : 'bg-white border border-gray-100'
+                            }`}>
+                            <div className="flex items-center gap-4">
+                                <span className="text-3xl">🥗</span>
+                                <div>
+                                    <div className="font-bold text-gray-900 text-lg">{t.standard}</div>
+                                    <div className="text-gray-500 text-sm">{t.standardDesc}</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button onClick={() => updateProfile('dietMode', 'carbControl')}
+                            className={`w-full p-5 rounded-2xl text-left btn-press transition-all ${
+                                profile.dietMode === 'carbControl' ? 'bg-[#D1F0ED] shadow-md ring-2 ring-[#a8ddd8]' : 'bg-white border border-gray-100'
+                            }`}>
+                            <div className="flex items-center gap-4">
+                                <span className="text-3xl">🩺</span>
+                                <div>
+                                    <div className="font-bold text-gray-900 text-lg">{t.carbControl}</div>
+                                    <div className="text-gray-500 text-sm">{t.carbControlDesc}</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            ),
+            // Summary
+            () => {
+                const tdee = calculateTDEE(profile);
+                const macros = calculateMacros(tdee);
+                const carbLimit = calculateCarbLimit(profile);
+                return (
+                    <div className={`${animClass}`}>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Plan</h2>
+                        <p className="text-gray-400 mb-6">Step 7/7</p>
+                        <div className="bg-white rounded-3xl p-6 shadow-sm mb-4">
+                            <div className="text-center mb-4">
+                                <div className="text-5xl font-bold text-gray-900">{tdee}</div>
+                                <div className="text-gray-400 text-sm">{t.kcal} / day</div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-3">
+                                <div className="text-center bg-gray-50 rounded-2xl p-3">
+                                    <div className="text-lg font-bold text-blue-500">{macros.protein}{t.g}</div>
+                                    <div className="text-xs text-gray-400">{t.protein}</div>
+                                </div>
+                                <div className="text-center bg-gray-50 rounded-2xl p-3">
+                                    <div className="text-lg font-bold text-yellow-500">{macros.fat}{t.g}</div>
+                                    <div className="text-xs text-gray-400">{t.fat}</div>
+                                </div>
+                                <div className="text-center bg-gray-50 rounded-2xl p-3">
+                                    <div className="text-lg font-bold text-green-500">{macros.carbs}{t.g}</div>
+                                    <div className="text-xs text-gray-400">{t.carbs}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {profile.dietMode === 'carbControl' && (
+                            <div className="bg-[#D1F0ED] rounded-3xl p-5 flex items-center gap-4 animate-fadeIn">
+                                <span className="text-3xl">🩺</span>
+                                <div>
+                                    <div className="font-bold text-gray-900">{t.dailyCarbLimit}</div>
+                                    <div className="text-2xl font-bold text-teal-700">{carbLimit}{t.g}</div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            },
         ];
 
-        function openSearch() {
-            document.getElementById('searchOverlay').style.display = 'flex';
-            setTimeout(() => document.getElementById('searchInput').focus(), 100);
-            searchFood('');
+        return (
+            <div className="max-w-[430px] mx-auto min-h-screen bg-[#F8F9FB] px-6 py-8 flex flex-col">
+                {step > 0 && (
+                    <div className="mb-6">
+                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-[#D7FE63] rounded-full transition-all duration-500"
+                                style={{ width: `${(step / (steps.length - 1)) * 100}%` }} />
+                        </div>
+                    </div>
+                )}
+                <div className="flex-1">{steps[step]()}</div>
+                {step > 0 && (
+                    <div className="flex gap-3 mt-8">
+                        {step > 1 && (
+                            <button onClick={goBack}
+                                className="flex-1 bg-white border border-gray-200 text-gray-700 py-4 rounded-2xl font-semibold btn-press hover:bg-gray-50 transition-colors">
+                                {t.back}
+                            </button>
+                        )}
+                        {step < steps.length - 1 ? (
+                            <button onClick={goNext} disabled={step === 1 && !profile.name.trim()}
+                                className={`flex-1 py-4 rounded-2xl font-semibold btn-press transition-colors ${
+                                    step === 1 && !profile.name.trim() ? 'bg-gray-200 text-gray-400' : 'bg-[#1a1a1a] text-white hover:bg-gray-800'
+                                }`}>
+                                {t.next}
+                            </button>
+                        ) : (
+                            <button onClick={() => onComplete(profile)}
+                                className="flex-1 bg-[#D7FE63] text-gray-900 py-4 rounded-2xl font-bold btn-press hover:bg-[#c5ec4e] transition-colors">
+                                {t.finish} ✨
+                            </button>
+                        )}
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    // ==================== Search Overlay ====================
+    function SearchOverlay({ onClose, onAdd }) {
+        const { lang } = useContext(AppContext);
+        const t = translations[lang];
+        const [query, setQuery] = useState('');
+        const inputRef = useRef(null);
+
+        useEffect(() => { inputRef.current?.focus(); }, []);
+
+        const filtered = foodDatabase.filter(f =>
+            f.name[lang].toLowerCase().includes(query.toLowerCase())
+        );
+
+        return (
+            <div className="fixed inset-0 z-50 bg-[#F8F9FB] animate-slideUp">
+                <div className="max-w-[430px] mx-auto px-5 py-4">
+                    <div className="flex items-center gap-3 mb-5">
+                        <button onClick={onClose} className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm btn-press">
+                            <i className="fa-solid fa-xmark text-gray-600"></i>
+                        </button>
+                        <div className="flex-1 relative">
+                            <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input ref={inputRef} type="text" value={query} onChange={e => setQuery(e.target.value)}
+                                placeholder={t.search}
+                                className="w-full bg-white rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63] shadow-sm" />
+                        </div>
+                    </div>
+                    <div className="space-y-2 overflow-y-auto hide-scrollbar" style={{ maxHeight: 'calc(100vh - 100px)' }}>
+                        {filtered.map((food, i) => {
+                            const servingCals = Math.round(food.calories * food.serving / 100);
+                            const servingCarbs = Math.round(food.carbs * food.serving / 100);
+                            return (
+                                <button key={food.id} onClick={() => { onAdd(food); onClose(); }}
+                                    className={`w-full bg-white rounded-2xl p-4 flex items-center gap-4 btn-press hover:bg-gray-50 transition-colors animate-fadeIn stagger-${Math.min(i+1,5)}`}>
+                                    <span className="text-3xl">{food.icon}</span>
+                                    <div className="flex-1 text-left">
+                                        <div className="font-semibold text-gray-900">{food.name[lang]}</div>
+                                        <div className="text-xs text-gray-400">{food.serving}g {t.serving} · {servingCals} {t.kcal}</div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-sm font-bold text-gray-700">{servingCarbs}{t.g}</div>
+                                        <div className="text-xs text-gray-400">{t.carbs}</div>
+                                    </div>
+                                    <i className="fa-solid fa-plus text-[#D7FE63] text-lg"></i>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // ==================== Dashboard Screen ====================
+    function DashboardScreen() {
+        const { profile, foodLog, selectedDate, lang } = useContext(AppContext);
+        const t = translations[lang];
+        const tdee = calculateTDEE(profile);
+        const macros = calculateMacros(tdee);
+        const carbLimit = profile.dietMode === 'carbControl' ? calculateCarbLimit(profile) : macros.carbs;
+
+        const dateKey = getDateKey(selectedDate);
+        const todayFoods = foodLog[dateKey] || [];
+
+        const totals = todayFoods.reduce((acc, item) => ({
+            calories: acc.calories + Math.round(item.food.calories * item.food.serving / 100),
+            protein: acc.protein + Math.round(item.food.protein * item.food.serving / 100),
+            fat: acc.fat + Math.round(item.food.fat * item.food.serving / 100),
+            carbs: acc.carbs + Math.round(item.food.carbs * item.food.serving / 100),
+        }), { calories: 0, protein: 0, fat: 0, carbs: 0 });
+
+        const calProgress = Math.min((totals.calories / tdee) * 100, 100);
+        const carbProgress = Math.min((totals.carbs / carbLimit) * 100, 100);
+        const remaining = Math.max(tdee - totals.calories, 0);
+
+        return (
+            <div className="animate-fadeIn">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">{getGreeting(t)}, {profile.name} 👋</h1>
+                    <p className="text-gray-400 text-sm mt-1">{t.letsTrack}</p>
+                </div>
+
+                {/* Calorie Ring */}
+                <div className="bg-white rounded-3xl p-6 shadow-sm mb-4 animate-fadeIn stagger-1">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className="text-sm text-gray-400 mb-1">{t.calories}</div>
+                            <div className="text-4xl font-bold text-gray-900">{totals.calories}</div>
+                            <div className="text-sm text-gray-400">{t.of} {tdee} {t.kcal}</div>
+                            <div className="mt-2 text-sm font-medium text-green-500">
+                                {remaining} {t.kcal} {t.remaining}
+                            </div>
+                        </div>
+                        <ProgressRing progress={calProgress} size={130} strokeWidth={14}>
+                            <div className="text-center">
+                                <div className="text-2xl font-bold text-gray-900">{Math.round(calProgress)}%</div>
+                            </div>
+                        </ProgressRing>
+                    </div>
+                </div>
+
+                {/* Diabetes Widget */}
+                {profile.dietMode === 'carbControl' && (
+                    <div className="bg-[#D1F0ED] rounded-3xl p-5 mb-4 animate-fadeIn stagger-2">
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                                <span className="text-xl">🩺</span>
+                                <span className="font-bold text-gray-900">{t.carbsConsumed}</span>
+                            </div>
+                            <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                                carbProgress > 90 ? 'bg-red-100 text-red-600' : carbProgress > 70 ? 'bg-yellow-100 text-yellow-600' : 'bg-green-100 text-green-600'
+                            }`}>
+                                {totals.carbs}{t.g} / {carbLimit}{t.g}
+                            </span>
+                        </div>
+                        <div className="h-3 bg-white/60 rounded-full overflow-hidden">
+                            <div className={`h-full rounded-full transition-all duration-700 ${
+                                carbProgress > 90 ? 'bg-red-400' : carbProgress > 70 ? 'bg-yellow-400' : 'bg-teal-500'
+                            }`} style={{ width: `${carbProgress}%` }} />
+                        </div>
+                        <div className="text-xs text-teal-700 mt-2 font-medium">
+                            {t.dailyCarbLimit}: {carbLimit}{t.g}
+                        </div>
+                    </div>
+                )}
+
+                {/* Macro Grid */}
+                <div className="grid grid-cols-3 gap-3 animate-fadeIn stagger-3">
+                    {[
+                        { label: t.protein, value: totals.protein, max: macros.protein, color: 'bg-blue-500', bg: 'bg-blue-50', textColor: 'text-blue-500' },
+                        { label: t.fat, value: totals.fat, max: macros.fat, color: 'bg-yellow-500', bg: 'bg-yellow-50', textColor: 'text-yellow-500' },
+                        { label: t.carbs, value: totals.carbs, max: profile.dietMode === 'carbControl' ? carbLimit : macros.carbs, color: 'bg-green-500', bg: 'bg-green-50', textColor: 'text-green-500' },
+                    ].map(m => (
+                        <div key={m.label} className={`${m.bg} rounded-2xl p-4`}>
+                            <div className={`text-xs font-medium ${m.textColor} mb-1`}>{m.label}</div>
+                            <div className="text-xl font-bold text-gray-900">{m.value}<span className="text-xs text-gray-400">{t.g}</span></div>
+                            <div className="h-1.5 bg-white/60 rounded-full mt-2 overflow-hidden">
+                                <div className={`h-full ${m.color} rounded-full transition-all duration-500`}
+                                    style={{ width: `${Math.min((m.value / m.max) * 100, 100)}%` }} />
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1">{t.of} {m.max}{t.g}</div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // ==================== Tracker Screen ====================
+    function TrackerScreen() {
+        const { profile, foodLog, setFoodLog, selectedDate, setSelectedDate, lang } = useContext(AppContext);
+        const t = translations[lang];
+        const [showSearch, setShowSearch] = useState(false);
+        const carbLimit = profile.dietMode === 'carbControl' ? calculateCarbLimit(profile) : null;
+
+        // Week calendar
+        const today = new Date();
+        const weekDates = [];
+        const dayOfWeek = today.getDay();
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(monday);
+            d.setDate(monday.getDate() + i);
+            weekDates.push(d);
         }
 
-        function closeSearch() {
-            document.getElementById('searchOverlay').style.display = 'none';
-            document.getElementById('searchInput').value = '';
-        }
+        const dateKey = getDateKey(selectedDate);
+        const todayFoods = foodLog[dateKey] || [];
 
-        function searchFood(query) {
-            const results = document.getElementById('searchResults');
-            const filtered = query.trim() === '' 
-                ? foodDatabase 
-                : foodDatabase.filter(f => f.name.toLowerCase().includes(query.toLowerCase()));
-            
-            results.innerHTML = filtered.map(f => `
-                <button onclick="addFoodFromSearch('${f.name}', '${f.emoji}', ${f.cal}, ${f.carbs})" 
-                    class="w-full bg-white rounded-2xl p-4 mb-3 flex items-center gap-4 text-left shadow-sm">
-                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0 text-2xl border border-slate-100">
-                        ${f.emoji}
+        const addFood = (food) => {
+            const newLog = { ...foodLog };
+            if (!newLog[dateKey]) newLog[dateKey] = [];
+            newLog[dateKey] = [...newLog[dateKey], { id: Date.now(), food, addedAt: new Date().toISOString() }];
+            setFoodLog(newLog);
+        };
+
+        const removeFood = (itemId) => {
+            const newLog = { ...foodLog };
+            newLog[dateKey] = (newLog[dateKey] || []).filter(item => item.id !== itemId);
+            setFoodLog(newLog);
+        };
+
+        return (
+            <div className="animate-fadeIn">
+                <div className="flex items-center justify-between mb-5">
+                    <h1 className="text-2xl font-bold text-gray-900">{t.tracker}</h1>
+                    <button onClick={() => setShowSearch(true)}
+                        className="w-12 h-12 bg-[#D7FE63] rounded-2xl flex items-center justify-center shadow-md btn-press hover:bg-[#c5ec4e] transition-colors">
+                        <i className="fa-solid fa-plus text-gray-900 text-lg"></i>
+                    </button>
+                </div>
+
+                {/* Week Calendar */}
+                <div className="flex gap-2 mb-6 overflow-x-auto hide-scrollbar pb-1">
+                    {weekDates.map((d, i) => {
+                        const isSelected = getDateKey(d) === getDateKey(selectedDate);
+                        const isToday = getDateKey(d) === getDateKey(today);
+                        return (
+                            <button key={i} onClick={() => setSelectedDate(new Date(d))}
+                                className={`flex-shrink-0 w-12 py-3 rounded-2xl flex flex-col items-center gap-1 btn-press transition-all ${
+                                    isSelected ? 'bg-[#1a1a1a] text-white shadow-lg' : 'bg-white text-gray-600'
+                                }`}>
+                                <span className="text-[10px] font-medium opacity-60">{t.weekDays[i]}</span>
+                                <span className="text-lg font-bold">{d.getDate()}</span>
+                                {isToday && <div className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#D7FE63]' : 'bg-[#D7FE63]'}`} />}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Food List */}
+                {todayFoods.length === 0 ? (
+                    <div className="text-center py-16 animate-fadeIn">
+                        <div className="text-5xl mb-4">🍽️</div>
+                        <div className="text-gray-400 font-medium">{t.noFood}</div>
+                        <div className="text-gray-300 text-sm mt-1">{t.tapToAdd}</div>
                     </div>
-                    <div class="flex-1">
-                        <h3 class="text-slate-900 font-bold text-sm">${f.name}</h3>
-                        <span class="text-slate-500 text-xs">${f.cal} kcal · ${f.carbs}g углев.</span>
+                ) : (
+                    <div className="space-y-0">
+                        {todayFoods.map((item, i) => {
+                            const servingCals = Math.round(item.food.calories * item.food.serving / 100);
+                            const servingCarbs = Math.round(item.food.carbs * item.food.serving / 100);
+                            const servingProtein = Math.round(item.food.protein * item.food.serving / 100);
+                            const servingFat = Math.round(item.food.fat * item.food.serving / 100);
+                            const isHighCarb = carbLimit && servingCarbs > 30;
+                            const isPortionAlert = carbLimit && servingCarbs > 20 && servingCarbs <= 30;
+
+                            return (
+                                <SwipeableItem key={item.id} onDelete={() => removeFood(item.id)}>
+                                    <div className={`bg-white rounded-2xl p-4 shadow-sm animate-fadeIn ${isHighCarb ? 'ring-2 ring-red-200' : ''}`}
+                                        style={{ animationDelay: `${i * 0.05}s` }}>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-3xl">{item.food.icon}</span>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-semibold text-gray-900">{item.food.name[lang]}</span>
+                                                    {isHighCarb && (
+                                                        <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{t.highCarbs}</span>
+                                                    )}
+                                                    {isPortionAlert && (
+                                                        <span className="text-[10px] bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full font-bold">{t.portionAlert}</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center gap-3 mt-1">
+                                                    <span className="text-xs text-gray-400">{servingCals} {t.kcal}</span>
+                                                    <span className="text-xs text-blue-400">P: {servingProtein}{t.g}</span>
+                                                    <span className="text-xs text-yellow-500">F: {servingFat}{t.g}</span>
+                                                    <span className="text-xs text-green-500">C: {servingCarbs}{t.g}</span>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="bg-gray-100 rounded-lg px-2 py-1">
+                                                    <span className="text-[10px] text-gray-500 font-medium">{t.glycemicLoad}</span>
+                                                    <span className="text-sm font-bold text-gray-700 ml-1">{item.food.gl}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </SwipeableItem>
+                            );
+                        })}
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-[#D7FE63] flex items-center justify-center text-slate-900">
-                        <i class="fa-solid fa-plus text-xs"></i>
+                )}
+
+                {showSearch && <SearchOverlay onClose={() => setShowSearch(false)} onAdd={addFood} />}
+            </div>
+        );
+    }
+
+    // ==================== Analytics Screen ====================
+    function AnalyticsScreen() {
+        const { profile, foodLog, selectedDate, waterLog, setWaterLog, lang } = useContext(AppContext);
+        const t = translations[lang];
+        const tdee = calculateTDEE(profile);
+        const macros = calculateMacros(tdee);
+        const carbLimit = profile.dietMode === 'carbControl' ? calculateCarbLimit(profile) : macros.carbs;
+        const dateKey = getDateKey(selectedDate);
+        const todayFoods = foodLog[dateKey] || [];
+        const waterGlasses = waterLog[dateKey] || 0;
+
+        const totals = todayFoods.reduce((acc, item) => ({
+            calories: acc.calories + Math.round(item.food.calories * item.food.serving / 100),
+            protein: acc.protein + Math.round(item.food.protein * item.food.serving / 100),
+            fat: acc.fat + Math.round(item.food.fat * item.food.serving / 100),
+            carbs: acc.carbs + Math.round(item.food.carbs * item.food.serving / 100),
+        }), { calories: 0, protein: 0, fat: 0, carbs: 0 });
+
+        const addWater = () => {
+            const newWater = { ...waterLog };
+            newWater[dateKey] = (newWater[dateKey] || 0) + 1;
+            setWaterLog(newWater);
+        };
+
+        const removeWater = () => {
+            const newWater = { ...waterLog };
+            newWater[dateKey] = Math.max((newWater[dateKey] || 0) - 1, 0);
+            setWaterLog(newWater);
+        };
+
+        const macroItems = [
+            { label: t.calories, value: totals.calories, max: tdee, unit: t.kcal, color: '#D7FE63', bg: '#f0f9d6' },
+            { label: t.protein, value: totals.protein, max: macros.protein, unit: t.g, color: '#60A5FA', bg: '#EFF6FF' },
+            { label: t.fat, value: totals.fat, max: macros.fat, unit: t.g, color: '#FBBF24', bg: '#FFFBEB' },
+            { label: t.carbs, value: totals.carbs, max: carbLimit, unit: t.g, color: '#34D399', bg: '#ECFDF5' },
+        ];
+
+        return (
+            <div className="animate-fadeIn">
+                <h1 className="text-2xl font-bold text-gray-900 mb-6">{t.analytics}</h1>
+
+                {/* Macros */}
+                <div className="bg-white rounded-3xl p-5 shadow-sm mb-4 animate-fadeIn stagger-1">
+                    <h3 className="font-bold text-gray-900 mb-4">{t.macros}</h3>
+                    <div className="space-y-4">
+                        {macroItems.map(m => {
+                            const pct = Math.min((m.value / m.max) * 100, 100);
+                            return (
+                                <div key={m.label}>
+                                    <div className="flex justify-between mb-1.5">
+                                        <span className="text-sm font-medium text-gray-700">{m.label}</span>
+                                        <span className="text-sm font-bold text-gray-900">{m.value} / {m.max} {m.unit}</span>
+                                    </div>
+                                    <div className="h-3 rounded-full overflow-hidden" style={{ background: m.bg }}>
+                                        <div className="h-full rounded-full transition-all duration-700"
+                                            style={{ width: `${pct}%`, background: m.color }} />
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
+                </div>
+
+                {/* Water Tracker */}
+                <div className="bg-white rounded-3xl p-5 shadow-sm animate-fadeIn stagger-2">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-bold text-gray-900">{t.water}</h3>
+                        <span className="text-sm text-gray-400">{waterGlasses} / 8 {t.glasses}</span>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap mb-4">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className={`w-10 h-14 rounded-xl flex items-center justify-center text-xl transition-all duration-300 ${
+                                i < waterGlasses ? 'bg-blue-100 scale-105' : 'bg-gray-50'
+                            }`}>
+                                {i < waterGlasses ? '💧' : '🫗'}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex gap-3">
+                        <button onClick={removeWater}
+                            className="flex-1 bg-gray-100 text-gray-600 py-3 rounded-2xl font-semibold btn-press hover:bg-gray-200 transition-colors">
+                            <i className="fa-solid fa-minus mr-2"></i>
+                        </button>
+                        <button onClick={addWater}
+                            className="flex-1 bg-blue-500 text-white py-3 rounded-2xl font-semibold btn-press hover:bg-blue-600 transition-colors">
+                            <i className="fa-solid fa-plus mr-2"></i>
+                        </button>
+                    </div>
+                    <div className="h-2 bg-blue-50 rounded-full mt-4 overflow-hidden">
+                        <div className="h-full bg-blue-400 rounded-full transition-all duration-500"
+                            style={{ width: `${Math.min((waterGlasses / 8) * 100, 100)}%` }} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // ==================== Settings Screen ====================
+    function SettingsScreen() {
+        const { profile, setProfile, lang, setLang, resetApp } = useContext(AppContext);
+        const t = translations[lang];
+        const [editing, setEditing] = useState(false);
+        const [editData, setEditData] = useState({ ...profile });
+        const [showConfirm, setShowConfirm] = useState(false);
+
+        const saveProfile = () => {
+            setProfile(editData);
+            setEditing(false);
+        };
+
+        const toggleDietMode = () => {
+            const newMode = profile.dietMode === 'standard' ? 'carbControl' : 'standard';
+            setProfile({ ...profile, dietMode: newMode });
+        };
+
+        return (
+            <div className="animate-fadeIn">
+                <h1 className="text-2xl font-bold text-gray-900 mb-6">{t.settings}</h1>
+
+                {/* Profile Card */}
+                <div className="bg-white rounded-3xl p-5 shadow-sm mb-4 animate-fadeIn stagger-1">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-16 h-16 bg-[#D7FE63] rounded-2xl flex items-center justify-center text-2xl font-bold text-gray-900">
+                            {profile.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <div className="font-bold text-lg text-gray-900">{profile.name}</div>
+                            <div className="text-sm text-gray-400">{profile.age} y/o · {profile.weight}kg · {profile.height}cm</div>
+                        </div>
+                    </div>
+                    {!editing ? (
+                        <button onClick={() => { setEditData({ ...profile }); setEditing(true); }}
+                            className="w-full bg-gray-100 text-gray-700 py-3 rounded-2xl font-semibold btn-press hover:bg-gray-200 transition-colors">
+                            <i className="fa-solid fa-pen mr-2"></i>{t.editProfile}
+                        </button>
+                    ) : (
+                        <div className="space-y-3 animate-fadeIn">
+                            <input type="text" value={editData.name} onChange={e => setEditData({ ...editData, name: e.target.value })}
+                                className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63]" />
+                            <div className="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label className="text-xs text-gray-400">{t.age}</label>
+                                    <input type="number" value={editData.age} onChange={e => setEditData({ ...editData, age: parseInt(e.target.value) || 0 })}
+                                        className="w-full bg-gray-50 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63]" />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-400">{t.weight}</label>
+                                    <input type="number" value={editData.weight} onChange={e => setEditData({ ...editData, weight: parseInt(e.target.value) || 0 })}
+                                        className="w-full bg-gray-50 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63]" />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-400">{t.height}</label>
+                                    <input type="number" value={editData.height} onChange={e => setEditData({ ...editData, height: parseInt(e.target.value) || 0 })}
+                                        className="w-full bg-gray-50 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63]" />
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <button onClick={() => setEditing(false)}
+                                    className="flex-1 bg-gray-100 text-gray-600 py-3 rounded-2xl font-semibold btn-press">{t.cancel}</button>
+                                <button onClick={saveProfile}
+                                    className="flex-1 bg-[#D7FE63] text-gray-900 py-3 rounded-2xl font-semibold btn-press">{t.save}</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Diet Mode Toggle */}
+                <div className="bg-white rounded-3xl p-5 shadow-sm mb-4 animate-fadeIn stagger-2">
+                    <h3 className="font-bold text-gray-900 mb-3">{t.dietMode}</h3>
+                    <div className="flex gap-3">
+                        <button onClick={() => setProfile({ ...profile, dietMode: 'standard' })}
+                            className={`flex-1 py-3 px-4 rounded-2xl font-medium text-sm btn-press transition-all ${
+                                profile.dietMode === 'standard' ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-gray-100 text-gray-500'
+                            }`}>
+                            🥗 {t.standard}
+                        </button>
+                        <button onClick={() => setProfile({ ...profile, dietMode: 'carbControl' })}
+                            className={`flex-1 py-3 px-4 rounded-2xl font-medium text-sm btn-press transition-all ${
+                                profile.dietMode === 'carbControl' ? 'bg-[#D1F0ED] text-teal-700 shadow-md' : 'bg-gray-100 text-gray-500'
+                            }`}>
+                            🩺 {t.carbControl}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Language */}
+                <div className="bg-white rounded-3xl p-5 shadow-sm mb-4 animate-fadeIn stagger-3">
+                    <h3 className="font-bold text-gray-900 mb-3">{t.language}</h3>
+                    <div className="flex gap-2">
+                        {[{code:'en',label:'English',flag:'🇬🇧'},{code:'ru',label:'Русский',flag:'🇷🇺'},{code:'kk',label:'Қазақша',flag:'🇰🇿'}].map(l => (
+                            <button key={l.code} onClick={() => setLang(l.code)}
+                                className={`flex-1 py-3 rounded-2xl font-medium text-sm btn-press transition-all flex flex-col items-center gap-1 ${
+                                    lang === l.code ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-gray-100 text-gray-500'
+                                }`}>
+                                <span className="text-lg">{l.flag}</span>
+                                <span className="text-xs">{l.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Reset */}
+                <button onClick={() => setShowConfirm(true)}
+                    className="w-full bg-red-50 text-red-500 py-4 rounded-2xl font-semibold btn-press hover:bg-red-100 transition-colors animate-fadeIn stagger-4">
+                    <i className="fa-solid fa-trash mr-2"></i>{t.resetData}
                 </button>
-            `).join('');
-        }
 
-        function addFoodFromSearch(name, emoji, cal, carbs) {
-            const foodList = document.getElementById('foodList');
-            const card = document.createElement('div');
-            card.className = 'card-cyan p-4 relative food-item slide-up'; // Цвет циана как у Taco
-            card.innerHTML = `
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-slate-900 font-bold text-sm">${emoji} ${name}</h3>
-                    <button onclick="removeFood(this)" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="flex flex-col gap-2">
-                    <div class="flex gap-2 items-center">
-                        <div class="w-1 h-6 bg-cyan-400 rounded-full"></div>
-                        <div>
-                            <p class="text-slate-900 font-bold text-xs">${cal}</p>
-                            <p class="text-slate-500 text-[10px]">Calories</p>
+                {showConfirm && (
+                    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-6 animate-fadeIn">
+                        <div className="bg-white rounded-3xl p-6 w-full max-w-sm animate-scaleIn">
+                            <p className="text-gray-900 font-semibold text-center mb-6">{t.confirmReset}</p>
+                            <div className="flex gap-3">
+                                <button onClick={() => setShowConfirm(false)}
+                                    className="flex-1 bg-gray-100 text-gray-600 py-3 rounded-2xl font-semibold btn-press">{t.no}</button>
+                                <button onClick={() => { resetApp(); setShowConfirm(false); }}
+                                    className="flex-1 bg-red-500 text-white py-3 rounded-2xl font-semibold btn-press">{t.yes}</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex gap-2 items-center">
-                        <div class="w-1 h-6 bg-cyan-400 rounded-full"></div>
-                        <div>
-                            <p class="text-slate-900 font-bold text-xs">${carbs}g</p>
-                            <p class="text-slate-500 text-[10px]">Carbs</p>
-                        </div>
+                )}
+            </div>
+        );
+    }
+
+    // ==================== Bottom Navigation ====================
+    function BottomNav({ activeTab, setActiveTab }) {
+        const { lang } = useContext(AppContext);
+        const t = translations[lang];
+        const tabs = [
+            { id: 'dashboard', icon: 'fa-house', label: t.dashboard },
+            { id: 'tracker', icon: 'fa-utensils', label: t.tracker },
+            { id: 'analytics', icon: 'fa-chart-simple', label: t.analytics },
+            { id: 'settings', icon: 'fa-gear', label: t.settings },
+        ];
+
+        return (
+            <div className="fixed bottom-0 left-0 right-0 z-40">
+                <div className="max-w-[430px] mx-auto">
+                    <div className="glass-card border-t border-gray-100 px-2 py-2 flex justify-around">
+                        {tabs.map(tab => (
+                            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                                className={`nav-item flex flex-col items-center py-2 px-4 rounded-2xl btn-press ${
+                                    activeTab === tab.id ? 'active' : 'text-gray-400'
+                                }`}>
+                                <i className={`fa-solid ${tab.icon} text-lg mb-1`}></i>
+                                <span className="text-[10px] font-semibold">{tab.label}</span>
+                                <div className={`nav-dot w-5 h-1 bg-[#D7FE63] rounded-full mt-1`}></div>
+                            </button>
+                        ))}
                     </div>
                 </div>
-            `;
-            foodList.appendChild(card);
-            closeSearch();
-            updateCalories();
-            navigateTo('calories');
-        }
+            </div>
+        );
+    }
 
-        function removeFood(btn) {
-            const card = btn.closest('.food-item');
-            card.style.opacity = '0';
-            card.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                card.remove();
-                updateCalories();
-            }, 300);
-        }
-
-        function updateCalories() {
-            const cards = document.querySelectorAll('#foodList .food-item');
-            let total = 0;
-            cards.forEach(card => {
-                const text = card.querySelectorAll('.text-slate-900.font-bold.text-xs')[0]?.textContent || '';
-                total += parseInt(text) || 0;
-            });
-            const left = Math.max(0, 2000 - total);
-            const el = document.getElementById('calorieLeft');
-            if(el) el.textContent = left;
-        }
-
-        function openAddFood() { document.getElementById('addFoodModal').style.display = 'flex'; }
-        function closeAddFood() { 
-            document.getElementById('addFoodModal').style.display = 'none'; 
-            document.getElementById('foodName').value = '';
-            document.getElementById('foodCalories').value = '';
-            document.getElementById('foodCarbs').value = '';
-        }
-
-        function addFood() {
-            const name = document.getElementById('foodName').value.trim();
-            const cal = parseInt(document.getElementById('foodCalories').value) || 0;
-            const carbs = parseInt(document.getElementById('foodCarbs').value) || 0;
-            if (!name) return;
-            addFoodFromSearch(name, '🍽', cal, carbs);
-            closeAddFood();
-        }
-
-        document.getElementById('addFoodModal').addEventListener('click', function(e) {
-            if (e.target === this) closeAddFood();
+    // ==================== Main App ====================
+    function App() {
+        const [isOnboarded, setIsOnboarded] = useState(() => {
+            try { return !!localStorage.getItem('wellai_profile'); } catch { return false; }
         });
-
-        // ===== CALORIE SUMMARY =====
-        function showCalorieSummary() {
-            const cards = document.querySelectorAll('#foodList .food-item');
-            let totalCal = 0, totalCarbs = 0, items = [];
-            
-            cards.forEach(card => {
-                const name = card.querySelector('h3').textContent || 'Продукт';
-                const cal = parseInt(card.querySelectorAll('.text-slate-900.font-bold.text-xs')[0]?.textContent || 0);
-                const carbs = parseInt(card.querySelectorAll('.text-slate-900.font-bold.text-xs')[1]?.textContent || 0);
-                totalCal += cal;
-                totalCarbs += carbs;
-                items.push({ name, cal, carbs });
-            });
-
-            const content = document.getElementById('summaryContent');
-            content.innerHTML = items.map(item => `
-                <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3 border border-slate-100">
-                    <span class="text-slate-700 text-sm font-medium">${item.name}</span>
-                    <span class="text-slate-900 font-bold text-sm">${item.cal} kcal</span>
-                </div>
-            `).join('') + `
-                <div class="border-t border-slate-200 pt-4 mt-4">
-                    <div class="flex justify-between mb-2">
-                        <span class="text-slate-500 text-sm">Всего:</span>
-                        <span class="text-slate-900 font-bold">${totalCal} kcal</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500 text-sm">Углеводов:</span>
-                        <span class="text-slate-900 font-bold">${totalCarbs}g</span>
-                    </div>
-                </div>
-            `;
-            document.getElementById('calorieSummaryModal').style.display = 'flex';
-        }
-
-        function closeSummary() { document.getElementById('calorieSummaryModal').style.display = 'none'; }
-        document.getElementById('calorieSummaryModal').addEventListener('click', function(e) {
-            if (e.target === this) closeSummary();
+        const [profile, setProfileState] = useState(() => {
+            try {
+                const saved = localStorage.getItem('wellai_profile');
+                return saved ? JSON.parse(saved) : null;
+            } catch { return null; }
         });
+        const [foodLog, setFoodLogState] = useState(() => {
+            try {
+                const saved = localStorage.getItem('wellai_foodlog');
+                return saved ? JSON.parse(saved) : {};
+            } catch { return {}; }
+        });
+        const [waterLog, setWaterLogState] = useState(() => {
+            try {
+                const saved = localStorage.getItem('wellai_waterlog');
+                return saved ? JSON.parse(saved) : {};
+            } catch { return {}; }
+        });
+        const [lang, setLangState] = useState(() => {
+            try { return localStorage.getItem('wellai_lang') || 'en'; } catch { return 'en'; }
+        });
+        const [activeTab, setActiveTab] = useState('dashboard');
+        const [selectedDate, setSelectedDate] = useState(new Date());
 
-        // ===== NOTIFICATIONS =====
-        function openNotifications() {
-            document.getElementById('notifBackdrop').style.display = 'block';
-            setTimeout(() => { document.getElementById('notifPanel').style.transform = 'translateX(0)'; }, 10);
-        }
-        function closeNotifications() {
-            document.getElementById('notifPanel').style.transform = 'translateX(100%)';
-            setTimeout(() => { document.getElementById('notifBackdrop').style.display = 'none'; }, 300);
+        const setProfile = (p) => {
+            setProfileState(p);
+            try { localStorage.setItem('wellai_profile', JSON.stringify(p)); } catch {}
+        };
+        const setFoodLog = (log) => {
+            setFoodLogState(log);
+            try { localStorage.setItem('wellai_foodlog', JSON.stringify(log)); } catch {}
+        };
+        const setWaterLog = (log) => {
+            setWaterLogState(log);
+            try { localStorage.setItem('wellai_waterlog', JSON.stringify(log)); } catch {}
+        };
+        const setLang = (l) => {
+            setLangState(l);
+            try { localStorage.setItem('wellai_lang', l); } catch {}
+        };
+
+        const handleOnboardingComplete = (profileData) => {
+            setProfile(profileData);
+            setIsOnboarded(true);
+        };
+
+        const resetApp = () => {
+            try {
+                localStorage.removeItem('wellai_profile');
+                localStorage.removeItem('wellai_foodlog');
+                localStorage.removeItem('wellai_waterlog');
+            } catch {}
+            setProfileState(null);
+            setFoodLogState({});
+            setWaterLogState({});
+            setIsOnboarded(false);
+        };
+
+        const contextValue = {
+            profile, setProfile, foodLog, setFoodLog, waterLog, setWaterLog,
+            lang, setLang, selectedDate, setSelectedDate, resetApp
+        };
+
+        if (!isOnboarded || !profile) {
+            return (
+                <AppContext.Provider value={contextValue}>
+                    <Onboarding onComplete={handleOnboardingComplete} />
+                </AppContext.Provider>
+            );
         }
 
-        // ===== SWIPES =====
-        let touchStartX = 0; let touchEndX = 0;
-        document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-        document.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
+        const renderScreen = () => {
+            switch (activeTab) {
+                case 'dashboard': return <DashboardScreen />;
+                case 'tracker': return <TrackerScreen />;
+                case 'analytics': return <AnalyticsScreen />;
+                case 'settings': return <SettingsScreen />;
+                default: return <DashboardScreen />;
+            }
+        };
 
-        function handleSwipe() {
-            const diff = touchStartX - touchEndX;
-            const threshold = 80;
-            const currentIdx = screenOrder.indexOf(currentScreen);
-            if (diff > threshold && currentIdx < screenOrder.length - 1) navigateTo(screenOrder[currentIdx + 1]);
-            else if (diff < -threshold && currentIdx > 0) navigateTo(screenOrder[currentIdx - 1]);
-        }
+        return (
+            <AppContext.Provider value={contextValue}>
+                <div className="max-w-[430px] mx-auto min-h-screen bg-[#F8F9FB]">
+                    <div className="px-5 pt-6 pb-28 overflow-y-auto hide-scrollbar" style={{ minHeight: '100vh' }}>
+                        {renderScreen()}
+                    </div>
+                    <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+                </div>
+            </AppContext.Provider>
+        );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
