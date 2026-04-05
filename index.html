@@ -1,1293 +1,2132 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>WellAI – Health & Diabetes Tracker</title>
+    <title>WellAI — Smart Health for Kazakhstan</title>
     <meta charset="UTF-8">
+    <!-- PROTECTED: meta type -->
+    <meta name="type" value="app" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta property="og:title" content="WellAI — Premium HealthTech for Kazakhstan">
+    <meta property="og:description" content="Trilingual diabetes & nutrition tracker with AI food scanning, built for Kazakhstan.">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #F8F9FB; margin: 0; padding: 0; overflow-x: hidden; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        @keyframes ringProgress { from { stroke-dashoffset: 314; } }
-        @keyframes fillWater { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
-        .animate-slideLeft { animation: slideLeft 0.3s ease-out forwards; }
-        .animate-slideRight { animation: slideRight 0.3s ease-out forwards; }
-        .animate-scaleIn { animation: scaleIn 0.3s ease-out forwards; }
-        .animate-slideUp { animation: slideUp 0.35s ease-out forwards; }
-        .animate-pulse-soft { animation: pulse 2s ease-in-out infinite; }
-        .stagger-1 { animation-delay: 0.05s; opacity: 0; }
-        .stagger-2 { animation-delay: 0.1s; opacity: 0; }
-        .stagger-3 { animation-delay: 0.15s; opacity: 0; }
-        .stagger-4 { animation-delay: 0.2s; opacity: 0; }
-        .stagger-5 { animation-delay: 0.25s; opacity: 0; }
-        .progress-ring-circle { transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        .swipe-item { transition: transform 0.2s ease-out; touch-action: pan-y; }
-        .btn-press { transition: transform 0.1s ease; }
-        .btn-press:active { transform: scale(0.96); }
-        .glass-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-        input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: #E5E7EB; outline: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #D7FE63; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer; }
-        .nav-item { transition: all 0.2s ease; }
-        .nav-item.active { color: #1a1a1a; }
-        .nav-item.active .nav-dot { opacity: 1; transform: scaleX(1); }
-        .nav-dot { opacity: 0; transform: scaleX(0); transition: all 0.2s ease; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --lime: #D7FE63;
+            --lime-dark: #b8e030;
+            --bg: #F8F9FB;
+            --surface: #FFFFFF;
+            --text: #0D0D0D;
+            --text-secondary: #6B7280;
+            --text-tertiary: #9CA3AF;
+            --border: #E5E7EB;
+            --red: #FF4D4D;
+            --yellow: #FFBB33;
+            --green: #22C55E;
+            --blue: #3B82F6;
+            --radius: 24px;
+            --shadow: 0 20px 50px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        html, body {
+            width: 100%; height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: #E8EAED;
+            overflow: hidden;
+        }
+
+        #app-root {
+            width: 100%;
+            max-width: 430px;
+            height: 100dvh;
+            margin: 0 auto;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── SCROLLABLE CONTENT ── */
+        .screen-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .screen-content::-webkit-scrollbar { display: none; }
+
+        /* ── TRANSITIONS ── */
+        .fade-enter { animation: fadeIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .fade-exit  { animation: fadeOut 0.2s ease forwards; }
+        .slide-up   { animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .slide-down { animation: slideDown 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+        @keyframes fadeIn    { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeOut   { from { opacity:1; } to { opacity:0; } }
+        @keyframes slideUp   { from { opacity:0; transform:translateY(60px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes slideDown { from { transform:translateY(100%); } to { transform:translateY(0); } }
+        @keyframes pulse     { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+        @keyframes scanLine  { 0% { top:10%; } 100% { top:85%; } }
+        @keyframes spin      { to { transform:rotate(360deg); } }
+        @keyframes ringFill  { from { stroke-dashoffset: 502; } }
+        @keyframes popIn     { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
+        @keyframes shimmer   { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
+
+        /* ── ONBOARDING ── */
+        #onboarding {
+            position: absolute; inset: 0;
+            background: var(--surface);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #onboarding.hidden {
+            opacity: 0;
+            transform: scale(0.96);
+            pointer-events: none;
+        }
+
+        .ob-header {
+            padding: 60px 28px 24px;
+            flex-shrink: 0;
+        }
+        .ob-logo {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 32px;
+        }
+        .ob-logo-icon {
+            width: 40px; height: 40px;
+            background: var(--text);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ob-logo-icon i { color: var(--lime); font-size: 18px; }
+        .ob-logo span { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+
+        .ob-step-indicator {
+            display: flex; gap: 6px; margin-bottom: 28px;
+        }
+        .ob-step-dot {
+            height: 4px; border-radius: 2px;
+            background: var(--border);
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        .ob-step-dot.active { background: var(--text); }
+        .ob-step-dot.done   { background: var(--lime-dark); }
+
+        .ob-title { font-size: 28px; font-weight: 800; color: var(--text); line-height: 1.2; letter-spacing: -0.5px; }
+        .ob-subtitle { font-size: 15px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; }
+
+        .ob-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 28px 24px;
+            scrollbar-width: none;
+        }
+        .ob-body::-webkit-scrollbar { display: none; }
+
+        .ob-footer {
+            padding: 16px 28px 40px;
+            flex-shrink: 0;
+        }
+
+        /* ── FORM ELEMENTS ── */
+        .form-group { margin-bottom: 20px; }
+        .form-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: block; }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 18px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none;
+        }
+        .input-field:focus {
+            border-color: var(--text);
+            box-shadow: 0 0 0 3px rgba(13,13,13,0.06);
+        }
+
+        .seg-control {
+            display: flex;
+            background: var(--bg);
+            border-radius: 14px;
+            padding: 4px;
+            gap: 4px;
+        }
+        .seg-btn {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .seg-btn.active {
+            background: var(--surface);
+            color: var(--text);
+            box-shadow: var(--shadow-md);
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            background: var(--bg);
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+        .toggle-label { font-size: 15px; font-weight: 600; color: var(--text); }
+        .toggle-sub   { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+        .toggle-switch {
+            width: 52px; height: 30px;
+            background: var(--border);
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.25s;
+            flex-shrink: 0;
+        }
+        .toggle-switch.on { background: var(--text); }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 24px; height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 3px; left: 3px;
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .toggle-switch.on::after { transform: translateX(22px); }
+
+        .goal-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 18px;
+            background: var(--bg);
+            border-radius: 16px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 10px;
+        }
+        .goal-card.selected {
+            background: var(--text);
+            border-color: var(--text);
+        }
+        .goal-card.selected .goal-title { color: var(--lime); }
+        .goal-card.selected .goal-sub   { color: rgba(255,255,255,0.6); }
+        .goal-icon {
+            width: 44px; height: 44px;
+            background: var(--surface);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .goal-card.selected .goal-icon { background: rgba(255,255,255,0.12); }
+        .goal-title { font-size: 15px; font-weight: 700; color: var(--text); }
+        .goal-sub   { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* ── PRIMARY BUTTON ── */
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: var(--text);
+            color: var(--lime);
+            border: none;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            letter-spacing: -0.2px;
+        }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:disabled { opacity: 0.4; }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 16px;
+            background: var(--bg);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-top: 10px;
+        }
+
+        /* ── LANGUAGE CHIPS ── */
+        .lang-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+        .lang-chip {
+            padding: 12px 20px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lang-chip.active {
+            background: var(--text);
+            border-color: var(--text);
+            color: var(--lime);
+        }
+
+        /* ── BOTTOM NAV ── */
+        #bottom-nav {
+            flex-shrink: 0;
+            height: 84px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 8px 16px;
+            position: relative;
+            z-index: 50;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 14px;
+            transition: all 0.2s;
+            flex: 1;
+            border: none;
+            background: transparent;
+        }
+        .nav-item i { font-size: 20px; color: var(--text-tertiary); transition: color 0.2s; }
+        .nav-item span { font-size: 10px; font-weight: 600; color: var(--text-tertiary); transition: color 0.2s; }
+        .nav-item.active i   { color: var(--text); }
+        .nav-item.active span { color: var(--text); }
+
+        .nav-fab {
+            width: 60px; height: 60px;
+            background: var(--text);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 8px 24px rgba(13,13,13,0.25);
+            transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+            flex-shrink: 0;
+            margin-bottom: 8px;
+        }
+        .nav-fab:active { transform: scale(0.92); }
+        .nav-fab i { color: var(--lime); font-size: 22px; }
+
+        /* ── SCREENS ── */
+        .screen { display: none; flex-direction: column; height: 100%; }
+        .screen.active { display: flex; }
+
+        /* ── DASHBOARD ── */
+        .dash-header {
+            padding: 56px 24px 20px;
+            background: var(--surface);
+        }
+        .dash-greeting { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+        .dash-name { font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-top: 2px; }
+
+        .dash-ring-section {
+            background: var(--surface);
+            padding: 0 24px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .ring-container { position: relative; width: 200px; height: 200px; }
+        .ring-svg { transform: rotate(-90deg); }
+        .ring-bg   { fill: none; stroke: #F0F0F0; stroke-width: 16; }
+        .ring-fill {
+            fill: none;
+            stroke: var(--lime-dark);
+            stroke-width: 16;
+            stroke-linecap: round;
+            stroke-dasharray: 502;
+            stroke-dashoffset: 502;
+            transition: stroke-dashoffset 1s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .ring-center {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .ring-kcal { font-size: 36px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+        .ring-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-top: 2px; }
+        .ring-sub   { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+
+        .macro-bars {
+            display: flex; gap: 10px;
+            padding: 0 24px 20px;
+            background: var(--surface);
+        }
+        .macro-bar-item {
+            flex: 1;
+            background: var(--bg);
+            border-radius: 16px;
+            padding: 14px 12px;
+        }
+        .macro-bar-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+        .macro-bar-val   { font-size: 17px; font-weight: 800; color: var(--text); margin: 4px 0 8px; }
+        .macro-bar-track {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .macro-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px 12px;
+        }
+        .section-title { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+        .section-link  { font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+
+        /* ── MEAL CARDS ── */
+        .meal-card {
+            margin: 0 24px 12px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 18px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        .meal-card:active { transform: scale(0.98); }
+        .meal-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .meal-type-badge {
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            padding: 5px 10px;
+            border-radius: 50px;
+            background: var(--bg);
+            color: var(--text-secondary);
+        }
+        .meal-kcal { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+        .meal-item-row {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .meal-item-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .gi-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .gi-green  { background: var(--green); }
+        .gi-yellow { background: var(--yellow); }
+        .gi-red    { background: var(--red); }
+        .meal-item-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
+        .meal-item-meta { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+        .meal-item-xe   { font-size: 11px; font-weight: 700; color: var(--blue); background: rgba(59,130,246,0.1); padding: 3px 7px; border-radius: 6px; }
+
+        .meal-complete-btn {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .meal-complete-btn.done {
+            background: var(--text);
+            border-color: var(--text);
+        }
+        .meal-complete-btn.done i { color: var(--lime); }
+        .meal-complete-btn i { font-size: 12px; color: transparent; }
+
+        /* ── WATER TRACKER ── */
+        .water-card {
+            margin: 0 24px 24px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        .water-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .water-title { font-size: 15px; font-weight: 700; color: var(--text); }
+        .water-count { font-size: 22px; font-weight: 800; color: var(--text); }
+        .water-sub   { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+        .water-glasses { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+        .water-glass {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+            border: none;
+        }
+        .water-glass.filled { background: #DBEAFE; }
+        .water-glass i { font-size: 16px; color: var(--border); }
+        .water-glass.filled i { color: var(--blue); }
+        .water-add-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .water-add-btn:active { transform: scale(0.97); }
+
+        /* ── PLANNER SCREEN ── */
+        .date-strip {
+            display: flex;
+            gap: 8px;
+            padding: 16px 24px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            background: var(--surface);
+        }
+        .date-strip::-webkit-scrollbar { display: none; }
+        .date-chip {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 10px 14px;
+            border-radius: 16px;
+            background: var(--bg);
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            border: none;
+        }
+        .date-chip.active { background: var(--text); }
+        .date-chip .day-name { font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; }
+        .date-chip .day-num  { font-size: 18px; font-weight: 800; color: var(--text); margin-top: 2px; }
+        .date-chip.active .day-name { color: rgba(255,255,255,0.6); }
+        .date-chip.active .day-num  { color: var(--lime); }
+
+        /* ── STATS SCREEN ── */
+        .stat-card {
+            margin: 0 24px 12px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        .stat-card-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .stat-card-val   { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+        .stat-card-unit  { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-left: 4px; }
+        .stat-bar-row    { display: flex; gap: 4px; margin-top: 14px; }
+        .stat-bar-col    { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .stat-bar-track  { width: 100%; height: 60px; background: var(--bg); border-radius: 6px; position: relative; overflow: hidden; }
+        .stat-bar-fill   { position: absolute; bottom: 0; width: 100%; border-radius: 6px 6px 0 0; transition: height 0.8s cubic-bezier(0.34,1.56,0.64,1); }
+        .stat-bar-day    { font-size: 10px; font-weight: 600; color: var(--text-tertiary); }
+
+        /* ── PROFILE SCREEN ── */
+        .profile-avatar {
+            width: 80px; height: 80px;
+            background: var(--text);
+            border-radius: 28px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .profile-avatar i { font-size: 36px; color: var(--lime); }
+        .profile-name  { font-size: 22px; font-weight: 800; color: var(--text); text-align: center; letter-spacing: -0.5px; }
+        .profile-goal  { font-size: 14px; color: var(--text-secondary); text-align: center; margin-top: 4px; font-weight: 500; }
+
+        .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 24px 16px; }
+        .metric-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+        .metric-card-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+        .metric-card-val   { font-size: 26px; font-weight: 800; color: var(--text); margin-top: 4px; letter-spacing: -0.5px; }
+        .metric-card-unit  { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+
+        .settings-list { padding: 0 24px; }
+        .settings-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item-left { display: flex; align-items: center; gap: 14px; }
+        .settings-icon {
+            width: 38px; height: 38px;
+            border-radius: 11px;
+            background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .settings-icon i { font-size: 16px; color: var(--text); }
+        .settings-label { font-size: 15px; font-weight: 600; color: var(--text); }
+        .settings-value { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+        .settings-arrow { color: var(--text-tertiary); font-size: 12px; }
+
+        /* ── AI SCAN MODAL ── */
+        #scan-modal {
+            position: absolute; inset: 0;
+            background: #000;
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+        }
+        #scan-modal.open { display: flex; animation: fadeIn 0.3s ease; }
+
+        .scan-viewfinder {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #111;
+        }
+        .scan-overlay {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .scan-frame {
+            width: 260px; height: 260px;
+            border: 2px solid rgba(215,254,99,0.8);
+            border-radius: 24px;
+            position: relative;
+        }
+        .scan-corner {
+            position: absolute;
+            width: 24px; height: 24px;
+            border-color: var(--lime);
+            border-style: solid;
+        }
+        .scan-corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+        .scan-corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+        .scan-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+        .scan-corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+
+        .scan-laser {
+            position: absolute;
+            left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--lime), transparent);
+            animation: scanLine 1.5s ease-in-out infinite alternate;
+            box-shadow: 0 0 12px var(--lime);
+        }
+
+        .scan-hint {
+            position: absolute;
+            bottom: 40px; left: 0; right: 0;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .scan-close {
+            position: absolute;
+            top: 56px; right: 24px;
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            border: none;
+            backdrop-filter: blur(10px);
+        }
+        .scan-close i { color: white; font-size: 16px; }
+
+        .scan-loading {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 16px;
+            backdrop-filter: blur(4px);
+        }
+        .scan-spinner {
+            width: 48px; height: 48px;
+            border: 3px solid rgba(215,254,99,0.3);
+            border-top-color: var(--lime);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .scan-loading-text { color: white; font-size: 15px; font-weight: 600; }
+
+        /* ── RESULT MODAL ── */
+        #result-modal {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: var(--surface);
+            border-radius: 28px 28px 0 0;
+            padding: 0 24px 40px;
+            z-index: 300;
+            display: none;
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.15);
+        }
+        #result-modal.open { display: block; animation: slideDown 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+
+        .result-handle {
+            width: 40px; height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 14px auto 24px;
+        }
+        .result-food-name { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+        .result-food-sub  { font-size: 14px; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
+
+        .result-stats {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 8px; margin: 20px 0;
+        }
+        .result-stat {
+            background: var(--bg);
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+        .result-stat-val  { font-size: 18px; font-weight: 800; color: var(--text); }
+        .result-stat-unit { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; margin-top: 2px; }
+
+        .result-gi-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 16px;
+            background: rgba(255,77,77,0.08);
+            border-radius: 14px;
+            margin-bottom: 20px;
+        }
+        .result-gi-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+        .result-gi-text { font-size: 14px; font-weight: 600; color: var(--text); }
+        .result-gi-val  { font-size: 13px; color: var(--text-secondary); margin-left: auto; font-weight: 500; }
+
+        /* ── TOAST ── */
+        #toast {
+            position: absolute;
+            top: 60px; left: 50%; transform: translateX(-50%);
+            background: var(--text);
+            color: var(--lime);
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            z-index: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        #toast.show { opacity: 1; }
+
+        /* ── DIABETES BANNER ── */
+        .diabetes-banner {
+            margin: 0 24px 12px;
+            background: linear-gradient(135deg, #0D0D0D, #1a1a1a);
+            border-radius: 20px;
+            padding: 18px 20px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .diabetes-banner-icon {
+            width: 44px; height: 44px;
+            background: var(--lime);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .diabetes-banner-icon i { font-size: 20px; color: var(--text); }
+        .diabetes-banner-title { font-size: 14px; font-weight: 700; color: white; }
+        .diabetes-banner-sub   { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+        /* ── SCREEN HEADERS ── */
+        .screen-header {
+            padding: 56px 24px 20px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        .screen-header-title { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+        .screen-header-sub   { font-size: 14px; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
+
+        /* ── FOOD DB CHIPS ── */
+        .food-db-section { padding: 0 24px 24px; }
+        .food-db-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+        .food-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .food-chip {
+            padding: 9px 14px;
+            background: var(--surface);
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .food-chip:active { transform: scale(0.95); }
+        .food-chip .gi-dot { width: 7px; height: 7px; }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 48px 24px;
+            text-align: center;
+        }
+        .empty-icon {
+            width: 72px; height: 72px;
+            background: var(--bg);
+            border-radius: 24px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 16px;
+        }
+        .empty-icon i { font-size: 32px; color: var(--text-tertiary); }
+        .empty-title { font-size: 17px; font-weight: 700; color: var(--text); }
+        .empty-sub   { font-size: 14px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
+
+        /* ── SHIMMER SKELETON ── */
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        /* ── XE HIGHLIGHT ── */
+        .xe-highlight {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(59,130,246,0.08);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 10px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        /* ── RESPONSIVE DESKTOP CENTER ── */
+        @media (min-width: 431px) {
+            body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+            #app-root { box-shadow: 0 40px 100px rgba(0,0,0,0.15); border-radius: 44px; overflow: hidden; }
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-    const { useState, useEffect, useRef, useCallback, useMemo, createContext, useContext } = React;
+<div id="app-root">
 
-    // ==================== i18n ====================
-    const translations = {
-        en: {
-            welcome: "Welcome to WellAI",
-            subtitle: "Your intelligent health companion",
-            getStarted: "Get Started",
-            next: "Next",
-            back: "Back",
-            finish: "Finish Setup",
-            name: "What's your name?",
-            namePlaceholder: "Enter your name",
-            age: "How old are you?",
-            gender: "Gender",
-            male: "Male",
-            female: "Female",
-            other: "Other",
-            weight: "Weight (kg)",
-            height: "Height (cm)",
-            activityLevel: "Activity Level",
-            sedentary: "Sedentary",
-            light: "Light",
-            moderate: "Moderate",
-            active: "Active",
-            veryActive: "Very Active",
-            goal: "Your Goal",
-            loseWeight: "Lose Weight",
-            maintain: "Maintain",
-            gainWeight: "Gain Weight",
-            dietMode: "Diet Mode",
-            standard: "Standard Mode",
-            standardDesc: "Balanced nutrition tracking",
-            carbControl: "Carb Control",
-            carbControlDesc: "Diabetes-friendly tracking",
-            dashboard: "Dashboard",
-            tracker: "Tracker",
-            analytics: "Analytics",
-            settings: "Settings",
-            calories: "Calories",
-            protein: "Protein",
-            fat: "Fat",
-            carbs: "Carbs",
-            consumed: "consumed",
-            remaining: "remaining",
-            dailyCarbLimit: "Daily Carb Limit",
-            carbsConsumed: "Carbs Consumed",
-            addFood: "Add Food",
-            search: "Search food...",
-            noFood: "No food logged yet",
-            tapToAdd: "Tap + to add food",
-            highCarbs: "⚠️ High Carbs",
-            portionAlert: "⚠️ Portion Alert",
-            glycemicLoad: "GL",
-            delete: "Delete",
-            water: "Water",
-            glasses: "glasses",
-            progress: "Progress",
-            macros: "Macronutrients",
-            profile: "Profile",
-            language: "Language",
-            editProfile: "Edit Profile",
-            save: "Save",
-            cancel: "Cancel",
-            today: "Today",
-            kcal: "kcal",
-            g: "g",
-            of: "of",
-            goodMorning: "Good Morning",
-            goodAfternoon: "Good Afternoon",
-            goodEvening: "Good Evening",
-            letsTrack: "Let's track your nutrition",
-            weekDays: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-            months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-            per100g: "per 100g",
-            serving: "serving",
-            carbWarning: "This item is high in carbs for your diet plan",
-            resetData: "Reset All Data",
-            confirmReset: "Are you sure? This will delete all your data.",
-            yes: "Yes",
-            no: "No",
-        },
-        ru: {
-            welcome: "Добро пожаловать в WellAI",
-            subtitle: "Ваш умный помощник здоровья",
-            getStarted: "Начать",
-            next: "Далее",
-            back: "Назад",
-            finish: "Завершить",
-            name: "Как вас зовут?",
-            namePlaceholder: "Введите имя",
-            age: "Сколько вам лет?",
-            gender: "Пол",
-            male: "Мужской",
-            female: "Женский",
-            other: "Другой",
-            weight: "Вес (кг)",
-            height: "Рост (см)",
-            activityLevel: "Уровень активности",
-            sedentary: "Сидячий",
-            light: "Лёгкий",
-            moderate: "Умеренный",
-            active: "Активный",
-            veryActive: "Очень активный",
-            goal: "Ваша цель",
-            loseWeight: "Похудеть",
-            maintain: "Поддержать",
-            gainWeight: "Набрать вес",
-            dietMode: "Режим питания",
-            standard: "Стандартный",
-            standardDesc: "Сбалансированное питание",
-            carbControl: "Контроль углеводов",
-            carbControlDesc: "Для диабетиков",
-            dashboard: "Главная",
-            tracker: "Трекер",
-            analytics: "Аналитика",
-            settings: "Настройки",
-            calories: "Калории",
-            protein: "Белки",
-            fat: "Жиры",
-            carbs: "Углеводы",
-            consumed: "потреблено",
-            remaining: "осталось",
-            dailyCarbLimit: "Лимит углеводов",
-            carbsConsumed: "Углеводов потреблено",
-            addFood: "Добавить еду",
-            search: "Поиск еды...",
-            noFood: "Еда не добавлена",
-            tapToAdd: "Нажмите + чтобы добавить",
-            highCarbs: "⚠️ Много углеводов",
-            portionAlert: "⚠️ Большая порция",
-            glycemicLoad: "ГН",
-            delete: "Удалить",
-            water: "Вода",
-            glasses: "стаканов",
-            progress: "Прогресс",
-            macros: "Макронутриенты",
-            profile: "Профиль",
-            language: "Язык",
-            editProfile: "Редактировать",
-            save: "Сохранить",
-            cancel: "Отмена",
-            today: "Сегодня",
-            kcal: "ккал",
-            g: "г",
-            of: "из",
-            goodMorning: "Доброе утро",
-            goodAfternoon: "Добрый день",
-            goodEvening: "Добрый вечер",
-            letsTrack: "Отслеживайте питание",
-            weekDays: ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"],
-            months: ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"],
-            per100g: "на 100г",
-            serving: "порция",
-            carbWarning: "Этот продукт содержит много углеводов",
-            resetData: "Сбросить данные",
-            confirmReset: "Вы уверены? Все данные будут удалены.",
-            yes: "Да",
-            no: "Нет",
-        },
-        kk: {
-            welcome: "WellAI-ға қош келдіңіз",
-            subtitle: "Сіздің денсаулық көмекшіңіз",
-            getStarted: "Бастау",
-            next: "Келесі",
-            back: "Артқа",
-            finish: "Аяқтау",
-            name: "Сіздің атыңыз?",
-            namePlaceholder: "Атыңызды енгізіңіз",
-            age: "Жасыңыз?",
-            gender: "Жынысы",
-            male: "Ер",
-            female: "Әйел",
-            other: "Басқа",
-            weight: "Салмақ (кг)",
-            height: "Бой (см)",
-            activityLevel: "Белсенділік деңгейі",
-            sedentary: "Отырықшы",
-            light: "Жеңіл",
-            moderate: "Орташа",
-            active: "Белсенді",
-            veryActive: "Өте белсенді",
-            goal: "Мақсатыңыз",
-            loseWeight: "Арықтау",
-            maintain: "Сақтау",
-            gainWeight: "Салмақ қосу",
-            dietMode: "Тамақтану режимі",
-            standard: "Стандартты",
-            standardDesc: "Теңдестірілген тамақтану",
-            carbControl: "Көмірсу бақылау",
-            carbControlDesc: "Диабет үшін",
-            dashboard: "Басты",
-            tracker: "Трекер",
-            analytics: "Талдау",
-            settings: "Баптау",
-            calories: "Калория",
-            protein: "Ақуыз",
-            fat: "Май",
-            carbs: "Көмірсу",
-            consumed: "тұтынылды",
-            remaining: "қалды",
-            dailyCarbLimit: "Көмірсу лимиті",
-            carbsConsumed: "Көмірсу тұтынылды",
-            addFood: "Тамақ қосу",
-            search: "Тамақ іздеу...",
-            noFood: "Тамақ қосылмаған",
-            tapToAdd: "Қосу үшін + басыңыз",
-            highCarbs: "⚠️ Көп көмірсу",
-            portionAlert: "⚠️ Үлкен порция",
-            glycemicLoad: "ГЖ",
-            delete: "Жою",
-            water: "Су",
-            glasses: "стақан",
-            progress: "Прогресс",
-            macros: "Макронутриенттер",
-            profile: "Профиль",
-            language: "Тіл",
-            editProfile: "Өзгерту",
-            save: "Сақтау",
-            cancel: "Бас тарту",
-            today: "Бүгін",
-            kcal: "ккал",
-            g: "г",
-            of: "ішінен",
-            goodMorning: "Қайырлы таң",
-            goodAfternoon: "Қайырлы күн",
-            goodEvening: "Қайырлы кеш",
-            letsTrack: "Тамақтануды бақылаңыз",
-            weekDays: ["Дс","Сс","Ср","Бс","Жм","Сн","Жс"],
-            months: ["Қаң","Ақп","Нау","Сәу","Мам","Мау","Шіл","Там","Қыр","Қаз","Қар","Жел"],
-            per100g: "100г-ға",
-            serving: "порция",
-            carbWarning: "Бұл тағамда көмірсу көп",
-            resetData: "Деректерді жою",
-            confirmReset: "Сенімдісіз бе? Барлық деректер жойылады.",
-            yes: "Иә",
-            no: "Жоқ",
-        }
-    };
-
-    // ==================== Food Database ====================
-    const foodDatabase = [
-        { id: 1, name: { en: "Chicken Breast", ru: "Куриная грудка", kk: "Тауық төсі" }, calories: 165, protein: 31, fat: 3.6, carbs: 0, gl: 0, icon: "🍗", serving: 150 },
-        { id: 2, name: { en: "Brown Rice", ru: "Бурый рис", kk: "Қоңыр күріш" }, calories: 216, protein: 5, fat: 1.8, carbs: 45, gl: 18, icon: "🍚", serving: 200 },
-        { id: 3, name: { en: "Salmon Fillet", ru: "Филе лосося", kk: "Лосось филесі" }, calories: 208, protein: 20, fat: 13, carbs: 0, gl: 0, icon: "🐟", serving: 150 },
-        { id: 4, name: { en: "Banana", ru: "Банан", kk: "Банан" }, calories: 89, protein: 1.1, fat: 0.3, carbs: 23, gl: 12, icon: "🍌", serving: 120 },
-        { id: 5, name: { en: "Greek Yogurt", ru: "Греческий йогурт", kk: "Грек йогурты" }, calories: 100, protein: 17, fat: 0.7, carbs: 6, gl: 3, icon: "🥛", serving: 200 },
-        { id: 6, name: { en: "Oatmeal", ru: "Овсянка", kk: "Сұлы ботқасы" }, calories: 154, protein: 5, fat: 2.6, carbs: 27, gl: 11, icon: "🥣", serving: 200 },
-        { id: 7, name: { en: "Egg (boiled)", ru: "Яйцо (варёное)", kk: "Жұмыртқа (пісірілген)" }, calories: 78, protein: 6, fat: 5, carbs: 0.6, gl: 0, icon: "🥚", serving: 50 },
-        { id: 8, name: { en: "Apple", ru: "Яблоко", kk: "Алма" }, calories: 52, protein: 0.3, fat: 0.2, carbs: 14, gl: 6, icon: "🍎", serving: 180 },
-        { id: 9, name: { en: "Avocado", ru: "Авокадо", kk: "Авокадо" }, calories: 160, protein: 2, fat: 15, carbs: 9, gl: 1, icon: "🥑", serving: 150 },
-        { id: 10, name: { en: "Sweet Potato", ru: "Батат", kk: "Тәтті картоп" }, calories: 103, protein: 2, fat: 0.1, carbs: 24, gl: 10, icon: "🍠", serving: 150 },
-        { id: 11, name: { en: "Broccoli", ru: "Брокколи", kk: "Брокколи" }, calories: 55, protein: 3.7, fat: 0.6, carbs: 11, gl: 2, icon: "🥦", serving: 150 },
-        { id: 12, name: { en: "White Bread", ru: "Белый хлеб", kk: "Ақ нан" }, calories: 265, protein: 9, fat: 3.2, carbs: 49, gl: 25, icon: "🍞", serving: 60 },
-        { id: 13, name: { en: "Pasta", ru: "Паста", kk: "Паста" }, calories: 220, protein: 8, fat: 1.3, carbs: 43, gl: 20, icon: "🍝", serving: 200 },
-        { id: 14, name: { en: "Almonds", ru: "Миндаль", kk: "Бадам" }, calories: 164, protein: 6, fat: 14, carbs: 6, gl: 1, icon: "🥜", serving: 28 },
-        { id: 15, name: { en: "Cottage Cheese", ru: "Творог", kk: "Сүзбе" }, calories: 98, protein: 11, fat: 4.3, carbs: 3.4, gl: 1, icon: "🧀", serving: 150 },
-        { id: 16, name: { en: "Orange Juice", ru: "Апельсиновый сок", kk: "Апельсин шырыны" }, calories: 112, protein: 1.7, fat: 0.5, carbs: 26, gl: 15, icon: "🧃", serving: 250 },
-        { id: 17, name: { en: "Steak (beef)", ru: "Стейк (говядина)", kk: "Стейк (сиыр)" }, calories: 271, protein: 26, fat: 18, carbs: 0, gl: 0, icon: "🥩", serving: 200 },
-        { id: 18, name: { en: "Chocolate Bar", ru: "Шоколадка", kk: "Шоколад" }, calories: 546, protein: 5, fat: 31, carbs: 60, gl: 30, icon: "🍫", serving: 50 },
-        { id: 19, name: { en: "Salad (mixed)", ru: "Салат (микс)", kk: "Салат (аралас)" }, calories: 45, protein: 2.5, fat: 0.5, carbs: 8, gl: 2, icon: "🥗", serving: 200 },
-        { id: 20, name: { en: "Coffee (latte)", ru: "Кофе (латте)", kk: "Кофе (латте)" }, calories: 135, protein: 7, fat: 5, carbs: 14, gl: 5, icon: "☕", serving: 350 },
-    ];
-
-    // ==================== Context ====================
-    const AppContext = createContext();
-
-    // ==================== Helper Functions ====================
-    function calculateBMR(profile) {
-        const { weight, height, age, gender } = profile;
-        if (gender === 'male') return 10 * weight + 6.25 * height - 5 * age + 5;
-        if (gender === 'female') return 10 * weight + 6.25 * height - 5 * age - 161;
-        return 10 * weight + 6.25 * height - 5 * age - 78;
-    }
-
-    function calculateTDEE(profile) {
-        const bmr = calculateBMR(profile);
-        const multipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, veryActive: 1.9 };
-        let tdee = bmr * (multipliers[profile.activityLevel] || 1.55);
-        if (profile.goal === 'lose') tdee -= 500;
-        if (profile.goal === 'gain') tdee += 400;
-        return Math.round(tdee);
-    }
-
-    function calculateMacros(calories) {
-        return {
-            protein: Math.round((calories * 0.3) / 4),
-            fat: Math.round((calories * 0.25) / 9),
-            carbs: Math.round((calories * 0.45) / 4),
-        };
-    }
-
-    function calculateCarbLimit(profile) {
-        const tdee = calculateTDEE(profile);
-        return Math.round((tdee * 0.35) / 4);
-    }
-
-    function getGreeting(t) {
-        const h = new Date().getHours();
-        if (h < 12) return t.goodMorning;
-        if (h < 18) return t.goodAfternoon;
-        return t.goodEvening;
-    }
-
-    function getDateKey(date) {
-        return date.toISOString().split('T')[0];
-    }
-
-    // ==================== Progress Ring Component ====================
-    function ProgressRing({ progress, size = 160, strokeWidth = 12, color = "#D7FE63", bgColor = "#E5E7EB", children }) {
-        const radius = (size - strokeWidth) / 2;
-        const circumference = 2 * Math.PI * radius;
-        const clampedProgress = Math.min(Math.max(progress, 0), 100);
-        const offset = circumference - (clampedProgress / 100) * circumference;
-
-        return (
-            <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
-                <svg width={size} height={size} className="transform -rotate-90">
-                    <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={bgColor} strokeWidth={strokeWidth} />
-                    <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={color}
-                        strokeWidth={strokeWidth} strokeLinecap="round"
-                        strokeDasharray={circumference} strokeDashoffset={offset}
-                        className="progress-ring-circle" style={{ animation: 'ringProgress 1s ease-out' }} />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">{children}</div>
+    <!-- ══════════════════════════════════════════
+         ONBOARDING
+    ══════════════════════════════════════════ -->
+    <div id="onboarding">
+        <div class="ob-header">
+            <div class="ob-logo">
+                <div class="ob-logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                <span>WellAI</span>
             </div>
-        );
-    }
+            <div class="ob-step-indicator">
+                <div class="ob-step-dot active" id="dot-0"></div>
+                <div class="ob-step-dot" id="dot-1"></div>
+                <div class="ob-step-dot" id="dot-2"></div>
+            </div>
+            <div id="ob-title" class="ob-title">Язык и регион</div>
+            <div id="ob-subtitle" class="ob-subtitle">Выберите предпочтительный язык и регион для персонализации</div>
+        </div>
 
-    // ==================== Swipeable Item ====================
-    function SwipeableItem({ children, onDelete }) {
-        const ref = useRef(null);
-        const startX = useRef(0);
-        const currentX = useRef(0);
-        const [offset, setOffset] = useState(0);
-        const [showDelete, setShowDelete] = useState(false);
+        <div class="ob-body" id="ob-body">
+            <!-- Step 0 content injected by JS -->
+        </div>
 
-        const handleTouchStart = (e) => {
-            startX.current = e.touches[0].clientX;
-            currentX.current = 0;
-        };
+        <div class="ob-footer">
+            <button class="btn-primary" id="ob-next-btn">Продолжить</button>
+            <button class="btn-secondary" id="ob-back-btn" style="display:none">Назад</button>
+        </div>
+    </div>
 
-        const handleTouchMove = (e) => {
-            const diff = e.touches[0].clientX - startX.current;
-            if (diff < 0) {
-                currentX.current = diff;
-                setOffset(Math.max(diff, -80));
-            }
-        };
+    <!-- ══════════════════════════════════════════
+         MAIN APP
+    ══════════════════════════════════════════ -->
+    <div id="main-app" style="display:none; flex-direction:column; height:100%; flex:1; overflow:hidden;">
 
-        const handleTouchEnd = () => {
-            if (currentX.current < -40) {
-                setOffset(-80);
-                setShowDelete(true);
-            } else {
-                setOffset(0);
-                setShowDelete(false);
-            }
-        };
+        <!-- SCREENS -->
+        <div class="screen-content" id="screens-wrapper">
 
-        return (
-            <div className="relative overflow-hidden rounded-2xl mb-3">
-                {showDelete && (
-                    <div className="absolute right-0 top-0 bottom-0 w-20 bg-red-500 flex items-center justify-center rounded-r-2xl cursor-pointer btn-press"
-                        onClick={() => { onDelete(); setOffset(0); setShowDelete(false); }}>
-                        <i className="fa-solid fa-trash text-white text-lg"></i>
-                    </div>
-                )}
-                <div ref={ref} className="swipe-item relative z-10"
-                    style={{ transform: `translateX(${offset}px)` }}
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}>
-                    {children}
+            <!-- HOME SCREEN -->
+            <div class="screen active" id="screen-home">
+                <div class="dash-header">
+                    <div class="dash-greeting" id="dash-greeting">Доброе утро 👋</div>
+                    <div class="dash-name" id="dash-name">Пользователь</div>
                 </div>
-            </div>
-        );
-    }
 
-    // ==================== Onboarding ====================
-    function Onboarding({ onComplete }) {
-        const { lang } = useContext(AppContext);
-        const t = translations[lang];
-        const [step, setStep] = useState(0);
-        const [direction, setDirection] = useState('right');
-        const [profile, setProfile] = useState({
-            name: '', age: 25, gender: 'male', weight: 70, height: 170,
-            activityLevel: 'moderate', goal: 'maintain', dietMode: 'standard'
-        });
-
-        const updateProfile = (key, value) => setProfile(p => ({ ...p, [key]: value }));
-
-        const goNext = () => { setDirection('right'); setStep(s => s + 1); };
-        const goBack = () => { setDirection('left'); setStep(s => s - 1); };
-
-        const animClass = direction === 'right' ? 'animate-slideLeft' : 'animate-slideRight';
-
-        const steps = [
-            // Welcome
-            () => (
-                <div className="flex flex-col items-center justify-center min-h-[70vh] text-center animate-fadeIn">
-                    <div className="w-24 h-24 bg-[#D7FE63] rounded-3xl flex items-center justify-center mb-6 shadow-lg animate-pulse-soft">
-                        <span className="text-4xl">🧠</span>
+                <div class="dash-ring-section">
+                    <div class="ring-container">
+                        <svg class="ring-svg" width="200" height="200" viewBox="0 0 200 200">
+                            <circle class="ring-bg" cx="100" cy="100" r="80"/>
+                            <circle class="ring-fill" id="cal-ring" cx="100" cy="100" r="80"/>
+                        </svg>
+                        <div class="ring-center">
+                            <div class="ring-kcal" id="ring-remaining">0</div>
+                            <div class="ring-label" id="ring-label-text">ккал осталось</div>
+                            <div class="ring-sub" id="ring-sub-text">из 2000 ккал</div>
+                        </div>
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-3">{t.welcome}</h1>
-                    <p className="text-gray-500 mb-10 text-lg">{t.subtitle}</p>
-                    <button onClick={goNext}
-                        className="w-full bg-[#1a1a1a] text-white py-4 rounded-2xl font-semibold text-lg btn-press hover:bg-gray-800 transition-colors">
-                        {t.getStarted}
+                </div>
+
+                <div class="macro-bars" id="macro-bars">
+                    <div class="macro-bar-item">
+                        <div class="macro-bar-label">Белки</div>
+                        <div class="macro-bar-val"><span id="mb-protein">0</span><span style="font-size:12px;font-weight:500;color:var(--text-secondary)">г</span></div>
+                        <div class="macro-bar-track"><div class="macro-bar-fill" id="mbf-protein" style="width:0%;background:#FF6B6B;"></div></div>
+                    </div>
+                    <div class="macro-bar-item">
+                        <div class="macro-bar-label">Жиры</div>
+                        <div class="macro-bar-val"><span id="mb-fat">0</span><span style="font-size:12px;font-weight:500;color:var(--text-secondary)">г</span></div>
+                        <div class="macro-bar-track"><div class="macro-bar-fill" id="mbf-fat" style="width:0%;background:#FFBB33;"></div></div>
+                    </div>
+                    <div class="macro-bar-item">
+                        <div class="macro-bar-label">Углев.</div>
+                        <div class="macro-bar-val"><span id="mb-carbs">0</span><span style="font-size:12px;font-weight:500;color:var(--text-secondary)">г</span></div>
+                        <div class="macro-bar-track"><div class="macro-bar-fill" id="mbf-carbs" style="width:0%;background:#3B82F6;"></div></div>
+                    </div>
+                </div>
+
+                <div id="diabetes-banner-home"></div>
+
+                <div class="section-header">
+                    <div class="section-title" id="meals-section-title">Приёмы пищи</div>
+                    <div class="section-link" id="meals-section-link">Добавить</div>
+                </div>
+
+                <div id="home-meals-list"></div>
+
+                <!-- Water Tracker -->
+                <div class="water-card">
+                    <div class="water-header">
+                        <div>
+                            <div class="water-title" id="water-title">Вода</div>
+                            <div class="water-sub" id="water-sub-text">цель: 8 стаканов</div>
+                        </div>
+                        <div>
+                            <div class="water-count"><span id="water-count">0</span>/8</div>
+                        </div>
+                    </div>
+                    <div class="water-glasses" id="water-glasses"></div>
+                    <button class="water-add-btn" id="water-add-btn">
+                        <i class="fa-solid fa-plus"></i>
+                        <span id="water-add-label">+250 мл</span>
                     </button>
                 </div>
-            ),
-            // Name
-            () => (
-                <div className={`${animClass}`}>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.name}</h2>
-                    <p className="text-gray-400 mb-8">Step 1/7</p>
-                    <input type="text" value={profile.name} onChange={e => updateProfile('name', e.target.value)}
-                        placeholder={t.namePlaceholder}
-                        className="w-full bg-white border-2 border-gray-100 rounded-2xl px-5 py-4 text-lg font-medium focus:border-[#D7FE63] focus:outline-none transition-colors" />
+            </div>
+
+            <!-- PLANNER SCREEN -->
+            <div class="screen" id="screen-planner">
+                <div class="screen-header">
+                    <div class="screen-header-title" id="planner-title">Планировщик</div>
+                    <div class="screen-header-sub" id="planner-sub">Ваш план питания на неделю</div>
                 </div>
-            ),
-            // Age & Gender
-            () => (
-                <div className={`${animClass}`}>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.age} & {t.gender}</h2>
-                    <p className="text-gray-400 mb-8">Step 2/7</p>
-                    <div className="mb-6">
-                        <label className="text-sm font-medium text-gray-500 mb-2 block">{t.age}: {profile.age}</label>
-                        <input type="range" min="10" max="100" value={profile.age}
-                            onChange={e => updateProfile('age', parseInt(e.target.value))}
-                            className="w-full" />
-                    </div>
-                    <label className="text-sm font-medium text-gray-500 mb-3 block">{t.gender}</label>
-                    <div className="grid grid-cols-3 gap-3">
-                        {['male','female','other'].map(g => (
-                            <button key={g} onClick={() => updateProfile('gender', g)}
-                                className={`py-3 rounded-2xl font-medium text-sm btn-press transition-all ${
-                                    profile.gender === g ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-white text-gray-600 border border-gray-100'
-                                }`}>
-                                {t[g]}
-                            </button>
-                        ))}
-                    </div>
+                <div class="date-strip" id="date-strip"></div>
+                <div id="planner-meals-list" style="padding-bottom:24px;"></div>
+            </div>
+
+            <!-- STATS SCREEN -->
+            <div class="screen" id="screen-stats">
+                <div class="screen-header">
+                    <div class="screen-header-title" id="stats-title">Статистика</div>
+                    <div class="screen-header-sub" id="stats-sub">Ваш прогресс за 7 дней</div>
                 </div>
-            ),
-            // Weight & Height
-            () => (
-                <div className={`${animClass}`}>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.weight} & {t.height}</h2>
-                    <p className="text-gray-400 mb-8">Step 3/7</p>
-                    <div className="mb-6">
-                        <label className="text-sm font-medium text-gray-500 mb-2 block">{t.weight}: {profile.weight} kg</label>
-                        <input type="range" min="30" max="200" value={profile.weight}
-                            onChange={e => updateProfile('weight', parseInt(e.target.value))} className="w-full" />
-                    </div>
+                <div style="padding-bottom:24px;" id="stats-content"></div>
+            </div>
+
+            <!-- PROFILE SCREEN -->
+            <div class="screen" id="screen-profile">
+                <div style="padding: 56px 24px 28px; background: var(--surface);">
+                    <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="profile-name" id="profile-name">Пользователь</div>
+                    <div class="profile-goal" id="profile-goal-label">Цель: Поддержание здоровья</div>
+                </div>
+
+                <div class="metric-grid" style="margin-top:16px;" id="metric-grid"></div>
+
+                <div class="settings-list" id="settings-list"></div>
+            </div>
+
+        </div><!-- /screens-wrapper -->
+
+        <!-- BOTTOM NAV -->
+        <nav id="bottom-nav">
+            <button class="nav-item active" data-screen="home" id="nav-home">
+                <i class="fa-solid fa-house"></i>
+                <span id="nav-label-home">Главная</span>
+            </button>
+            <button class="nav-item" data-screen="planner" id="nav-planner">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span id="nav-label-planner">Планер</span>
+            </button>
+            <button class="nav-fab" id="nav-scan">
+                <i class="fa-solid fa-camera"></i>
+            </button>
+            <button class="nav-item" data-screen="stats" id="nav-stats">
+                <i class="fa-solid fa-chart-line"></i>
+                <span id="nav-label-stats">Статистика</span>
+            </button>
+            <button class="nav-item" data-screen="profile" id="nav-profile">
+                <i class="fa-solid fa-user"></i>
+                <span id="nav-label-profile">Профиль</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         AI SCAN MODAL
+    ══════════════════════════════════════════ -->
+    <div id="scan-modal">
+        <div class="scan-viewfinder">
+            <div class="scan-overlay">
+                <div class="scan-frame">
+                    <div class="scan-corner tl"></div>
+                    <div class="scan-corner tr"></div>
+                    <div class="scan-corner bl"></div>
+                    <div class="scan-corner br"></div>
+                    <div class="scan-laser" id="scan-laser"></div>
+                </div>
+            </div>
+            <div class="scan-hint" id="scan-hint">Наведите камеру на блюдо</div>
+            <button class="scan-close" id="scan-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="scan-loading" id="scan-loading" style="display:none;">
+                <div class="scan-spinner"></div>
+                <div class="scan-loading-text" id="scan-loading-text">Распознаю блюдо...</div>
+            </div>
+        </div>
+
+        <!-- Result slide-up -->
+        <div id="result-modal">
+            <div class="result-handle"></div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+                <div style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;" id="result-label">Распознано</div>
+            </div>
+            <div class="result-food-name" id="result-name">Бешбармак</div>
+            <div class="result-food-sub" id="result-origin">Казахская кухня · 1 порция</div>
+
+            <div class="result-stats">
+                <div class="result-stat">
+                    <div class="result-stat-val" id="res-kcal">450</div>
+                    <div class="result-stat-unit">ккал</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-val" id="res-carbs">35г</div>
+                    <div class="result-stat-unit">углев.</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-val" style="color:var(--blue);" id="res-xe">2.9</div>
+                    <div class="result-stat-unit">XE</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-val" id="res-gl">24.5</div>
+                    <div class="result-stat-unit">ГН</div>
+                </div>
+            </div>
+
+            <div class="result-gi-row" id="result-gi-row">
+                <div class="result-gi-dot gi-red" id="result-gi-dot"></div>
+                <div class="result-gi-text" id="result-gi-text">Высокий гликемический индекс</div>
+                <div class="result-gi-val" id="result-gi-val">ГИ: 70</div>
+            </div>
+
+            <button class="btn-primary" id="result-add-btn">Добавить в дневник</button>
+            <button class="btn-secondary" id="result-cancel-btn">Отмена</button>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast"></div>
+
+</div><!-- /app-root -->
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  WellAI — Core Application Logic
+// ══════════════════════════════════════════════════════════
+
+// ── I18N ──────────────────────────────────────────────────
+const i18n = {
+    ru: {
+        // Onboarding
+        ob_step0_title: 'Язык и регион',
+        ob_step0_sub: 'Выберите предпочтительный язык и регион',
+        ob_step1_title: 'Расскажите о себе',
+        ob_step1_sub: 'Данные используются для расчёта вашей нормы калорий',
+        ob_step2_title: 'Медицинский статус',
+        ob_step2_sub: 'Поможет персонализировать рекомендации',
+        ob_next: 'Продолжить',
+        ob_back: 'Назад',
+        ob_finish: 'Начать',
+        ob_lang_label: 'Язык',
+        ob_region_label: 'Регион',
+        ob_gender_label: 'Пол',
+        ob_male: 'Мужской',
+        ob_female: 'Женский',
+        ob_age_label: 'Возраст',
+        ob_height_label: 'Рост (см)',
+        ob_weight_label: 'Вес (кг)',
+        ob_diabetes_label: 'Сахарный диабет',
+        ob_diabetes_sub: 'Включить контроль XE и ГИ',
+        ob_goal_label: 'Цель',
+        goal_loss: 'Снижение веса',
+        goal_loss_sub: 'Дефицит калорий, контроль порций',
+        goal_maintain: 'Поддержание здоровья',
+        goal_maintain_sub: 'Сбалансированное питание',
+        goal_diabetes: 'Контроль углеводов',
+        goal_diabetes_sub: 'Для диабетиков, контроль XE/ГИ',
+        // Dashboard
+        greeting_morning: 'Доброе утро 👋',
+        greeting_afternoon: 'Добрый день 👋',
+        greeting_evening: 'Добрый вечер 👋',
+        kcal_left: 'ккал осталось',
+        kcal_of: 'из',
+        kcal_unit: 'ккал',
+        protein: 'Белки',
+        fat: 'Жиры',
+        carbs: 'Углев.',
+        meals_title: 'Приёмы пищи',
+        add: 'Добавить',
+        water_title: 'Вода',
+        water_goal: 'цель: 8 стаканов',
+        water_add: '+250 мл',
+        diabetes_banner_title: 'Режим диабета активен',
+        diabetes_banner_sub: 'Отображаются XE и гликемический индекс',
+        // Meals
+        breakfast: 'Завтрак',
+        lunch: 'Обед',
+        dinner: 'Ужин',
+        snack: 'Перекус',
+        // Nav
+        nav_home: 'Главная',
+        nav_planner: 'Планер',
+        nav_stats: 'Статистика',
+        nav_profile: 'Профиль',
+        // Planner
+        planner_title: 'Планировщик',
+        planner_sub: 'Ваш план питания на неделю',
+        days: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+        // Stats
+        stats_title: 'Статистика',
+        stats_sub: 'Ваш прогресс за 7 дней',
+        stats_avg_kcal: 'Среднее ккал/день',
+        stats_total_xe: 'Всего XE за неделю',
+        stats_water: 'Вода (стаканов/день)',
+        stats_weekly: 'Калории по дням',
+        // Profile
+        profile_goal: 'Цель',
+        weight_label: 'Вес',
+        height_label: 'Рост',
+        age_label: 'Возраст',
+        bmi_label: 'ИМТ',
+        settings_lang: 'Язык',
+        settings_diabetes: 'Диабет',
+        settings_goal: 'Цель',
+        settings_notify: 'Уведомления',
+        settings_about: 'О приложении',
+        on: 'Вкл',
+        off: 'Выкл',
+        // Scan
+        scan_hint: 'Наведите камеру на блюдо',
+        scan_loading: 'Распознаю блюдо...',
+        scan_recognized: 'Распознано',
+        scan_origin: 'Казахская кухня · 1 порция',
+        scan_add: 'Добавить в дневник',
+        scan_cancel: 'Отмена',
+        gi_high: 'Высокий гликемический индекс',
+        gi_medium: 'Средний гликемический индекс',
+        gi_low: 'Низкий гликемический индекс',
+        added_toast: 'Добавлено в дневник!',
+        // Goals
+        goal_loss_short: 'Снижение веса',
+        goal_maintain_short: 'Поддержание здоровья',
+        goal_diabetes_short: 'Контроль углеводов',
+    },
+    kz: {
+        ob_step0_title: 'Тіл және аймақ',
+        ob_step0_sub: 'Қалаулы тіл мен аймақты таңдаңыз',
+        ob_step1_title: 'Өзіңіз туралы айтыңыз',
+        ob_step1_sub: 'Деректер калория нормасын есептеу үшін пайдаланылады',
+        ob_step2_title: 'Медициналық мәртебе',
+        ob_step2_sub: 'Ұсыныстарды жекелендіруге көмектеседі',
+        ob_next: 'Жалғастыру',
+        ob_back: 'Артқа',
+        ob_finish: 'Бастау',
+        ob_lang_label: 'Тіл',
+        ob_region_label: 'Аймақ',
+        ob_gender_label: 'Жыныс',
+        ob_male: 'Ер',
+        ob_female: 'Әйел',
+        ob_age_label: 'Жас',
+        ob_height_label: 'Бой (см)',
+        ob_weight_label: 'Салмақ (кг)',
+        ob_diabetes_label: 'Қант диабеті',
+        ob_diabetes_sub: 'XE және ГИ бақылауын қосу',
+        ob_goal_label: 'Мақсат',
+        goal_loss: 'Салмақ жоғалту',
+        goal_loss_sub: 'Калория тапшылығы, порцияны бақылау',
+        goal_maintain: 'Денсаулықты сақтау',
+        goal_maintain_sub: 'Теңгерімді тамақтану',
+        goal_diabetes: 'Көмірсуды бақылау',
+        goal_diabetes_sub: 'Диабетиктер үшін, XE/ГИ бақылауы',
+        greeting_morning: 'Қайырлы таң 👋',
+        greeting_afternoon: 'Қайырлы күн 👋',
+        greeting_evening: 'Қайырлы кеш 👋',
+        kcal_left: 'ккал қалды',
+        kcal_of: 'из',
+        kcal_unit: 'ккал',
+        protein: 'Ақуыз',
+        fat: 'Май',
+        carbs: 'Көмірсу',
+        meals_title: 'Тамақтану',
+        add: 'Қосу',
+        water_title: 'Су',
+        water_goal: 'мақсат: 8 стакан',
+        water_add: '+250 мл',
+        diabetes_banner_title: 'Диабет режимі белсенді',
+        diabetes_banner_sub: 'XE және гликемиялық индекс көрсетіледі',
+        breakfast: 'Таңғы ас',
+        lunch: 'Түскі ас',
+        dinner: 'Кешкі ас',
+        snack: 'Тәттілік',
+        nav_home: 'Басты',
+        nav_planner: 'Жоспар',
+        nav_stats: 'Статистика',
+        nav_profile: 'Профиль',
+        planner_title: 'Жоспарлаушы',
+        planner_sub: 'Апталық тамақтану жоспары',
+        days: ['Жс','Дс','Сс','Ср','Бс','Жм','Сб'],
+        stats_title: 'Статистика',
+        stats_sub: '7 күндегі прогресс',
+        stats_avg_kcal: 'Орташа ккал/күн',
+        stats_total_xe: 'Аптадағы XE',
+        stats_water: 'Су (стакан/күн)',
+        stats_weekly: 'Күнделікті калориялар',
+        profile_goal: 'Мақсат',
+        weight_label: 'Салмақ',
+        height_label: 'Бой',
+        age_label: 'Жас',
+        bmi_label: 'ДСИ',
+        settings_lang: 'Тіл',
+        settings_diabetes: 'Диабет',
+        settings_goal: 'Мақсат',
+        settings_notify: 'Хабарландырулар',
+        settings_about: 'Қолданба туралы',
+        on: 'Қосулы',
+        off: 'Өшірулі',
+        scan_hint: 'Камераны тағамға бағыттаңыз',
+        scan_loading: 'Тағамды тану...',
+        scan_recognized: 'Танылды',
+        scan_origin: 'Қазақ асханасы · 1 порция',
+        scan_add: 'Күнделікке қосу',
+        scan_cancel: 'Болдырмау',
+        gi_high: 'Жоғары гликемиялық индекс',
+        gi_medium: 'Орташа гликемиялық индекс',
+        gi_low: 'Төмен гликемиялық индекс',
+        added_toast: 'Күнделікке қосылды!',
+        goal_loss_short: 'Салмақ жоғалту',
+        goal_maintain_short: 'Денсаулықты сақтау',
+        goal_diabetes_short: 'Көмірсуды бақылау',
+    },
+    en: {
+        ob_step0_title: 'Language & Region',
+        ob_step0_sub: 'Choose your preferred language and region',
+        ob_step1_title: 'Tell us about yourself',
+        ob_step1_sub: 'Used to calculate your daily calorie goal',
+        ob_step2_title: 'Medical Status',
+        ob_step2_sub: 'Helps personalize recommendations',
+        ob_next: 'Continue',
+        ob_back: 'Back',
+        ob_finish: 'Get Started',
+        ob_lang_label: 'Language',
+        ob_region_label: 'Region',
+        ob_gender_label: 'Gender',
+        ob_male: 'Male',
+        ob_female: 'Female',
+        ob_age_label: 'Age',
+        ob_height_label: 'Height (cm)',
+        ob_weight_label: 'Weight (kg)',
+        ob_diabetes_label: 'Diabetes',
+        ob_diabetes_sub: 'Enable XE & GI tracking',
+        ob_goal_label: 'Goal',
+        goal_loss: 'Weight Loss',
+        goal_loss_sub: 'Calorie deficit, portion control',
+        goal_maintain: 'Maintain Health',
+        goal_maintain_sub: 'Balanced nutrition',
+        goal_diabetes: 'Carb Control',
+        goal_diabetes_sub: 'For diabetics, XE/GI tracking',
+        greeting_morning: 'Good morning 👋',
+        greeting_afternoon: 'Good afternoon 👋',
+        greeting_evening: 'Good evening 👋',
+        kcal_left: 'kcal left',
+        kcal_of: 'of',
+        kcal_unit: 'kcal',
+        protein: 'Protein',
+        fat: 'Fat',
+        carbs: 'Carbs',
+        meals_title: 'Meals',
+        add: 'Add',
+        water_title: 'Water',
+        water_goal: 'goal: 8 glasses',
+        water_add: '+250 ml',
+        diabetes_banner_title: 'Diabetes Mode Active',
+        diabetes_banner_sub: 'XE and glycemic index are shown',
+        breakfast: 'Breakfast',
+        lunch: 'Lunch',
+        dinner: 'Dinner',
+        snack: 'Snack',
+        nav_home: 'Home',
+        nav_planner: 'Planner',
+        nav_stats: 'Stats',
+        nav_profile: 'Profile',
+        planner_title: 'Meal Planner',
+        planner_sub: 'Your weekly meal plan',
+        days: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+        stats_title: 'Statistics',
+        stats_sub: 'Your 7-day progress',
+        stats_avg_kcal: 'Avg kcal/day',
+        stats_total_xe: 'Total XE this week',
+        stats_water: 'Water (glasses/day)',
+        stats_weekly: 'Daily Calories',
+        profile_goal: 'Goal',
+        weight_label: 'Weight',
+        height_label: 'Height',
+        age_label: 'Age',
+        bmi_label: 'BMI',
+        settings_lang: 'Language',
+        settings_diabetes: 'Diabetes',
+        settings_goal: 'Goal',
+        settings_notify: 'Notifications',
+        settings_about: 'About',
+        on: 'On',
+        off: 'Off',
+        scan_hint: 'Point camera at a dish',
+        scan_loading: 'Recognizing dish...',
+        scan_recognized: 'Recognized',
+        scan_origin: 'Kazakh cuisine · 1 serving',
+        scan_add: 'Add to diary',
+        scan_cancel: 'Cancel',
+        gi_high: 'High glycemic index',
+        gi_medium: 'Medium glycemic index',
+        gi_low: 'Low glycemic index',
+        added_toast: 'Added to diary!',
+        goal_loss_short: 'Weight Loss',
+        goal_maintain_short: 'Maintain Health',
+        goal_diabetes_short: 'Carb Control',
+    }
+};
+
+// ── FOOD DATABASE ──────────────────────────────────────────
+const foodDB = [
+    { id: 1,  name: { ru: 'Бешбармак',    kz: 'Бесбармақ',  en: 'Beshbarmak'   }, kcal: 450, protein: 28, fat: 18, carbs: 35, gi: 70,  origin: { ru: 'Казахская кухня', kz: 'Қазақ асханасы', en: 'Kazakh cuisine' } },
+    { id: 2,  name: { ru: 'Плов',          kz: 'Палау',       en: 'Plov'          }, kcal: 380, protein: 14, fat: 16, carbs: 48, gi: 65,  origin: { ru: 'Центральноазиатская кухня', kz: 'Орта Азия асханасы', en: 'Central Asian cuisine' } },
+    { id: 3,  name: { ru: 'Баурсак',       kz: 'Бауырсақ',   en: 'Baursak'       }, kcal: 320, protein: 6,  fat: 14, carbs: 44, gi: 72,  origin: { ru: 'Казахская кухня', kz: 'Қазақ асханасы', en: 'Kazakh cuisine' } },
+    { id: 4,  name: { ru: 'Шубат',         kz: 'Шұбат',      en: 'Shubat'        }, kcal: 90,  protein: 3,  fat: 4,  carbs: 5,  gi: 30,  origin: { ru: 'Казахский напиток', kz: 'Қазақ сусыны', en: 'Kazakh drink' } },
+    { id: 5,  name: { ru: 'Қазы',          kz: 'Қазы',       en: 'Kazy'          }, kcal: 380, protein: 22, fat: 32, carbs: 2,  gi: 0,   origin: { ru: 'Казахская кухня', kz: 'Қазақ асханасы', en: 'Kazakh cuisine' } },
+    { id: 6,  name: { ru: 'Овсянка',       kz: 'Сұлы жармасы', en: 'Oatmeal'    }, kcal: 150, protein: 5,  fat: 3,  carbs: 27, gi: 40,  origin: { ru: 'Завтрак', kz: 'Таңғы ас', en: 'Breakfast' } },
+    { id: 7,  name: { ru: 'Куриная грудка',kz: 'Тауық еті',  en: 'Chicken Breast'}, kcal: 165, protein: 31, fat: 4,  carbs: 0,  gi: 0,   origin: { ru: 'Белковое блюдо', kz: 'Ақуызды тағам', en: 'Protein dish' } },
+    { id: 8,  name: { ru: 'Гречка',        kz: 'Қарақұмық',  en: 'Buckwheat'     }, kcal: 343, protein: 13, fat: 3,  carbs: 71, gi: 50,  origin: { ru: 'Крупа', kz: 'Жарма', en: 'Grain' } },
+    { id: 9,  name: { ru: 'Яблоко',        kz: 'Алма',       en: 'Apple'         }, kcal: 52,  protein: 0,  fat: 0,  carbs: 14, gi: 36,  origin: { ru: 'Фрукт', kz: 'Жеміс', en: 'Fruit' } },
+    { id: 10, name: { ru: 'Кефир',         kz: 'Кефир',      en: 'Kefir'         }, kcal: 51,  protein: 3,  fat: 2,  carbs: 5,  gi: 35,  origin: { ru: 'Молочный продукт', kz: 'Сүт өнімі', en: 'Dairy' } },
+];
+
+// ── USER CONTEXT ───────────────────────────────────────────
+const UserCtx = {
+    lang: 'ru',
+    region: 'KZ',
+    gender: 'male',
+    age: 28,
+    height: 175,
+    weight: 75,
+    diabetes: false,
+    goal: 'maintain',
+    dailyKcal: 2000,
+    dailyProtein: 150,
+    dailyFat: 67,
+    dailyCarbs: 250,
+    waterGlasses: 0,
+    consumedKcal: 0,
+    consumedProtein: 0,
+    consumedFat: 0,
+    consumedCarbs: 0,
+};
+
+// ── STATE ──────────────────────────────────────────────────
+let obStep = 0;
+let currentScreen = 'home';
+let selectedDate = new Date();
+let scanTimeout = null;
+
+// Meal data
+const mealData = [
+    {
+        id: 'm1', type: 'breakfast', completed: false,
+        items: [
+            { foodId: 6, grams: 200 },
+            { foodId: 10, grams: 150 },
+        ]
+    },
+    {
+        id: 'm2', type: 'lunch', completed: false,
+        items: [
+            { foodId: 1, grams: 300 },
+        ]
+    },
+    {
+        id: 'm3', type: 'dinner', completed: false,
+        items: [
+            { foodId: 7, grams: 150 },
+            { foodId: 8, grams: 100 },
+        ]
+    },
+    {
+        id: 'm4', type: 'snack', completed: false,
+        items: [
+            { foodId: 9, grams: 150 },
+        ]
+    },
+];
+
+// ── HELPERS ───────────────────────────────────────────────
+const t = (key) => (i18n[UserCtx.lang] || i18n.ru)[key] || key;
+const calcXE = (carbs) => (carbs / 12).toFixed(1);
+const calcGL = (gi, carbs) => ((gi * carbs) / 100).toFixed(1);
+const getGIClass = (gi) => gi <= 55 ? 'gi-green' : gi <= 69 ? 'gi-yellow' : 'gi-red';
+const getGILabel = (gi) => gi <= 55 ? t('gi_low') : gi <= 69 ? t('gi_medium') : t('gi_high');
+
+function calcMealTotals(meal) {
+    let kcal = 0, protein = 0, fat = 0, carbs = 0;
+    meal.items.forEach(item => {
+        const food = foodDB.find(f => f.id === item.foodId);
+        if (!food) return;
+        const ratio = item.grams / 100;
+        kcal    += food.kcal    * ratio;
+        protein += food.protein * ratio;
+        fat     += food.fat     * ratio;
+        carbs   += food.carbs   * ratio;
+    });
+    return { kcal: Math.round(kcal), protein: Math.round(protein), fat: Math.round(fat), carbs: Math.round(carbs) };
+}
+
+function calcMifflin() {
+    const { gender, age, height, weight, goal } = UserCtx;
+    let bmr = gender === 'male'
+        ? 10 * weight + 6.25 * height - 5 * age + 5
+        : 10 * weight + 6.25 * height - 5 * age - 161;
+    let tdee = bmr * 1.55; // moderate activity
+    if (goal === 'loss')     tdee -= 500;
+    if (goal === 'diabetes') tdee -= 200;
+    UserCtx.dailyKcal    = Math.round(tdee);
+    UserCtx.dailyProtein = Math.round(tdee * 0.30 / 4);
+    UserCtx.dailyFat     = Math.round(tdee * 0.30 / 9);
+    UserCtx.dailyCarbs   = Math.round(tdee * 0.40 / 4);
+}
+
+function recalcConsumed() {
+    let kcal = 0, protein = 0, fat = 0, carbs = 0;
+    mealData.forEach(meal => {
+        if (meal.completed) {
+            const t = calcMealTotals(meal);
+            kcal    += t.kcal;
+            protein += t.protein;
+            fat     += t.fat;
+            carbs   += t.carbs;
+        }
+    });
+    UserCtx.consumedKcal    = kcal;
+    UserCtx.consumedProtein = protein;
+    UserCtx.consumedFat     = fat;
+    UserCtx.consumedCarbs   = carbs;
+}
+
+function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+function getGreeting() {
+    const h = new Date().getHours();
+    if (h < 12) return t('greeting_morning');
+    if (h < 18) return t('greeting_afternoon');
+    return t('greeting_evening');
+}
+
+// ── ONBOARDING ────────────────────────────────────────────
+const obSteps = [
+    {
+        titleKey: 'ob_step0_title',
+        subKey: 'ob_step0_sub',
+        render: () => `
+            <div class="form-group">
+                <label class="form-label">${t('ob_lang_label')}</label>
+                <div class="lang-chips">
+                    <div class="lang-chip ${UserCtx.lang==='ru'?'active':''}" data-lang="ru">🇷🇺 Русский</div>
+                    <div class="lang-chip ${UserCtx.lang==='kz'?'active':''}" data-lang="kz">🇰🇿 Қазақша</div>
+                    <div class="lang-chip ${UserCtx.lang==='en'?'active':''}" data-lang="en">🇬🇧 English</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">${t('ob_region_label')}</label>
+                <select class="input-field" id="ob-region">
+                    <option value="KZ" ${UserCtx.region==='KZ'?'selected':''}>🇰🇿 Kazakhstan</option>
+                    <option value="RU" ${UserCtx.region==='RU'?'selected':''}>🇷🇺 Russia</option>
+                    <option value="OTHER">Other</option>
+                </select>
+            </div>
+        `
+    },
+    {
+        titleKey: 'ob_step1_title',
+        subKey: 'ob_step1_sub',
+        render: () => `
+            <div class="form-group">
+                <label class="form-label">${t('ob_gender_label')}</label>
+                <div class="seg-control">
+                    <button class="seg-btn ${UserCtx.gender==='male'?'active':''}" data-gender="male">${t('ob_male')}</button>
+                    <button class="seg-btn ${UserCtx.gender==='female'?'active':''}" data-gender="female">${t('ob_female')}</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">${t('ob_age_label')}</label>
+                <input class="input-field" type="number" id="ob-age" value="${UserCtx.age}" min="10" max="100" placeholder="28">
+            </div>
+            <div class="form-group">
+                <label class="form-label">${t('ob_height_label')}</label>
+                <input class="input-field" type="number" id="ob-height" value="${UserCtx.height}" min="100" max="250" placeholder="175">
+            </div>
+            <div class="form-group">
+                <label class="form-label">${t('ob_weight_label')}</label>
+                <input class="input-field" type="number" id="ob-weight" value="${UserCtx.weight}" min="30" max="300" placeholder="75">
+            </div>
+        `
+    },
+    {
+        titleKey: 'ob_step2_title',
+        subKey: 'ob_step2_sub',
+        render: () => `
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">${t('ob_diabetes_label')}</div>
+                    <div class="toggle-sub">${t('ob_diabetes_sub')}</div>
+                </div>
+                <div class="toggle-switch ${UserCtx.diabetes?'on':''}" id="diabetes-toggle"></div>
+            </div>
+            <div class="form-group" style="margin-top:20px;">
+                <label class="form-label">${t('ob_goal_label')}</label>
+                <div class="goal-card ${UserCtx.goal==='loss'?'selected':''}" data-goal="loss">
+                    <div class="goal-icon">🏃</div>
                     <div>
-                        <label className="text-sm font-medium text-gray-500 mb-2 block">{t.height}: {profile.height} cm</label>
-                        <input type="range" min="100" max="220" value={profile.height}
-                            onChange={e => updateProfile('height', parseInt(e.target.value))} className="w-full" />
+                        <div class="goal-title">${t('goal_loss')}</div>
+                        <div class="goal-sub">${t('goal_loss_sub')}</div>
                     </div>
                 </div>
-            ),
-            // Activity
-            () => (
-                <div className={`${animClass}`}>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.activityLevel}</h2>
-                    <p className="text-gray-400 mb-6">Step 4/7</p>
-                    <div className="space-y-3">
-                        {['sedentary','light','moderate','active','veryActive'].map((level, i) => (
-                            <button key={level} onClick={() => updateProfile('activityLevel', level)}
-                                className={`w-full py-4 px-5 rounded-2xl font-medium text-left btn-press transition-all flex items-center gap-3 ${
-                                    profile.activityLevel === level ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-white text-gray-600 border border-gray-100'
-                                }`}>
-                                <span className="text-xl">{['🪑','🚶','🏃','💪','🔥'][i]}</span>
-                                {t[level]}
-                            </button>
-                        ))}
+                <div class="goal-card ${UserCtx.goal==='maintain'?'selected':''}" data-goal="maintain">
+                    <div class="goal-icon">💚</div>
+                    <div>
+                        <div class="goal-title">${t('goal_maintain')}</div>
+                        <div class="goal-sub">${t('goal_maintain_sub')}</div>
                     </div>
                 </div>
-            ),
-            // Goal
-            () => (
-                <div className={`${animClass}`}>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.goal}</h2>
-                    <p className="text-gray-400 mb-6">Step 5/7</p>
-                    <div className="space-y-3">
-                        {[{k:'lose',icon:'📉'},{k:'maintain',icon:'⚖️'},{k:'gain',icon:'📈'}].map(({k,icon}) => (
-                            <button key={k} onClick={() => updateProfile('goal', k)}
-                                className={`w-full py-5 px-5 rounded-2xl font-medium text-left btn-press transition-all flex items-center gap-4 ${
-                                    profile.goal === k ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-white text-gray-600 border border-gray-100'
-                                }`}>
-                                <span className="text-2xl">{icon}</span>
-                                <span className="text-lg">{k === 'lose' ? t.loseWeight : k === 'maintain' ? t.maintain : t.gainWeight}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            ),
-            // Diet Mode
-            () => (
-                <div className={`${animClass}`}>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.dietMode}</h2>
-                    <p className="text-gray-400 mb-6">Step 6/7</p>
-                    <div className="space-y-4">
-                        <button onClick={() => updateProfile('dietMode', 'standard')}
-                            className={`w-full p-5 rounded-2xl text-left btn-press transition-all ${
-                                profile.dietMode === 'standard' ? 'bg-[#D7FE63] shadow-md ring-2 ring-[#c5ec4e]' : 'bg-white border border-gray-100'
-                            }`}>
-                            <div className="flex items-center gap-4">
-                                <span className="text-3xl">🥗</span>
-                                <div>
-                                    <div className="font-bold text-gray-900 text-lg">{t.standard}</div>
-                                    <div className="text-gray-500 text-sm">{t.standardDesc}</div>
-                                </div>
-                            </div>
-                        </button>
-                        <button onClick={() => updateProfile('dietMode', 'carbControl')}
-                            className={`w-full p-5 rounded-2xl text-left btn-press transition-all ${
-                                profile.dietMode === 'carbControl' ? 'bg-[#D1F0ED] shadow-md ring-2 ring-[#a8ddd8]' : 'bg-white border border-gray-100'
-                            }`}>
-                            <div className="flex items-center gap-4">
-                                <span className="text-3xl">🩺</span>
-                                <div>
-                                    <div className="font-bold text-gray-900 text-lg">{t.carbControl}</div>
-                                    <div className="text-gray-500 text-sm">{t.carbControlDesc}</div>
-                                </div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            ),
-            // Summary
-            () => {
-                const tdee = calculateTDEE(profile);
-                const macros = calculateMacros(tdee);
-                const carbLimit = calculateCarbLimit(profile);
-                return (
-                    <div className={`${animClass}`}>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Plan</h2>
-                        <p className="text-gray-400 mb-6">Step 7/7</p>
-                        <div className="bg-white rounded-3xl p-6 shadow-sm mb-4">
-                            <div className="text-center mb-4">
-                                <div className="text-5xl font-bold text-gray-900">{tdee}</div>
-                                <div className="text-gray-400 text-sm">{t.kcal} / day</div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-3">
-                                <div className="text-center bg-gray-50 rounded-2xl p-3">
-                                    <div className="text-lg font-bold text-blue-500">{macros.protein}{t.g}</div>
-                                    <div className="text-xs text-gray-400">{t.protein}</div>
-                                </div>
-                                <div className="text-center bg-gray-50 rounded-2xl p-3">
-                                    <div className="text-lg font-bold text-yellow-500">{macros.fat}{t.g}</div>
-                                    <div className="text-xs text-gray-400">{t.fat}</div>
-                                </div>
-                                <div className="text-center bg-gray-50 rounded-2xl p-3">
-                                    <div className="text-lg font-bold text-green-500">{macros.carbs}{t.g}</div>
-                                    <div className="text-xs text-gray-400">{t.carbs}</div>
-                                </div>
-                            </div>
-                        </div>
-                        {profile.dietMode === 'carbControl' && (
-                            <div className="bg-[#D1F0ED] rounded-3xl p-5 flex items-center gap-4 animate-fadeIn">
-                                <span className="text-3xl">🩺</span>
-                                <div>
-                                    <div className="font-bold text-gray-900">{t.dailyCarbLimit}</div>
-                                    <div className="text-2xl font-bold text-teal-700">{carbLimit}{t.g}</div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                );
-            },
-        ];
-
-        return (
-            <div className="max-w-[430px] mx-auto min-h-screen bg-[#F8F9FB] px-6 py-8 flex flex-col">
-                {step > 0 && (
-                    <div className="mb-6">
-                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-[#D7FE63] rounded-full transition-all duration-500"
-                                style={{ width: `${(step / (steps.length - 1)) * 100}%` }} />
-                        </div>
-                    </div>
-                )}
-                <div className="flex-1">{steps[step]()}</div>
-                {step > 0 && (
-                    <div className="flex gap-3 mt-8">
-                        {step > 1 && (
-                            <button onClick={goBack}
-                                className="flex-1 bg-white border border-gray-200 text-gray-700 py-4 rounded-2xl font-semibold btn-press hover:bg-gray-50 transition-colors">
-                                {t.back}
-                            </button>
-                        )}
-                        {step < steps.length - 1 ? (
-                            <button onClick={goNext} disabled={step === 1 && !profile.name.trim()}
-                                className={`flex-1 py-4 rounded-2xl font-semibold btn-press transition-colors ${
-                                    step === 1 && !profile.name.trim() ? 'bg-gray-200 text-gray-400' : 'bg-[#1a1a1a] text-white hover:bg-gray-800'
-                                }`}>
-                                {t.next}
-                            </button>
-                        ) : (
-                            <button onClick={() => onComplete(profile)}
-                                className="flex-1 bg-[#D7FE63] text-gray-900 py-4 rounded-2xl font-bold btn-press hover:bg-[#c5ec4e] transition-colors">
-                                {t.finish} ✨
-                            </button>
-                        )}
-                    </div>
-                )}
-            </div>
-        );
-    }
-
-    // ==================== Search Overlay ====================
-    function SearchOverlay({ onClose, onAdd }) {
-        const { lang } = useContext(AppContext);
-        const t = translations[lang];
-        const [query, setQuery] = useState('');
-        const inputRef = useRef(null);
-
-        useEffect(() => { inputRef.current?.focus(); }, []);
-
-        const filtered = foodDatabase.filter(f =>
-            f.name[lang].toLowerCase().includes(query.toLowerCase())
-        );
-
-        return (
-            <div className="fixed inset-0 z-50 bg-[#F8F9FB] animate-slideUp">
-                <div className="max-w-[430px] mx-auto px-5 py-4">
-                    <div className="flex items-center gap-3 mb-5">
-                        <button onClick={onClose} className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm btn-press">
-                            <i className="fa-solid fa-xmark text-gray-600"></i>
-                        </button>
-                        <div className="flex-1 relative">
-                            <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input ref={inputRef} type="text" value={query} onChange={e => setQuery(e.target.value)}
-                                placeholder={t.search}
-                                className="w-full bg-white rounded-2xl pl-11 pr-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63] shadow-sm" />
-                        </div>
-                    </div>
-                    <div className="space-y-2 overflow-y-auto hide-scrollbar" style={{ maxHeight: 'calc(100vh - 100px)' }}>
-                        {filtered.map((food, i) => {
-                            const servingCals = Math.round(food.calories * food.serving / 100);
-                            const servingCarbs = Math.round(food.carbs * food.serving / 100);
-                            return (
-                                <button key={food.id} onClick={() => { onAdd(food); onClose(); }}
-                                    className={`w-full bg-white rounded-2xl p-4 flex items-center gap-4 btn-press hover:bg-gray-50 transition-colors animate-fadeIn stagger-${Math.min(i+1,5)}`}>
-                                    <span className="text-3xl">{food.icon}</span>
-                                    <div className="flex-1 text-left">
-                                        <div className="font-semibold text-gray-900">{food.name[lang]}</div>
-                                        <div className="text-xs text-gray-400">{food.serving}g {t.serving} · {servingCals} {t.kcal}</div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="text-sm font-bold text-gray-700">{servingCarbs}{t.g}</div>
-                                        <div className="text-xs text-gray-400">{t.carbs}</div>
-                                    </div>
-                                    <i className="fa-solid fa-plus text-[#D7FE63] text-lg"></i>
-                                </button>
-                            );
-                        })}
+                <div class="goal-card ${UserCtx.goal==='diabetes'?'selected':''}" data-goal="diabetes">
+                    <div class="goal-icon">🩺</div>
+                    <div>
+                        <div class="goal-title">${t('goal_diabetes')}</div>
+                        <div class="goal-sub">${t('goal_diabetes_sub')}</div>
                     </div>
                 </div>
             </div>
-        );
+        `
+    }
+];
+
+function renderObStep(step) {
+    const s = obSteps[step];
+    document.getElementById('ob-title').textContent    = t(s.titleKey);
+    document.getElementById('ob-subtitle').textContent = t(s.subKey);
+    document.getElementById('ob-body').innerHTML = s.render();
+    document.getElementById('ob-next-btn').textContent = step === 2 ? t('ob_finish') : t('ob_next');
+    document.getElementById('ob-back-btn').style.display = step > 0 ? 'block' : 'none';
+
+    // Update step dots
+    for (let i = 0; i < 3; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        dot.className = 'ob-step-dot' + (i === step ? ' active' : i < step ? ' done' : '');
     }
 
-    // ==================== Dashboard Screen ====================
-    function DashboardScreen() {
-        const { profile, foodLog, selectedDate, lang } = useContext(AppContext);
-        const t = translations[lang];
-        const tdee = calculateTDEE(profile);
-        const macros = calculateMacros(tdee);
-        const carbLimit = profile.dietMode === 'carbControl' ? calculateCarbLimit(profile) : macros.carbs;
+    // Bind step-specific events
+    if (step === 0) bindStep0();
+    if (step === 1) bindStep1();
+    if (step === 2) bindStep2();
+}
 
-        const dateKey = getDateKey(selectedDate);
-        const todayFoods = foodLog[dateKey] || [];
-
-        const totals = todayFoods.reduce((acc, item) => ({
-            calories: acc.calories + Math.round(item.food.calories * item.food.serving / 100),
-            protein: acc.protein + Math.round(item.food.protein * item.food.serving / 100),
-            fat: acc.fat + Math.round(item.food.fat * item.food.serving / 100),
-            carbs: acc.carbs + Math.round(item.food.carbs * item.food.serving / 100),
-        }), { calories: 0, protein: 0, fat: 0, carbs: 0 });
-
-        const calProgress = Math.min((totals.calories / tdee) * 100, 100);
-        const carbProgress = Math.min((totals.carbs / carbLimit) * 100, 100);
-        const remaining = Math.max(tdee - totals.calories, 0);
-
-        return (
-            <div className="animate-fadeIn">
-                <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">{getGreeting(t)}, {profile.name} 👋</h1>
-                    <p className="text-gray-400 text-sm mt-1">{t.letsTrack}</p>
-                </div>
-
-                {/* Calorie Ring */}
-                <div className="bg-white rounded-3xl p-6 shadow-sm mb-4 animate-fadeIn stagger-1">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <div className="text-sm text-gray-400 mb-1">{t.calories}</div>
-                            <div className="text-4xl font-bold text-gray-900">{totals.calories}</div>
-                            <div className="text-sm text-gray-400">{t.of} {tdee} {t.kcal}</div>
-                            <div className="mt-2 text-sm font-medium text-green-500">
-                                {remaining} {t.kcal} {t.remaining}
-                            </div>
-                        </div>
-                        <ProgressRing progress={calProgress} size={130} strokeWidth={14}>
-                            <div className="text-center">
-                                <div className="text-2xl font-bold text-gray-900">{Math.round(calProgress)}%</div>
-                            </div>
-                        </ProgressRing>
-                    </div>
-                </div>
-
-                {/* Diabetes Widget */}
-                {profile.dietMode === 'carbControl' && (
-                    <div className="bg-[#D1F0ED] rounded-3xl p-5 mb-4 animate-fadeIn stagger-2">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                                <span className="text-xl">🩺</span>
-                                <span className="font-bold text-gray-900">{t.carbsConsumed}</span>
-                            </div>
-                            <span className={`text-sm font-bold px-3 py-1 rounded-full ${
-                                carbProgress > 90 ? 'bg-red-100 text-red-600' : carbProgress > 70 ? 'bg-yellow-100 text-yellow-600' : 'bg-green-100 text-green-600'
-                            }`}>
-                                {totals.carbs}{t.g} / {carbLimit}{t.g}
-                            </span>
-                        </div>
-                        <div className="h-3 bg-white/60 rounded-full overflow-hidden">
-                            <div className={`h-full rounded-full transition-all duration-700 ${
-                                carbProgress > 90 ? 'bg-red-400' : carbProgress > 70 ? 'bg-yellow-400' : 'bg-teal-500'
-                            }`} style={{ width: `${carbProgress}%` }} />
-                        </div>
-                        <div className="text-xs text-teal-700 mt-2 font-medium">
-                            {t.dailyCarbLimit}: {carbLimit}{t.g}
-                        </div>
-                    </div>
-                )}
-
-                {/* Macro Grid */}
-                <div className="grid grid-cols-3 gap-3 animate-fadeIn stagger-3">
-                    {[
-                        { label: t.protein, value: totals.protein, max: macros.protein, color: 'bg-blue-500', bg: 'bg-blue-50', textColor: 'text-blue-500' },
-                        { label: t.fat, value: totals.fat, max: macros.fat, color: 'bg-yellow-500', bg: 'bg-yellow-50', textColor: 'text-yellow-500' },
-                        { label: t.carbs, value: totals.carbs, max: profile.dietMode === 'carbControl' ? carbLimit : macros.carbs, color: 'bg-green-500', bg: 'bg-green-50', textColor: 'text-green-500' },
-                    ].map(m => (
-                        <div key={m.label} className={`${m.bg} rounded-2xl p-4`}>
-                            <div className={`text-xs font-medium ${m.textColor} mb-1`}>{m.label}</div>
-                            <div className="text-xl font-bold text-gray-900">{m.value}<span className="text-xs text-gray-400">{t.g}</span></div>
-                            <div className="h-1.5 bg-white/60 rounded-full mt-2 overflow-hidden">
-                                <div className={`h-full ${m.color} rounded-full transition-all duration-500`}
-                                    style={{ width: `${Math.min((m.value / m.max) * 100, 100)}%` }} />
-                            </div>
-                            <div className="text-xs text-gray-400 mt-1">{t.of} {m.max}{t.g}</div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    // ==================== Tracker Screen ====================
-    function TrackerScreen() {
-        const { profile, foodLog, setFoodLog, selectedDate, setSelectedDate, lang } = useContext(AppContext);
-        const t = translations[lang];
-        const [showSearch, setShowSearch] = useState(false);
-        const carbLimit = profile.dietMode === 'carbControl' ? calculateCarbLimit(profile) : null;
-
-        // Week calendar
-        const today = new Date();
-        const weekDates = [];
-        const dayOfWeek = today.getDay();
-        const monday = new Date(today);
-        monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
-        for (let i = 0; i < 7; i++) {
-            const d = new Date(monday);
-            d.setDate(monday.getDate() + i);
-            weekDates.push(d);
-        }
-
-        const dateKey = getDateKey(selectedDate);
-        const todayFoods = foodLog[dateKey] || [];
-
-        const addFood = (food) => {
-            const newLog = { ...foodLog };
-            if (!newLog[dateKey]) newLog[dateKey] = [];
-            newLog[dateKey] = [...newLog[dateKey], { id: Date.now(), food, addedAt: new Date().toISOString() }];
-            setFoodLog(newLog);
-        };
-
-        const removeFood = (itemId) => {
-            const newLog = { ...foodLog };
-            newLog[dateKey] = (newLog[dateKey] || []).filter(item => item.id !== itemId);
-            setFoodLog(newLog);
-        };
-
-        return (
-            <div className="animate-fadeIn">
-                <div className="flex items-center justify-between mb-5">
-                    <h1 className="text-2xl font-bold text-gray-900">{t.tracker}</h1>
-                    <button onClick={() => setShowSearch(true)}
-                        className="w-12 h-12 bg-[#D7FE63] rounded-2xl flex items-center justify-center shadow-md btn-press hover:bg-[#c5ec4e] transition-colors">
-                        <i className="fa-solid fa-plus text-gray-900 text-lg"></i>
-                    </button>
-                </div>
-
-                {/* Week Calendar */}
-                <div className="flex gap-2 mb-6 overflow-x-auto hide-scrollbar pb-1">
-                    {weekDates.map((d, i) => {
-                        const isSelected = getDateKey(d) === getDateKey(selectedDate);
-                        const isToday = getDateKey(d) === getDateKey(today);
-                        return (
-                            <button key={i} onClick={() => setSelectedDate(new Date(d))}
-                                className={`flex-shrink-0 w-12 py-3 rounded-2xl flex flex-col items-center gap-1 btn-press transition-all ${
-                                    isSelected ? 'bg-[#1a1a1a] text-white shadow-lg' : 'bg-white text-gray-600'
-                                }`}>
-                                <span className="text-[10px] font-medium opacity-60">{t.weekDays[i]}</span>
-                                <span className="text-lg font-bold">{d.getDate()}</span>
-                                {isToday && <div className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#D7FE63]' : 'bg-[#D7FE63]'}`} />}
-                            </button>
-                        );
-                    })}
-                </div>
-
-                {/* Food List */}
-                {todayFoods.length === 0 ? (
-                    <div className="text-center py-16 animate-fadeIn">
-                        <div className="text-5xl mb-4">🍽️</div>
-                        <div className="text-gray-400 font-medium">{t.noFood}</div>
-                        <div className="text-gray-300 text-sm mt-1">{t.tapToAdd}</div>
-                    </div>
-                ) : (
-                    <div className="space-y-0">
-                        {todayFoods.map((item, i) => {
-                            const servingCals = Math.round(item.food.calories * item.food.serving / 100);
-                            const servingCarbs = Math.round(item.food.carbs * item.food.serving / 100);
-                            const servingProtein = Math.round(item.food.protein * item.food.serving / 100);
-                            const servingFat = Math.round(item.food.fat * item.food.serving / 100);
-                            const isHighCarb = carbLimit && servingCarbs > 30;
-                            const isPortionAlert = carbLimit && servingCarbs > 20 && servingCarbs <= 30;
-
-                            return (
-                                <SwipeableItem key={item.id} onDelete={() => removeFood(item.id)}>
-                                    <div className={`bg-white rounded-2xl p-4 shadow-sm animate-fadeIn ${isHighCarb ? 'ring-2 ring-red-200' : ''}`}
-                                        style={{ animationDelay: `${i * 0.05}s` }}>
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-3xl">{item.food.icon}</span>
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-semibold text-gray-900">{item.food.name[lang]}</span>
-                                                    {isHighCarb && (
-                                                        <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{t.highCarbs}</span>
-                                                    )}
-                                                    {isPortionAlert && (
-                                                        <span className="text-[10px] bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full font-bold">{t.portionAlert}</span>
-                                                    )}
-                                                </div>
-                                                <div className="flex items-center gap-3 mt-1">
-                                                    <span className="text-xs text-gray-400">{servingCals} {t.kcal}</span>
-                                                    <span className="text-xs text-blue-400">P: {servingProtein}{t.g}</span>
-                                                    <span className="text-xs text-yellow-500">F: {servingFat}{t.g}</span>
-                                                    <span className="text-xs text-green-500">C: {servingCarbs}{t.g}</span>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="bg-gray-100 rounded-lg px-2 py-1">
-                                                    <span className="text-[10px] text-gray-500 font-medium">{t.glycemicLoad}</span>
-                                                    <span className="text-sm font-bold text-gray-700 ml-1">{item.food.gl}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </SwipeableItem>
-                            );
-                        })}
-                    </div>
-                )}
-
-                {showSearch && <SearchOverlay onClose={() => setShowSearch(false)} onAdd={addFood} />}
-            </div>
-        );
-    }
-
-    // ==================== Analytics Screen ====================
-    function AnalyticsScreen() {
-        const { profile, foodLog, selectedDate, waterLog, setWaterLog, lang } = useContext(AppContext);
-        const t = translations[lang];
-        const tdee = calculateTDEE(profile);
-        const macros = calculateMacros(tdee);
-        const carbLimit = profile.dietMode === 'carbControl' ? calculateCarbLimit(profile) : macros.carbs;
-        const dateKey = getDateKey(selectedDate);
-        const todayFoods = foodLog[dateKey] || [];
-        const waterGlasses = waterLog[dateKey] || 0;
-
-        const totals = todayFoods.reduce((acc, item) => ({
-            calories: acc.calories + Math.round(item.food.calories * item.food.serving / 100),
-            protein: acc.protein + Math.round(item.food.protein * item.food.serving / 100),
-            fat: acc.fat + Math.round(item.food.fat * item.food.serving / 100),
-            carbs: acc.carbs + Math.round(item.food.carbs * item.food.serving / 100),
-        }), { calories: 0, protein: 0, fat: 0, carbs: 0 });
-
-        const addWater = () => {
-            const newWater = { ...waterLog };
-            newWater[dateKey] = (newWater[dateKey] || 0) + 1;
-            setWaterLog(newWater);
-        };
-
-        const removeWater = () => {
-            const newWater = { ...waterLog };
-            newWater[dateKey] = Math.max((newWater[dateKey] || 0) - 1, 0);
-            setWaterLog(newWater);
-        };
-
-        const macroItems = [
-            { label: t.calories, value: totals.calories, max: tdee, unit: t.kcal, color: '#D7FE63', bg: '#f0f9d6' },
-            { label: t.protein, value: totals.protein, max: macros.protein, unit: t.g, color: '#60A5FA', bg: '#EFF6FF' },
-            { label: t.fat, value: totals.fat, max: macros.fat, unit: t.g, color: '#FBBF24', bg: '#FFFBEB' },
-            { label: t.carbs, value: totals.carbs, max: carbLimit, unit: t.g, color: '#34D399', bg: '#ECFDF5' },
-        ];
-
-        return (
-            <div className="animate-fadeIn">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">{t.analytics}</h1>
-
-                {/* Macros */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm mb-4 animate-fadeIn stagger-1">
-                    <h3 className="font-bold text-gray-900 mb-4">{t.macros}</h3>
-                    <div className="space-y-4">
-                        {macroItems.map(m => {
-                            const pct = Math.min((m.value / m.max) * 100, 100);
-                            return (
-                                <div key={m.label}>
-                                    <div className="flex justify-between mb-1.5">
-                                        <span className="text-sm font-medium text-gray-700">{m.label}</span>
-                                        <span className="text-sm font-bold text-gray-900">{m.value} / {m.max} {m.unit}</span>
-                                    </div>
-                                    <div className="h-3 rounded-full overflow-hidden" style={{ background: m.bg }}>
-                                        <div className="h-full rounded-full transition-all duration-700"
-                                            style={{ width: `${pct}%`, background: m.color }} />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Water Tracker */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm animate-fadeIn stagger-2">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-bold text-gray-900">{t.water}</h3>
-                        <span className="text-sm text-gray-400">{waterGlasses} / 8 {t.glasses}</span>
-                    </div>
-                    <div className="flex items-center gap-2 flex-wrap mb-4">
-                        {Array.from({ length: 8 }).map((_, i) => (
-                            <div key={i} className={`w-10 h-14 rounded-xl flex items-center justify-center text-xl transition-all duration-300 ${
-                                i < waterGlasses ? 'bg-blue-100 scale-105' : 'bg-gray-50'
-                            }`}>
-                                {i < waterGlasses ? '💧' : '🫗'}
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex gap-3">
-                        <button onClick={removeWater}
-                            className="flex-1 bg-gray-100 text-gray-600 py-3 rounded-2xl font-semibold btn-press hover:bg-gray-200 transition-colors">
-                            <i className="fa-solid fa-minus mr-2"></i>
-                        </button>
-                        <button onClick={addWater}
-                            className="flex-1 bg-blue-500 text-white py-3 rounded-2xl font-semibold btn-press hover:bg-blue-600 transition-colors">
-                            <i className="fa-solid fa-plus mr-2"></i>
-                        </button>
-                    </div>
-                    <div className="h-2 bg-blue-50 rounded-full mt-4 overflow-hidden">
-                        <div className="h-full bg-blue-400 rounded-full transition-all duration-500"
-                            style={{ width: `${Math.min((waterGlasses / 8) * 100, 100)}%` }} />
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // ==================== Settings Screen ====================
-    function SettingsScreen() {
-        const { profile, setProfile, lang, setLang, resetApp } = useContext(AppContext);
-        const t = translations[lang];
-        const [editing, setEditing] = useState(false);
-        const [editData, setEditData] = useState({ ...profile });
-        const [showConfirm, setShowConfirm] = useState(false);
-
-        const saveProfile = () => {
-            setProfile(editData);
-            setEditing(false);
-        };
-
-        const toggleDietMode = () => {
-            const newMode = profile.dietMode === 'standard' ? 'carbControl' : 'standard';
-            setProfile({ ...profile, dietMode: newMode });
-        };
-
-        return (
-            <div className="animate-fadeIn">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">{t.settings}</h1>
-
-                {/* Profile Card */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm mb-4 animate-fadeIn stagger-1">
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="w-16 h-16 bg-[#D7FE63] rounded-2xl flex items-center justify-center text-2xl font-bold text-gray-900">
-                            {profile.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                            <div className="font-bold text-lg text-gray-900">{profile.name}</div>
-                            <div className="text-sm text-gray-400">{profile.age} y/o · {profile.weight}kg · {profile.height}cm</div>
-                        </div>
-                    </div>
-                    {!editing ? (
-                        <button onClick={() => { setEditData({ ...profile }); setEditing(true); }}
-                            className="w-full bg-gray-100 text-gray-700 py-3 rounded-2xl font-semibold btn-press hover:bg-gray-200 transition-colors">
-                            <i className="fa-solid fa-pen mr-2"></i>{t.editProfile}
-                        </button>
-                    ) : (
-                        <div className="space-y-3 animate-fadeIn">
-                            <input type="text" value={editData.name} onChange={e => setEditData({ ...editData, name: e.target.value })}
-                                className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63]" />
-                            <div className="grid grid-cols-3 gap-2">
-                                <div>
-                                    <label className="text-xs text-gray-400">{t.age}</label>
-                                    <input type="number" value={editData.age} onChange={e => setEditData({ ...editData, age: parseInt(e.target.value) || 0 })}
-                                        className="w-full bg-gray-50 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63]" />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-400">{t.weight}</label>
-                                    <input type="number" value={editData.weight} onChange={e => setEditData({ ...editData, weight: parseInt(e.target.value) || 0 })}
-                                        className="w-full bg-gray-50 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63]" />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-gray-400">{t.height}</label>
-                                    <input type="number" value={editData.height} onChange={e => setEditData({ ...editData, height: parseInt(e.target.value) || 0 })}
-                                        className="w-full bg-gray-50 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D7FE63]" />
-                                </div>
-                            </div>
-                            <div className="flex gap-2">
-                                <button onClick={() => setEditing(false)}
-                                    className="flex-1 bg-gray-100 text-gray-600 py-3 rounded-2xl font-semibold btn-press">{t.cancel}</button>
-                                <button onClick={saveProfile}
-                                    className="flex-1 bg-[#D7FE63] text-gray-900 py-3 rounded-2xl font-semibold btn-press">{t.save}</button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Diet Mode Toggle */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm mb-4 animate-fadeIn stagger-2">
-                    <h3 className="font-bold text-gray-900 mb-3">{t.dietMode}</h3>
-                    <div className="flex gap-3">
-                        <button onClick={() => setProfile({ ...profile, dietMode: 'standard' })}
-                            className={`flex-1 py-3 px-4 rounded-2xl font-medium text-sm btn-press transition-all ${
-                                profile.dietMode === 'standard' ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-gray-100 text-gray-500'
-                            }`}>
-                            🥗 {t.standard}
-                        </button>
-                        <button onClick={() => setProfile({ ...profile, dietMode: 'carbControl' })}
-                            className={`flex-1 py-3 px-4 rounded-2xl font-medium text-sm btn-press transition-all ${
-                                profile.dietMode === 'carbControl' ? 'bg-[#D1F0ED] text-teal-700 shadow-md' : 'bg-gray-100 text-gray-500'
-                            }`}>
-                            🩺 {t.carbControl}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Language */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm mb-4 animate-fadeIn stagger-3">
-                    <h3 className="font-bold text-gray-900 mb-3">{t.language}</h3>
-                    <div className="flex gap-2">
-                        {[{code:'en',label:'English',flag:'🇬🇧'},{code:'ru',label:'Русский',flag:'🇷🇺'},{code:'kk',label:'Қазақша',flag:'🇰🇿'}].map(l => (
-                            <button key={l.code} onClick={() => setLang(l.code)}
-                                className={`flex-1 py-3 rounded-2xl font-medium text-sm btn-press transition-all flex flex-col items-center gap-1 ${
-                                    lang === l.code ? 'bg-[#D7FE63] text-gray-900 shadow-md' : 'bg-gray-100 text-gray-500'
-                                }`}>
-                                <span className="text-lg">{l.flag}</span>
-                                <span className="text-xs">{l.label}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Reset */}
-                <button onClick={() => setShowConfirm(true)}
-                    className="w-full bg-red-50 text-red-500 py-4 rounded-2xl font-semibold btn-press hover:bg-red-100 transition-colors animate-fadeIn stagger-4">
-                    <i className="fa-solid fa-trash mr-2"></i>{t.resetData}
-                </button>
-
-                {showConfirm && (
-                    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-6 animate-fadeIn">
-                        <div className="bg-white rounded-3xl p-6 w-full max-w-sm animate-scaleIn">
-                            <p className="text-gray-900 font-semibold text-center mb-6">{t.confirmReset}</p>
-                            <div className="flex gap-3">
-                                <button onClick={() => setShowConfirm(false)}
-                                    className="flex-1 bg-gray-100 text-gray-600 py-3 rounded-2xl font-semibold btn-press">{t.no}</button>
-                                <button onClick={() => { resetApp(); setShowConfirm(false); }}
-                                    className="flex-1 bg-red-500 text-white py-3 rounded-2xl font-semibold btn-press">{t.yes}</button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-        );
-    }
-
-    // ==================== Bottom Navigation ====================
-    function BottomNav({ activeTab, setActiveTab }) {
-        const { lang } = useContext(AppContext);
-        const t = translations[lang];
-        const tabs = [
-            { id: 'dashboard', icon: 'fa-house', label: t.dashboard },
-            { id: 'tracker', icon: 'fa-utensils', label: t.tracker },
-            { id: 'analytics', icon: 'fa-chart-simple', label: t.analytics },
-            { id: 'settings', icon: 'fa-gear', label: t.settings },
-        ];
-
-        return (
-            <div className="fixed bottom-0 left-0 right-0 z-40">
-                <div className="max-w-[430px] mx-auto">
-                    <div className="glass-card border-t border-gray-100 px-2 py-2 flex justify-around">
-                        {tabs.map(tab => (
-                            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                                className={`nav-item flex flex-col items-center py-2 px-4 rounded-2xl btn-press ${
-                                    activeTab === tab.id ? 'active' : 'text-gray-400'
-                                }`}>
-                                <i className={`fa-solid ${tab.icon} text-lg mb-1`}></i>
-                                <span className="text-[10px] font-semibold">{tab.label}</span>
-                                <div className={`nav-dot w-5 h-1 bg-[#D7FE63] rounded-full mt-1`}></div>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // ==================== Main App ====================
-    function App() {
-        const [isOnboarded, setIsOnboarded] = useState(() => {
-            try { return !!localStorage.getItem('wellai_profile'); } catch { return false; }
+function bindStep0() {
+    document.querySelectorAll('.lang-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            UserCtx.lang = chip.dataset.lang;
+            renderObStep(0);
         });
-        const [profile, setProfileState] = useState(() => {
-            try {
-                const saved = localStorage.getItem('wellai_profile');
-                return saved ? JSON.parse(saved) : null;
-            } catch { return null; }
+    });
+    const regionSel = document.getElementById('ob-region');
+    if (regionSel) regionSel.addEventListener('change', e => UserCtx.region = e.target.value);
+}
+
+function bindStep1() {
+    document.querySelectorAll('[data-gender]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            UserCtx.gender = btn.dataset.gender;
+            document.querySelectorAll('[data-gender]').forEach(b => b.classList.toggle('active', b.dataset.gender === UserCtx.gender));
         });
-        const [foodLog, setFoodLogState] = useState(() => {
-            try {
-                const saved = localStorage.getItem('wellai_foodlog');
-                return saved ? JSON.parse(saved) : {};
-            } catch { return {}; }
+    });
+    ['age','height','weight'].forEach(field => {
+        const el = document.getElementById(`ob-${field}`);
+        if (el) el.addEventListener('input', () => UserCtx[field] = parseFloat(el.value) || 0);
+    });
+}
+
+function bindStep2() {
+    const toggle = document.getElementById('diabetes-toggle');
+    if (toggle) toggle.addEventListener('click', () => {
+        UserCtx.diabetes = !UserCtx.diabetes;
+        toggle.classList.toggle('on', UserCtx.diabetes);
+    });
+    document.querySelectorAll('[data-goal]').forEach(card => {
+        card.addEventListener('click', () => {
+            UserCtx.goal = card.dataset.goal;
+            document.querySelectorAll('[data-goal]').forEach(c => c.classList.toggle('selected', c.dataset.goal === UserCtx.goal));
         });
-        const [waterLog, setWaterLogState] = useState(() => {
-            try {
-                const saved = localStorage.getItem('wellai_waterlog');
-                return saved ? JSON.parse(saved) : {};
-            } catch { return {}; }
-        });
-        const [lang, setLangState] = useState(() => {
-            try { return localStorage.getItem('wellai_lang') || 'en'; } catch { return 'en'; }
-        });
-        const [activeTab, setActiveTab] = useState('dashboard');
-        const [selectedDate, setSelectedDate] = useState(new Date());
+    });
+}
 
-        const setProfile = (p) => {
-            setProfileState(p);
-            try { localStorage.setItem('wellai_profile', JSON.stringify(p)); } catch {}
-        };
-        const setFoodLog = (log) => {
-            setFoodLogState(log);
-            try { localStorage.setItem('wellai_foodlog', JSON.stringify(log)); } catch {}
-        };
-        const setWaterLog = (log) => {
-            setWaterLogState(log);
-            try { localStorage.setItem('wellai_waterlog', JSON.stringify(log)); } catch {}
-        };
-        const setLang = (l) => {
-            setLangState(l);
-            try { localStorage.setItem('wellai_lang', l); } catch {}
-        };
+document.getElementById('ob-next-btn').addEventListener('click', () => {
+    if (obStep < 2) {
+        obStep++;
+        renderObStep(obStep);
+    } else {
+        // Finish onboarding
+        calcMifflin();
+        launchApp();
+    }
+});
 
-        const handleOnboardingComplete = (profileData) => {
-            setProfile(profileData);
-            setIsOnboarded(true);
-        };
+document.getElementById('ob-back-btn').addEventListener('click', () => {
+    if (obStep > 0) {
+        obStep--;
+        renderObStep(obStep);
+    }
+});
 
-        const resetApp = () => {
-            try {
-                localStorage.removeItem('wellai_profile');
-                localStorage.removeItem('wellai_foodlog');
-                localStorage.removeItem('wellai_waterlog');
-            } catch {}
-            setProfileState(null);
-            setFoodLogState({});
-            setWaterLogState({});
-            setIsOnboarded(false);
-        };
+// ── APP LAUNCH ────────────────────────────────────────────
+function launchApp() {
+    const ob = document.getElementById('onboarding');
+    ob.classList.add('hidden');
+    setTimeout(() => { ob.style.display = 'none'; }, 500);
 
-        const contextValue = {
-            profile, setProfile, foodLog, setFoodLog, waterLog, setWaterLog,
-            lang, setLang, selectedDate, setSelectedDate, resetApp
-        };
+    const app = document.getElementById('main-app');
+    app.style.display = 'flex';
+    app.style.animation = 'fadeIn 0.5s ease';
 
-        if (!isOnboarded || !profile) {
-            return (
-                <AppContext.Provider value={contextValue}>
-                    <Onboarding onComplete={handleOnboardingComplete} />
-                </AppContext.Provider>
-            );
-        }
+    recalcConsumed();
+    renderHome();
+    renderPlanner();
+    renderStats();
+    renderProfile();
+    renderWater();
+}
 
-        const renderScreen = () => {
-            switch (activeTab) {
-                case 'dashboard': return <DashboardScreen />;
-                case 'tracker': return <TrackerScreen />;
-                case 'analytics': return <AnalyticsScreen />;
-                case 'settings': return <SettingsScreen />;
-                default: return <DashboardScreen />;
-            }
-        };
+// ── HOME / DASHBOARD ──────────────────────────────────────
+function renderHome() {
+    const lang = UserCtx.lang;
 
-        return (
-            <AppContext.Provider value={contextValue}>
-                <div className="max-w-[430px] mx-auto min-h-screen bg-[#F8F9FB]">
-                    <div className="px-5 pt-6 pb-28 overflow-y-auto hide-scrollbar" style={{ minHeight: '100vh' }}>
-                        {renderScreen()}
-                    </div>
-                    <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+    // Greeting
+    document.getElementById('dash-greeting').textContent = getGreeting();
+    document.getElementById('dash-name').textContent     = UserCtx.gender === 'male' ? (lang === 'en' ? 'Friend' : lang === 'kz' ? 'Достым' : 'Привет') : (lang === 'en' ? 'Friend' : lang === 'kz' ? 'Достым' : 'Привет');
+
+    // Ring
+    const remaining = Math.max(0, UserCtx.dailyKcal - UserCtx.consumedKcal);
+    const pct = Math.min(1, UserCtx.consumedKcal / UserCtx.dailyKcal);
+    const circumference = 2 * Math.PI * 80; // 502.65
+    const offset = circumference * (1 - pct);
+    const ring = document.getElementById('cal-ring');
+    ring.style.strokeDashoffset = offset;
+    document.getElementById('ring-remaining').textContent = remaining;
+    document.getElementById('ring-label-text').textContent = t('kcal_left');
+    document.getElementById('ring-sub-text').textContent   = `${t('kcal_of')} ${UserCtx.dailyKcal} ${t('kcal_unit')}`;
+
+    // Macro bars
+    const pPct = Math.min(100, (UserCtx.consumedProtein / UserCtx.dailyProtein) * 100);
+    const fPct = Math.min(100, (UserCtx.consumedFat     / UserCtx.dailyFat)     * 100);
+    const cPct = Math.min(100, (UserCtx.consumedCarbs   / UserCtx.dailyCarbs)   * 100);
+    document.getElementById('mb-protein').textContent = UserCtx.consumedProtein;
+    document.getElementById('mb-fat').textContent     = UserCtx.consumedFat;
+    document.getElementById('mb-carbs').textContent   = UserCtx.consumedCarbs;
+    document.getElementById('mbf-protein').style.width = pPct + '%';
+    document.getElementById('mbf-fat').style.width     = fPct + '%';
+    document.getElementById('mbf-carbs').style.width   = cPct + '%';
+
+    // Macro labels
+    const macroItems = document.querySelectorAll('.macro-bar-item .macro-bar-label');
+    if (macroItems[0]) macroItems[0].textContent = t('protein');
+    if (macroItems[1]) macroItems[1].textContent = t('fat');
+    if (macroItems[2]) macroItems[2].textContent = t('carbs');
+
+    // Diabetes banner
+    const bannerEl = document.getElementById('diabetes-banner-home');
+    if (UserCtx.diabetes) {
+        const totalXE = (UserCtx.consumedCarbs / 12).toFixed(1);
+        bannerEl.innerHTML = `
+            <div class="diabetes-banner fade-enter">
+                <div class="diabetes-banner-icon"><i class="fa-solid fa-syringe"></i></div>
+                <div>
+                    <div class="diabetes-banner-title">${t('diabetes_banner_title')}</div>
+                    <div class="diabetes-banner-sub">${t('diabetes_banner_sub')} · ${totalXE} XE</div>
                 </div>
-            </AppContext.Provider>
-        );
+            </div>`;
+    } else {
+        bannerEl.innerHTML = '';
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
+    // Section labels
+    document.getElementById('meals-section-title').textContent = t('meals_title');
+    document.getElementById('meals-section-link').textContent  = t('add');
+
+    // Meals list
+    renderMealsList('home-meals-list');
+
+    // Water
+    document.getElementById('water-title').textContent    = t('water_title');
+    document.getElementById('water-sub-text').textContent = t('water_goal');
+    document.getElementById('water-add-label').textContent = t('water_add');
+}
+
+function renderMealsList(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    mealData.forEach(meal => {
+        const totals = calcMealTotals(meal);
+        const xe = calcXE(totals.carbs);
+        const mealTypeLabel = t(meal.type);
+        container.innerHTML += `
+            <div class="meal-card fade-enter" id="meal-card-${meal.id}">
+                <div class="meal-card-header">
+                    <div class="meal-type-badge">${mealTypeLabel}</div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        ${UserCtx.diabetes ? `<span class="meal-item-xe">${xe} XE</span>` : ''}
+                        <span class="meal-kcal">${totals.kcal} ${t('kcal_unit')}</span>
+                        <button class="meal-complete-btn ${meal.completed?'done':''}" onclick="toggleMeal('${meal.id}')">
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+                ${meal.items.map(item => {
+                    const food = foodDB.find(f => f.id === item.foodId);
+                    if (!food) return '';
+                    const ratio = item.grams / 100;
+                    const itemCarbs = Math.round(food.carbs * ratio);
+                    const itemXE    = calcXE(itemCarbs);
+                    const gl        = calcGL(food.gi, itemCarbs);
+                    return `
+                        <div class="meal-item-row">
+                            <div class="gi-dot ${getGIClass(food.gi)}"></div>
+                            <div class="meal-item-name">${food.name[UserCtx.lang] || food.name.ru}</div>
+                            <div class="meal-item-meta">${item.grams}г · ${Math.round(food.kcal * ratio)} ${t('kcal_unit')}</div>
+                            ${UserCtx.diabetes ? `<div class="meal-item-xe">${itemXE} XE</div>` : ''}
+                        </div>`;
+                }).join('')}
+            </div>`;
+    });
+}
+
+function toggleMeal(mealId) {
+    const meal = mealData.find(m => m.id === mealId);
+    if (!meal) return;
+    meal.completed = !meal.completed;
+    recalcConsumed();
+    renderHome();
+    renderMealsList('planner-meals-list');
+}
+
+// ── WATER ─────────────────────────────────────────────────
+function renderWater() {
+    const container = document.getElementById('water-glasses');
+    if (!container) return;
+    container.innerHTML = '';
+    for (let i = 0; i < 8; i++) {
+        const filled = i < UserCtx.waterGlasses;
+        container.innerHTML += `
+            <button class="water-glass ${filled?'filled':''}" onclick="toggleWater(${i})">
+                <i class="fa-solid fa-droplet"></i>
+            </button>`;
+    }
+    document.getElementById('water-count').textContent = UserCtx.waterGlasses;
+}
+
+function toggleWater(idx) {
+    UserCtx.waterGlasses = idx < UserCtx.waterGlasses ? idx : idx + 1;
+    renderWater();
+}
+
+document.getElementById('water-add-btn').addEventListener('click', () => {
+    if (UserCtx.waterGlasses < 8) {
+        UserCtx.waterGlasses++;
+        renderWater();
+    }
+});
+
+// ── PLANNER ───────────────────────────────────────────────
+function renderPlanner() {
+    document.getElementById('planner-title').textContent = t('planner_title');
+    document.getElementById('planner-sub').textContent   = t('planner_sub');
+
+    // Date strip
+    const strip = document.getElementById('date-strip');
+    strip.innerHTML = '';
+    const days = t('days');
+    const today = new Date();
+    for (let i = -3; i <= 3; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        const isToday = i === 0;
+        strip.innerHTML += `
+            <button class="date-chip ${isToday?'active':''}" onclick="selectDate(${i})">
+                <span class="day-name">${days[d.getDay()]}</span>
+                <span class="day-num">${d.getDate()}</span>
+            </button>`;
+    }
+
+    renderMealsList('planner-meals-list');
+}
+
+function selectDate(offset) {
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    selectedDate = d;
+    renderPlanner();
+}
+
+// ── STATS ─────────────────────────────────────────────────
+function renderStats() {
+    document.getElementById('stats-title').textContent = t('stats_title');
+    document.getElementById('stats-sub').textContent   = t('stats_sub');
+
+    const weekData = [1820, 2100, 1950, 2200, 1780, 2050, UserCtx.consumedKcal || 1600];
+    const avg = Math.round(weekData.reduce((a,b)=>a+b,0) / weekData.length);
+    const maxVal = Math.max(...weekData);
+    const days = t('days');
+    const today = new Date();
+
+    const content = document.getElementById('stats-content');
+    content.innerHTML = `
+        <div class="stat-card fade-enter" style="margin-top:20px;">
+            <div class="stat-card-title">${t('stats_avg_kcal')}</div>
+            <div><span class="stat-card-val">${avg}</span><span class="stat-card-unit">${t('kcal_unit')}</span></div>
+            <div class="stat-bar-row">
+                ${weekData.map((val, i) => {
+                    const d = new Date(today);
+                    d.setDate(today.getDate() - 6 + i);
+                    const h = Math.round((val / maxVal) * 100);
+                    const isToday = i === 6;
+                    return `
+                        <div class="stat-bar-col">
+                            <div class="stat-bar-track">
+                                <div class="stat-bar-fill" style="height:${h}%;background:${isToday?'var(--lime-dark)':'var(--border)'};"></div>
+                            </div>
+                            <div class="stat-bar-day">${days[d.getDay()]}</div>
+                        </div>`;
+                }).join('')}
+            </div>
+        </div>
+
+        <div class="stat-card fade-enter" style="animation-delay:0.1s;">
+            <div class="stat-card-title">${t('stats_total_xe')}</div>
+            <div><span class="stat-card-val">${(weekData.reduce((a,b)=>a+b,0) * 0.4 / 4 / 12).toFixed(0)}</span><span class="stat-card-unit">XE</span></div>
+        </div>
+
+        <div class="stat-card fade-enter" style="animation-delay:0.15s;">
+            <div class="stat-card-title">${t('stats_water')}</div>
+            <div><span class="stat-card-val">${UserCtx.waterGlasses}</span><span class="stat-card-unit">/ 8</span></div>
+            <div style="margin-top:12px;">
+                <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden;">
+                    <div style="height:100%;width:${(UserCtx.waterGlasses/8)*100}%;background:var(--blue);border-radius:4px;transition:width 0.8s ease;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="food-db-section fade-enter" style="animation-delay:0.2s;">
+            <div class="food-db-title" style="padding-top:8px;">${UserCtx.lang==='en'?'Regional Foods':'Региональные продукты'}</div>
+            <div class="food-chips">
+                ${foodDB.slice(0,5).map(f => `
+                    <div class="food-chip">
+                        <div class="gi-dot ${getGIClass(f.gi)}"></div>
+                        ${f.name[UserCtx.lang] || f.name.ru}
+                        <span style="color:var(--text-secondary);font-size:11px;">${f.kcal}${t('kcal_unit')}</span>
+                    </div>`).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// ── PROFILE ───────────────────────────────────────────────
+function renderProfile() {
+    const bmi = (UserCtx.weight / ((UserCtx.height/100)**2)).toFixed(1);
+    const goalMap = { loss: t('goal_loss_short'), maintain: t('goal_maintain_short'), diabetes: t('goal_diabetes_short') };
+    const goalShort = goalMap[UserCtx.goal] || '';
+
+    document.getElementById('profile-name').textContent       = UserCtx.gender === 'male' ? (UserCtx.lang==='en'?'User':'Пользователь') : (UserCtx.lang==='en'?'User':'Пользователь');
+    document.getElementById('profile-goal-label').textContent = `${t('profile_goal')}: ${goalShort}`;
+
+    const grid = document.getElementById('metric-grid');
+    grid.innerHTML = `
+        <div class="metric-card fade-enter">
+            <div class="metric-card-label">${t('weight_label')}</div>
+            <div class="metric-card-val">${UserCtx.weight}<span class="metric-card-unit">кг</span></div>
+        </div>
+        <div class="metric-card fade-enter" style="animation-delay:0.05s;">
+            <div class="metric-card-label">${t('height_label')}</div>
+            <div class="metric-card-val">${UserCtx.height}<span class="metric-card-unit">см</span></div>
+        </div>
+        <div class="metric-card fade-enter" style="animation-delay:0.1s;">
+            <div class="metric-card-label">${t('age_label')}</div>
+            <div class="metric-card-val">${UserCtx.age}<span class="metric-card-unit">${UserCtx.lang==='en'?'y':'л'}</span></div>
+        </div>
+        <div class="metric-card fade-enter" style="animation-delay:0.15s;">
+            <div class="metric-card-label">${t('bmi_label')}</div>
+            <div class="metric-card-val" style="color:${bmi<18.5||bmi>30?'var(--red)':bmi>25?'var(--yellow)':'var(--green)'}">${bmi}</div>
+        </div>
+    `;
+
+    const langNames = { ru: 'Русский', kz: 'Қазақша', en: 'English' };
+    const settings = document.getElementById('settings-list');
+    settings.innerHTML = `
+        <div class="settings-item" onclick="cycleLang()">
+            <div class="settings-item-left">
+                <div class="settings-icon"><i class="fa-solid fa-globe"></i></div>
+                <div class="settings-label">${t('settings_lang')}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="settings-value">${langNames[UserCtx.lang]}</span>
+                <i class="fa-solid fa-chevron-right settings-arrow"></i>
+            </div>
+        </div>
+        <div class="settings-item" onclick="toggleDiabetes()">
+            <div class="settings-item-left">
+                <div class="settings-icon"><i class="fa-solid fa-syringe"></i></div>
+                <div class="settings-label">${t('settings_diabetes')}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="settings-value">${UserCtx.diabetes ? t('on') : t('off')}</span>
+                <div class="toggle-switch ${UserCtx.diabetes?'on':''}" style="width:40px;height:24px;" onclick="event.stopPropagation();toggleDiabetes()"></div>
+            </div>
+        </div>
+        <div class="settings-item">
+            <div class="settings-item-left">
+                <div class="settings-icon"><i class="fa-solid fa-bullseye"></i></div>
+                <div class="settings-label">${t('settings_goal')}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="settings-value">${goalShort}</span>
+                <i class="fa-solid fa-chevron-right settings-arrow"></i>
+            </div>
+        </div>
+        <div class="settings-item">
+            <div class="settings-item-left">
+                <div class="settings-icon"><i class="fa-solid fa-bell"></i></div>
+                <div class="settings-label">${t('settings_notify')}</div>
+            </div>
+            <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+        <div class="settings-item">
+            <div class="settings-item-left">
+                <div class="settings-icon"><i class="fa-solid fa-circle-info"></i></div>
+                <div class="settings-label">${t('settings_about')}</div>
+            </div>
+            <i class="fa-solid fa-chevron-right settings-arrow"></i>
+        </div>
+    `;
+}
+
+function cycleLang() {
+    const langs = ['ru', 'kz', 'en'];
+    const idx = langs.indexOf(UserCtx.lang);
+    UserCtx.lang = langs[(idx + 1) % langs.length];
+    refreshAllUI();
+}
+
+function toggleDiabetes() {
+    UserCtx.diabetes = !UserCtx.diabetes;
+    refreshAllUI();
+}
+
+function refreshAllUI() {
+    renderHome();
+    renderPlanner();
+    renderStats();
+    renderProfile();
+    renderWater();
+    // Update nav labels
+    document.getElementById('nav-label-home').textContent    = t('nav_home');
+    document.getElementById('nav-label-planner').textContent = t('nav_planner');
+    document.getElementById('nav-label-stats').textContent   = t('nav_stats');
+    document.getElementById('nav-label-profile').textContent = t('nav_profile');
+    // Update scan modal
+    document.getElementById('scan-hint').textContent         = t('scan_hint');
+    document.getElementById('scan-loading-text').textContent = t('scan_loading');
+    document.getElementById('result-label').textContent      = t('scan_recognized');
+    document.getElementById('result-origin').textContent     = t('scan_origin');
+    document.getElementById('result-add-btn').textContent    = t('scan_add');
+    document.getElementById('result-cancel-btn').textContent = t('scan_cancel');
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+document.querySelectorAll('.nav-item[data-screen]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const screen = btn.dataset.screen;
+        switchScreen(screen);
+    });
+});
+
+function switchScreen(screen) {
+    currentScreen = screen;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const el = document.getElementById(`screen-${screen}`);
+    if (el) { el.classList.add('active'); el.style.animation = 'fadeIn 0.3s ease'; }
+    const nav = document.getElementById(`nav-${screen}`);
+    if (nav) nav.classList.add('active');
+}
+
+// ── AI SCAN ───────────────────────────────────────────────
+document.getElementById('nav-scan').addEventListener('click', openScan);
+
+function openScan() {
+    const modal = document.getElementById('scan-modal');
+    modal.classList.add('open');
+    document.getElementById('result-modal').classList.remove('open');
+    document.getElementById('scan-loading').style.display = 'none';
+    document.getElementById('scan-hint').textContent = t('scan_hint');
+
+    // Auto-scan after 2s
+    scanTimeout = setTimeout(() => {
+        document.getElementById('scan-loading').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('scan-loading').style.display = 'none';
+            showScanResult();
+        }, 2000);
+    }, 2000);
+}
+
+function showScanResult() {
+    // Show Beshbarmak result
+    const food = foodDB[0]; // Beshbarmak
+    const grams = 300;
+    const ratio = grams / 100;
+    const kcal   = Math.round(food.kcal    * ratio);
+    const carbs  = Math.round(food.carbs   * ratio);
+    const xe     = calcXE(carbs);
+    const gl     = calcGL(food.gi, carbs);
+
+    document.getElementById('result-name').textContent   = food.name[UserCtx.lang] || food.name.ru;
+    document.getElementById('result-origin').textContent = food.origin[UserCtx.lang] || food.origin.ru;
+    document.getElementById('res-kcal').textContent  = kcal;
+    document.getElementById('res-carbs').textContent = carbs + 'г';
+    document.getElementById('res-xe').textContent    = xe;
+    document.getElementById('res-gl').textContent    = gl;
+    document.getElementById('result-gi-val').textContent  = `ГИ: ${food.gi}`;
+    document.getElementById('result-gi-text').textContent = getGILabel(food.gi);
+
+    const dotEl = document.getElementById('result-gi-dot');
+    dotEl.className = `result-gi-dot ${getGIClass(food.gi)}`;
+
+    const giRow = document.getElementById('result-gi-row');
+    if (food.gi >= 70) giRow.style.background = 'rgba(255,77,77,0.08)';
+    else if (food.gi >= 56) giRow.style.background = 'rgba(255,187,51,0.08)';
+    else giRow.style.background = 'rgba(34,197,94,0.08)';
+
+    document.getElementById('result-label').textContent      = t('scan_recognized');
+    document.getElementById('result-add-btn').textContent    = t('scan_add');
+    document.getElementById('result-cancel-btn').textContent = t('scan_cancel');
+
+    document.getElementById('result-modal').classList.add('open');
+}
+
+document.getElementById('scan-close-btn').addEventListener('click', closeScan);
+document.getElementById('result-cancel-btn').addEventListener('click', closeScan);
+
+function closeScan() {
+    clearTimeout(scanTimeout);
+    document.getElementById('scan-modal').classList.remove('open');
+    document.getElementById('result-modal').classList.remove('open');
+}
+
+document.getElementById('result-add-btn').addEventListener('click', () => {
+    // Add beshbarmak to diary
+    const food = foodDB[0];
+    const grams = 300;
+    const ratio = grams / 100;
+    UserCtx.consumedKcal    += Math.round(food.kcal    * ratio);
+    UserCtx.consumedProtein += Math.round(food.protein * ratio);
+    UserCtx.consumedFat     += Math.round(food.fat     * ratio);
+    UserCtx.consumedCarbs   += Math.round(food.carbs   * ratio);
+    closeScan();
+    renderHome();
+    showToast(t('added_toast'));
+    switchScreen('home');
+});
+
+// ── INIT ──────────────────────────────────────────────────
+renderObStep(0);
+
+// Init water glasses
+(function initWaterGlasses() {
+    const container = document.getElementById('water-glasses');
+    if (!container) return;
+    for (let i = 0; i < 8; i++) {
+        container.innerHTML += `<button class="water-glass" onclick="toggleWater(${i})"><i class="fa-solid fa-droplet"></i></button>`;
+    }
+})();
+
+</script>
 </body>
 </html>
