@@ -3,7 +3,6 @@
 <head>
     <title>WellAI — Smart Health for Kazakhstan</title>
     <meta charset="UTF-8">
-    <!-- PROTECTED: meta type -->
     <meta name="type" value="app" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta property="og:title" content="WellAI — Premium HealthTech for Kazakhstan">
@@ -1035,9 +1034,6 @@
 <body>
 <div id="app-root">
 
-    <!-- ══════════════════════════════════════════
-         ONBOARDING
-    ══════════════════════════════════════════ -->
     <div id="onboarding">
         <div class="ob-header">
             <div class="ob-logo">
@@ -1054,8 +1050,7 @@
         </div>
 
         <div class="ob-body" id="ob-body">
-            <!-- Step 0 content injected by JS -->
-        </div>
+            </div>
 
         <div class="ob-footer">
             <button class="btn-primary" id="ob-next-btn">Продолжить</button>
@@ -1063,15 +1058,10 @@
         </div>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         MAIN APP
-    ══════════════════════════════════════════ -->
     <div id="main-app" style="display:none; flex-direction:column; height:100%; flex:1; overflow:hidden;">
 
-        <!-- SCREENS -->
         <div class="screen-content" id="screens-wrapper">
 
-            <!-- HOME SCREEN -->
             <div class="screen active" id="screen-home">
                 <div class="dash-header">
                     <div class="dash-greeting" id="dash-greeting">Доброе утро 👋</div>
@@ -1119,7 +1109,6 @@
 
                 <div id="home-meals-list"></div>
 
-                <!-- Water Tracker -->
                 <div class="water-card">
                     <div class="water-header">
                         <div>
@@ -1138,7 +1127,6 @@
                 </div>
             </div>
 
-            <!-- PLANNER SCREEN -->
             <div class="screen" id="screen-planner">
                 <div class="screen-header">
                     <div class="screen-header-title" id="planner-title">Планировщик</div>
@@ -1148,7 +1136,6 @@
                 <div id="planner-meals-list" style="padding-bottom:24px;"></div>
             </div>
 
-            <!-- FORUM SCREEN -->
             <div class="screen" id="screen-forum">
                 <div class="screen-header">
                     <div class="screen-header-title" id="forum-title">Форум</div>
@@ -1164,7 +1151,6 @@
                 </div>
             </div>
 
-            <!-- PROFILE SCREEN -->
             <div class="screen" id="screen-profile">
                 <div style="padding: 56px 24px 28px; background: rgba(255,255,255,0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.3);">
                     <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
@@ -1177,10 +1163,7 @@
                 <div id="settings-list"></div>
             </div>
 
-        </div><!-- /screens-wrapper -->
-
-        <!-- BOTTOM NAV -->
-        <nav id="bottom-nav">
+        </div><nav id="bottom-nav">
             <button class="nav-item active" data-screen="home" id="nav-home">
                 <i class="fa-solid fa-house"></i>
                 <span id="nav-label-home">Главная</span>
@@ -1203,9 +1186,6 @@
         </nav>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         AI SCAN MODAL
-    ══════════════════════════════════════════ -->
     <div id="scan-modal">
         <div class="scan-viewfinder">
             <div class="scan-overlay">
@@ -1225,7 +1205,6 @@
             </div>
         </div>
 
-        <!-- Result slide-up -->
         <div id="result-modal">
             <div class="result-handle"></div>
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
@@ -1264,12 +1243,11 @@
         </div>
     </div>
 
-    <!-- TOAST -->
     <div id="toast"></div>
+    
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
 
-</div><!-- /app-root -->
-
-<script>
+</div><script>
 // ══════════════════════════════════════════════════════════
 //  WellAI — Core Application Logic
 // ══════════════════════════════════════════════════════════
@@ -1357,9 +1335,9 @@ const i18n = {
         off: 'Выкл',
         // Scan
         scan_hint: 'Наведите камеру на блюдо',
-        scan_loading: 'Распознаю блюдо...',
+        scan_loading: 'Распознаю блюдо через ИИ...',
         scan_recognized: 'Распознано',
-        scan_origin: 'Казахская кухня · 1 порция',
+        scan_origin: 'Распознано Gemini',
         scan_add: 'Добавить в дневник',
         scan_cancel: 'Отмена',
         gi_high: 'Высокий гликемический индекс',
@@ -1463,7 +1441,7 @@ const i18n = {
         scan_hint: 'Камераны тағамға бағыттаңыз',
         scan_loading: 'Тағамды тану...',
         scan_recognized: 'Танылды',
-        scan_origin: 'Қазақ асханасы · 1 порция',
+        scan_origin: 'Gemini арқылы танылды',
         scan_add: 'Күнделікке қосу',
         scan_cancel: 'Болдырмау',
         gi_high: 'Жоғары гликемиялық индекс',
@@ -1564,9 +1542,9 @@ const i18n = {
         on: 'On',
         off: 'Off',
         scan_hint: 'Point camera at a dish',
-        scan_loading: 'Recognizing dish...',
+        scan_loading: 'Recognizing via AI...',
         scan_recognized: 'Recognized',
-        scan_origin: 'Kazakh cuisine · 1 serving',
+        scan_origin: 'Recognized by Gemini',
         scan_add: 'Add to diary',
         scan_cancel: 'Cancel',
         gi_high: 'High glycemic index',
@@ -1635,7 +1613,7 @@ const UserCtx = {
 let obStep = 0;
 let currentScreen = 'home';
 let selectedDate = new Date();
-let scanTimeout = null;
+let currentScannedFood = null; // Для сохранения результатов Gemini
 
 // Meal data
 const mealData = [
@@ -2338,83 +2316,148 @@ function switchScreen(screen) {
     if (nav) nav.classList.add('active');
 }
 
-// ── AI SCAN ───────────────────────────────────────────────
-document.getElementById('nav-scan').addEventListener('click', openScan);
+// ── GEMINI AI INTEGRATION ─────────────────────────────────
 
-function openScan() {
+// ВНИМАНИЕ: Для реального использования замените этот ключ на свой!
+const API_KEY = 'AIzaSyDhcKfKvciuDEe7WY7sjxcyx9UxT2UkRgk'; 
+
+// 1. Привязываем клик по кнопке с камерой к открытию input
+document.getElementById('nav-scan').addEventListener('click', () => {
+    document.getElementById('cameraInput').click();
+});
+
+// Функция конвертации файла для ИИ
+function fileToGenerativePart(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve({
+            inlineData: { data: reader.result.split(",")[1], mimeType: file.type }
+        });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// Главная функция обращения к API Gemini
+async function analyzeFoodImage(imageFile) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    const imagePart = await fileToGenerativePart(imageFile);
+    
+    // Улучшенный промпт, запрашивающий также GI (гликемический индекс)
+    const prompt = `
+        Ты эксперт-диетолог. Проанализируй это фото еды.
+        Определи блюдо, примерный вес, калорийность, БЖУ и примерный гликемический индекс (GI).
+        Верни ответ СТРОГО в формате JSON без markdown разметки.
+        Структура: 
+        {
+            "dish_name": "Название блюда", 
+            "origin": "Регион/Тип (например: Казахская кухня)", 
+            "weight_g": 200, 
+            "calories": 350, 
+            "protein_g": 15, 
+            "fat_g": 10, 
+            "carbs_g": 45, 
+            "gi": 50
+        }
+    `;
+    
+    const requestBody = { contents: [{ parts: [{ text: prompt }, imagePart] }] };
+    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+    const data = await response.json();
+    
+    let jsonText = data.candidates[0].content.parts[0].text;
+    jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(jsonText);
+}
+
+// 2. Обработчик события: когда фото сделано/выбрано
+document.getElementById('cameraInput').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Показываем интерфейс сканирования и лоадер
     const modal = document.getElementById('scan-modal');
     modal.classList.add('open');
     document.getElementById('result-modal').classList.remove('open');
+    document.getElementById('scan-loading').style.display = 'flex';
+    document.getElementById('scan-hint').textContent = t('scan_loading'); 
+
+    try {
+        const result = await analyzeFoodImage(file);
+        currentScannedFood = result; // Сохраняем для добавления в дневник
+        showDynamicScanResult(result);
+    } catch (error) {
+        console.error("Ошибка AI:", error);
+        alert("Не удалось распознать еду. Проверьте API ключ или попробуйте сделать фото четче.");
+        closeScan();
+    }
+    
+    event.target.value = ''; // Сбрасываем input
+});
+
+// 3. Функция вывода динамических данных от ИИ в модальное окно
+function showDynamicScanResult(data) {
     document.getElementById('scan-loading').style.display = 'none';
-    document.getElementById('scan-hint').textContent = t('scan_hint');
 
-    // Auto-scan after 2s
-    scanTimeout = setTimeout(() => {
-        document.getElementById('scan-loading').style.display = 'flex';
-        setTimeout(() => {
-            document.getElementById('scan-loading').style.display = 'none';
-            showScanResult();
-        }, 2000);
-    }, 2000);
-}
+    const carbs = data.carbs_g;
+    const xe = calcXE(carbs);
+    const gi = data.gi || 50; 
+    const gl = calcGL(gi, carbs);
 
-function showScanResult() {
-    // Show Beshbarmak result
-    const food = foodDB[0]; // Beshbarmak
-    const grams = 300;
-    const ratio = grams / 100;
-    const kcal   = Math.round(food.kcal    * ratio);
-    const carbs  = Math.round(food.carbs   * ratio);
-    const xe     = calcXE(carbs);
-    const gl     = calcGL(food.gi, carbs);
-
-    document.getElementById('result-name').textContent   = food.name[UserCtx.lang] || food.name.ru;
-    document.getElementById('result-origin').textContent = food.origin[UserCtx.lang] || food.origin.ru;
-    document.getElementById('res-kcal').textContent  = kcal;
+    // Подставляем данные от ИИ
+    document.getElementById('result-name').textContent   = data.dish_name;
+    document.getElementById('result-origin').textContent = data.origin || t('scan_origin');
+    document.getElementById('res-kcal').textContent  = data.calories;
     document.getElementById('res-carbs').textContent = carbs + 'г';
     document.getElementById('res-xe').textContent    = xe;
     document.getElementById('res-gl').textContent    = gl;
-    document.getElementById('result-gi-val').textContent  = `ГИ: ${food.gi}`;
-    document.getElementById('result-gi-text').textContent = getGILabel(food.gi);
 
+    // Гликемический индекс
+    document.getElementById('result-gi-val').textContent  = `ГИ: ${gi}`;
+    document.getElementById('result-gi-text').textContent = getGILabel(gi);
+    
     const dotEl = document.getElementById('result-gi-dot');
-    dotEl.className = `result-gi-dot ${getGIClass(food.gi)}`;
+    dotEl.className = `result-gi-dot ${getGIClass(gi)}`;
 
     const giRow = document.getElementById('result-gi-row');
-    if (food.gi >= 70) giRow.style.background = 'rgba(255,77,77,0.08)';
-    else if (food.gi >= 56) giRow.style.background = 'rgba(255,187,51,0.08)';
+    if (gi >= 70) giRow.style.background = 'rgba(255,77,77,0.08)';
+    else if (gi >= 56) giRow.style.background = 'rgba(255,187,51,0.08)';
     else giRow.style.background = 'rgba(34,197,94,0.08)';
 
     document.getElementById('result-label').textContent      = t('scan_recognized');
     document.getElementById('result-add-btn').textContent    = t('scan_add');
     document.getElementById('result-cancel-btn').textContent = t('scan_cancel');
 
+    // Открываем шторку с результатом
     document.getElementById('result-modal').classList.add('open');
 }
 
-document.getElementById('scan-close-btn').addEventListener('click', closeScan);
-document.getElementById('result-cancel-btn').addEventListener('click', closeScan);
-
-function closeScan() {
-    clearTimeout(scanTimeout);
-    document.getElementById('scan-modal').classList.remove('open');
-    document.getElementById('result-modal').classList.remove('open');
-}
-
+// 4. Кнопка "Добавить в дневник" (теперь использует данные от ИИ)
 document.getElementById('result-add-btn').addEventListener('click', () => {
-    // Add beshbarmak to diary
-    const food = foodDB[0];
-    const grams = 300;
-    const ratio = grams / 100;
-    UserCtx.consumedKcal    += Math.round(food.kcal    * ratio);
-    UserCtx.consumedProtein += Math.round(food.protein * ratio);
-    UserCtx.consumedFat     += Math.round(food.fat     * ratio);
-    UserCtx.consumedCarbs   += Math.round(food.carbs   * ratio);
+    if (!currentScannedFood) return;
+
+    // Прибавляем распознанные макронутриенты
+    UserCtx.consumedKcal    += currentScannedFood.calories;
+    UserCtx.consumedProtein += currentScannedFood.protein_g;
+    UserCtx.consumedFat     += currentScannedFood.fat_g;
+    UserCtx.consumedCarbs   += currentScannedFood.carbs_g;
+
     closeScan();
     renderHome();
     showToast(t('added_toast'));
     switchScreen('home');
+    
+    currentScannedFood = null; // Очищаем после добавления
 });
+
+// Закрытие сканера
+document.getElementById('scan-close-btn').addEventListener('click', closeScan);
+document.getElementById('result-cancel-btn').addEventListener('click', closeScan);
+
+function closeScan() {
+    document.getElementById('scan-modal').classList.remove('open');
+    document.getElementById('result-modal').classList.remove('open');
+}
 
 // ── INIT ──────────────────────────────────────────────────
 renderObStep(0);
