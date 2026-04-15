@@ -2319,7 +2319,7 @@ function switchScreen(screen) {
 // ── GEMINI AI INTEGRATION ─────────────────────────────────
 
 // ВНИМАНИЕ: Для реального использования замените этот ключ на свой!
-const API_KEY = 'AIzaSyCC_n7DCa7dGsvjBZOk6RPfNPz5jQTlUeM'; 
+
 
 // 1. Привязываем клик по кнопке с камерой к открытию input
 document.getElementById('nav-scan').addEventListener('click', () => {
@@ -2340,74 +2340,30 @@ function fileToGenerativePart(file) {
 
 // Главная функция обращения к API Gemini
 async function analyzeFoodImage(imageFile) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-    
+    const workerUrl = "https://wellai-worker.wellai.workers.dev";
+
     const imagePart = await fileToGenerativePart(imageFile);
 
-    const prompt = `
-Ты эксперт-диетолог. Проанализируй это фото еды.
-Верни ТОЛЬКО JSON:
-
-{
-    "dish_name": "Название блюда",
-    "origin": "Тип кухни",
-    "weight_g": 200,
-    "calories": 350,
-    "protein_g": 15,
-    "fat_g": 10,
-    "carbs_g": 45,
-    "gi": 50
-}
-`;
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    const response = await fetch(workerUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify({
-            contents: [{
-                parts: [
-                    { text: prompt },
-                    imagePart
-                ]
-            }]
+            imageBase64: imagePart.inlineData.data,
+            mimeType: imagePart.inlineData.mimeType
         })
     });
 
     const data = await response.json();
 
-    // 🔥 защита от пустого ответа
-    if (!data.candidates || !data.candidates[0]) {
-        console.error("API ERROR:", data);
-        throw new Error("Нет ответа от AI");
+    if (!response.ok) {
+        console.error("WORKER ERROR:", data);
+        throw new Error(data?.error || "Worker request failed");
     }
 
-    let text = data.candidates[0].content.parts[0].text;
-
-    // 🧹 очистка
-    text = text
-        .replace(/```json/g, '')
-        .replace(/```/g, '')
-        .trim();
-
-    // 🔥 вырезаем чистый JSON
-    const start = text.indexOf('{');
-    const end = text.lastIndexOf('}');
-
-    if (start === -1 || end === -1) {
-        console.error("RAW:", text);
-        throw new Error("AI вернул не JSON");
-    }
-
-    const clean = text.slice(start, end + 1);
-
-    try {
-        return JSON.parse(clean);
-    } catch (e) {
-        console.error("PARSE ERROR:", clean);
-        throw new Error("Ошибка парсинга");
-    }
+    return data;
 }
-
 // 2. Обработчик события: когда фото сделано/выбрано
 document.getElementById('cameraInput').addEventListener('change', async (event) => {
     const file = event.target.files[0];
