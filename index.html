@@ -1109,6 +1109,120 @@
         .mvp-small-btn { flex: 1; border: none; background: rgba(240,249,255,0.9); border-radius: 12px; padding: 10px; font-size: 12px; font-weight: 700; font-family: 'Inter', sans-serif; color: var(--text); cursor: pointer; }
         .mvp-danger-btn { background: rgba(248,113,113,0.12); color: #B91C1C; }
 
+
+        /* ── AI MENU / FRIDGE PLANNER ── */
+        .menu-root { padding: 18px 24px 28px; }
+        .menu-hero-card {
+            background: linear-gradient(135deg, #0F172A, #1E293B);
+            color: white;
+            border-radius: 26px;
+            padding: 22px;
+            box-shadow: 0 18px 46px rgba(15,23,42,0.20);
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .menu-hero-card::after {
+            content: '';
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            right: -60px;
+            top: -70px;
+            background: rgba(167,243,208,0.15);
+        }
+        .menu-hero-kicker { font-size: 12px; font-weight: 800; color: var(--lime); text-transform: uppercase; letter-spacing: 0.8px; }
+        .menu-hero-title { font-size: 24px; font-weight: 800; letter-spacing: -0.6px; line-height: 1.15; margin-top: 8px; max-width: 290px; }
+        .menu-hero-sub { font-size: 14px; color: rgba(255,255,255,0.68); line-height: 1.5; margin-top: 9px; max-width: 300px; }
+        .menu-section-card {
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: 0 8px 32px rgba(15,23,42,0.07);
+            margin-bottom: 14px;
+        }
+        .menu-section-title { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+        .menu-section-sub { font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px; }
+        .menu-category { margin-top: 14px; }
+        .menu-category:first-of-type { margin-top: 0; }
+        .menu-category-title { font-size: 12px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.45px; margin-bottom: 8px; }
+        .menu-chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .menu-chip {
+            border: 1.5px solid rgba(226,232,240,0.9);
+            background: rgba(240,249,255,0.78);
+            border-radius: 999px;
+            padding: 10px 13px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.18s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .menu-chip:active { transform: scale(0.96); }
+        .menu-chip.active { background: linear-gradient(135deg, #0F172A, #1E293B); border-color: transparent; color: var(--lime); box-shadow: 0 8px 20px rgba(15,23,42,0.16); }
+        .menu-seg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .menu-seg-btn {
+            border: 1.5px solid rgba(226,232,240,0.9);
+            background: rgba(255,255,255,0.70);
+            border-radius: 16px;
+            padding: 12px 8px;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .menu-seg-btn.active { background: linear-gradient(135deg, #0F172A, #1E293B); color: var(--lime); border-color: transparent; box-shadow: 0 8px 20px rgba(15,23,42,0.16); }
+        .menu-actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+        .menu-primary-mini, .menu-secondary-mini {
+            border: none;
+            border-radius: 16px;
+            padding: 13px 12px;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .menu-primary-mini { background: linear-gradient(135deg, #0F172A, #1E293B); color: var(--lime); box-shadow: 0 8px 24px rgba(15,23,42,0.18); }
+        .menu-primary-mini:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+        .menu-secondary-mini { background: rgba(240,249,255,0.9); color: var(--text); border: 1px solid rgba(226,232,240,0.9); }
+        .menu-plan-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+        .menu-plan-title { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.4px; }
+        .menu-plan-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; }
+        .menu-ai-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px; border-radius: 999px; background: rgba(167,243,208,0.24); color: var(--lime-dark); font-size: 11px; font-weight: 800; white-space: nowrap; }
+        .menu-meal-card {
+            background: rgba(255,255,255,0.86);
+            border: 1px solid rgba(255,255,255,0.42);
+            border-radius: 24px;
+            padding: 17px;
+            box-shadow: 0 8px 32px rgba(15,23,42,0.07);
+            margin-bottom: 12px;
+        }
+        .menu-meal-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+        .menu-meal-type { font-size: 11px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .menu-meal-name { font-size: 16px; font-weight: 800; color: var(--text); margin-top: 4px; line-height: 1.25; }
+        .menu-meal-grams { font-size: 13px; font-weight: 800; color: var(--text-secondary); white-space: nowrap; }
+        .menu-ingredients { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+        .menu-ingredient-pill { font-size: 11px; font-weight: 700; color: var(--text-secondary); background: rgba(240,249,255,0.88); border: 1px solid rgba(226,232,240,0.8); border-radius: 999px; padding: 6px 9px; }
+        .menu-nutrition-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 13px; }
+        .menu-nutrition-cell { background: rgba(240,249,255,0.75); border-radius: 13px; padding: 9px 4px; text-align: center; }
+        .menu-nutrition-val { font-size: 13px; font-weight: 900; color: var(--text); }
+        .menu-nutrition-label { font-size: 9px; font-weight: 800; color: var(--text-tertiary); text-transform: uppercase; margin-top: 2px; }
+        .menu-loading {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 54px 24px; text-align: center;
+        }
+        .menu-loader {
+            width: 46px; height: 46px; border-radius: 50%; border: 3px solid rgba(52,211,153,0.2); border-top-color: var(--lime-dark); animation: spin 0.9s linear infinite; margin-bottom: 14px;
+        }
+        .menu-empty-note { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-top: 10px; }
+
         /* ── RESPONSIVE DESKTOP CENTER ── */
         @media (min-width: 431px) {
             body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
@@ -1214,11 +1328,10 @@
 
             <div class="screen" id="screen-planner">
                 <div class="screen-header">
-                    <div class="screen-header-title" id="planner-title">Планировщик</div>
-                    <div class="screen-header-sub" id="planner-sub">Ваш план питания на неделю</div>
+                    <div class="screen-header-title" id="planner-title">Меню</div>
+                    <div class="screen-header-sub" id="planner-sub">AI-меню из продуктов, которые уже есть дома</div>
                 </div>
-                <div class="date-strip" id="date-strip"></div>
-                <div id="planner-meals-list" style="padding-top:4px;padding-bottom:24px;"></div>
+                <div id="menu-root" class="menu-root"></div>
             </div>
 
             <div class="screen" id="screen-forum">
@@ -1406,12 +1519,12 @@ const i18n = {
         snack: 'Перекус',
         // Nav
         nav_home: 'Главная',
-        nav_planner: 'Планер',
+        nav_planner: 'Меню',
         nav_stats: 'Статистика',
         nav_profile: 'Профиль',
         // Planner
-        planner_title: 'Планировщик',
-        planner_sub: 'Ваш план питания на неделю',
+        planner_title: 'Меню',
+        planner_sub: 'AI-меню из продуктов, которые уже есть дома',
         days: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
         // Stats
         stats_title: 'Статистика',
@@ -1514,11 +1627,11 @@ const i18n = {
         dinner: 'Кешкі ас',
         snack: 'Тәттілік',
         nav_home: 'Басты',
-        nav_planner: 'Жоспар',
+        nav_planner: 'Мәзір',
         nav_stats: 'Статистика',
         nav_profile: 'Профиль',
-        planner_title: 'Жоспарлаушы',
-        planner_sub: 'Апталық тамақтану жоспары',
+        planner_title: 'Мәзір',
+        planner_sub: 'Үйдегі өнімдерден AI мәзір',
         days: ['Жс','Дс','Сс','Ср','Бс','Жм','Сб'],
         stats_title: 'Статистика',
         stats_sub: '7 күндегі прогресс',
@@ -1617,11 +1730,11 @@ const i18n = {
         dinner: 'Dinner',
         snack: 'Snack',
         nav_home: 'Home',
-        nav_planner: 'Planner',
+        nav_planner: 'Menu',
         nav_stats: 'Stats',
         nav_profile: 'Profile',
-        planner_title: 'Meal Planner',
-        planner_sub: 'Your weekly meal plan',
+        planner_title: 'Menu',
+        planner_sub: 'AI meals from what you already have',
         days: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
         stats_title: 'Statistics',
         stats_sub: 'Your 7-day progress',
@@ -1717,6 +1830,17 @@ let currentScannedFood = null; // Для сохранения результат
 let loggedFoods = [];           // Manual + AI diary entries that should survive recalculation
 let forumWaitlist = false;      // Forum launch waitlist CTA state
 let notificationsEnabled = false;
+let menuState = {
+    setupDone: false,
+    selectedProducts: [],
+    cookTime: '15',
+    menuGoal: 'balance',
+    restrictions: ['none'],
+    plan: null,
+    loading: false,
+    lastGeneratedAt: null,
+    source: null
+};
 
 // Meal data
 const mealData = [
@@ -1867,6 +1991,100 @@ const mvpText = {
 };
 const ux = (key) => (mvpText[UserCtx.lang] || mvpText.ru)[key] || key;
 
+// ── AI MENU TEXT + FRIDGE CATALOG ─────────────────────────
+const menuText = {
+    ru: {
+        heroKicker: 'AI Меню', heroTitle: 'Соберём рацион из вашего холодильника', heroSub: 'Выберите продукты, которые уже есть дома. WellAI составит день питания без лишних покупок.',
+        fridgeTitle: 'Что есть у вас дома?', fridgeSub: 'Выберите минимум 3 продукта. Меню будет строиться только на выбранных ингредиентах.',
+        timeTitle: 'Сколько времени на готовку?', goalTitle: 'Цель меню', restrictionsTitle: 'Ограничения',
+        generate: '✨ Составить меню', generating: 'Генерирую меню...', selected: 'выбрано', needMore: 'Выберите хотя бы 3 продукта',
+        planTitle: 'Сегодняшнее меню', planSub: 'Составлено из ваших продуктов с учётом цели и профиля.', aiGenerated: 'AI plan', localGenerated: 'Smart plan',
+        regenerate: '🔄 Сгенерировать заново', editProducts: '✏️ Изменить продукты', addAll: '➕ Всё в дневник', addMeal: 'Добавить', addedAll: 'Меню добавлено в дневник',
+        breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', snack: 'Перекус',
+        kcal: 'ккал', protein: 'Б', fat: 'Ж', carbs: 'У', gi: 'ГИ', grams: 'г',
+        fallbackNote: 'Если AI недоступен, используется локальная smart-логика для демо.',
+        categories: { protein: 'Белки', carbs: 'Крупы и гарниры', vegetables: 'Овощи', dairy: 'Молочка', fruits: 'Фрукты', other: 'Другое' },
+        times: { '5': '5 мин', '15': '15 мин', '30': '30 мин' },
+        goals: { balance: 'Баланс', lowCarb: 'Контроль углеводов', highProtein: 'Больше белка' },
+        restrictions: { none: 'Нет', noMeat: 'Без мяса', noDairy: 'Без молочки', diabetes: 'Diabetes-friendly' }
+    },
+    kz: {
+        heroKicker: 'AI мәзір', heroTitle: 'Үйдегі өнімдерден рацион құрамыз', heroSub: 'Қолда бар өнімдерді таңдаңыз. WellAI артық сатып алусыз бір күндік мәзір ұсынады.',
+        fridgeTitle: 'Үйде не бар?', fridgeSub: 'Кемінде 3 өнім таңдаңыз. Мәзір тек таңдалған ингредиенттерге сүйенеді.',
+        timeTitle: 'Дайындауға қанша уақыт бар?', goalTitle: 'Мәзір мақсаты', restrictionsTitle: 'Шектеулер',
+        generate: '✨ Мәзір құру', generating: 'Мәзір құрылуда...', selected: 'таңдалды', needMore: 'Кемінде 3 өнім таңдаңыз',
+        planTitle: 'Бүгінгі мәзір', planSub: 'Өнімдеріңіз, мақсатыңыз және профиліңіз бойынша құрылды.', aiGenerated: 'AI plan', localGenerated: 'Smart plan',
+        regenerate: '🔄 Қайта құру', editProducts: '✏️ Өнімдерді өзгерту', addAll: '➕ Күнделікке қосу', addMeal: 'Қосу', addedAll: 'Мәзір күнделікке қосылды',
+        breakfast: 'Таңғы ас', lunch: 'Түскі ас', dinner: 'Кешкі ас', snack: 'Перекус',
+        kcal: 'ккал', protein: 'А', fat: 'М', carbs: 'К', gi: 'ГИ', grams: 'г',
+        fallbackNote: 'AI қолжетімсіз болса, демо үшін локалды smart-логика қолданылады.',
+        categories: { protein: 'Ақуыз', carbs: 'Жармалар', vegetables: 'Көкөністер', dairy: 'Сүт өнімдері', fruits: 'Жемістер', other: 'Басқа' },
+        times: { '5': '5 мин', '15': '15 мин', '30': '30 мин' },
+        goals: { balance: 'Баланс', lowCarb: 'Көмірсу бақылауы', highProtein: 'Көбірек ақуыз' },
+        restrictions: { none: 'Жоқ', noMeat: 'Етсіз', noDairy: 'Сүтсіз', diabetes: 'Диабетке ыңғайлы' }
+    },
+    en: {
+        heroKicker: 'AI Menu', heroTitle: 'Meals from your fridge', heroSub: 'Pick products you already have. WellAI builds a daily menu without extra shopping.',
+        fridgeTitle: 'What do you have at home?', fridgeSub: 'Choose at least 3 products. The menu will use only selected ingredients.',
+        timeTitle: 'Cooking time', goalTitle: 'Menu goal', restrictionsTitle: 'Restrictions',
+        generate: '✨ Generate menu', generating: 'Generating menu...', selected: 'selected', needMore: 'Choose at least 3 products',
+        planTitle: "Today's menu", planSub: 'Built from your products, goal and profile.', aiGenerated: 'AI plan', localGenerated: 'Smart plan',
+        regenerate: '🔄 Regenerate', editProducts: '✏️ Edit products', addAll: '➕ Add all', addMeal: 'Add', addedAll: 'Menu added to diary',
+        breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack',
+        kcal: 'kcal', protein: 'P', fat: 'F', carbs: 'C', gi: 'GI', grams: 'g',
+        fallbackNote: 'If AI is unavailable, local smart logic is used for the demo.',
+        categories: { protein: 'Protein', carbs: 'Grains & sides', vegetables: 'Vegetables', dairy: 'Dairy', fruits: 'Fruits', other: 'Other' },
+        times: { '5': '5 min', '15': '15 min', '30': '30 min' },
+        goals: { balance: 'Balance', lowCarb: 'Low carb', highProtein: 'More protein' },
+        restrictions: { none: 'None', noMeat: 'No meat', noDairy: 'No dairy', diabetes: 'Diabetes-friendly' }
+    }
+};
+const mt = (key) => (menuText[UserCtx.lang] || menuText.ru)[key] || key;
+
+const fridgeCatalog = [
+    { cat: 'protein', items: [
+        { id: 'chicken', emoji: '🍗', label: { ru: 'Курица', kz: 'Тауық', en: 'Chicken' }, kcal: 165, protein: 31, fat: 4, carbs: 0, gi: 0 },
+        { id: 'eggs', emoji: '🥚', label: { ru: 'Яйца', kz: 'Жұмыртқа', en: 'Eggs' }, kcal: 155, protein: 13, fat: 11, carbs: 1, gi: 0 },
+        { id: 'fish', emoji: '🐟', label: { ru: 'Рыба', kz: 'Балық', en: 'Fish' }, kcal: 180, protein: 24, fat: 10, carbs: 0, gi: 0 },
+        { id: 'beef', emoji: '🥩', label: { ru: 'Говядина', kz: 'Сиыр еті', en: 'Beef' }, kcal: 250, protein: 26, fat: 15, carbs: 0, gi: 0 },
+        { id: 'cottage_cheese', emoji: '🥣', label: { ru: 'Творог', kz: 'Ірімшік', en: 'Cottage cheese' }, kcal: 120, protein: 18, fat: 5, carbs: 3, gi: 30 }
+    ]},
+    { cat: 'carbs', items: [
+        { id: 'buckwheat', emoji: '🍚', label: { ru: 'Гречка', kz: 'Қарақұмық', en: 'Buckwheat' }, kcal: 110, protein: 4, fat: 1, carbs: 20, gi: 50 },
+        { id: 'rice', emoji: '🍚', label: { ru: 'Рис', kz: 'Күріш', en: 'Rice' }, kcal: 130, protein: 3, fat: 0, carbs: 28, gi: 70 },
+        { id: 'pasta', emoji: '🍝', label: { ru: 'Макароны', kz: 'Макарон', en: 'Pasta' }, kcal: 150, protein: 5, fat: 1, carbs: 30, gi: 55 },
+        { id: 'potato', emoji: '🥔', label: { ru: 'Картофель', kz: 'Картоп', en: 'Potato' }, kcal: 85, protein: 2, fat: 0, carbs: 20, gi: 65 },
+        { id: 'oatmeal', emoji: '🥣', label: { ru: 'Овсянка', kz: 'Сұлы ботқасы', en: 'Oatmeal' }, kcal: 70, protein: 3, fat: 1, carbs: 12, gi: 55 }
+    ]},
+    { cat: 'vegetables', items: [
+        { id: 'cucumber', emoji: '🥒', label: { ru: 'Огурцы', kz: 'Қияр', en: 'Cucumber' }, kcal: 15, protein: 1, fat: 0, carbs: 3, gi: 15 },
+        { id: 'tomato', emoji: '🍅', label: { ru: 'Помидоры', kz: 'Қызанақ', en: 'Tomatoes' }, kcal: 18, protein: 1, fat: 0, carbs: 4, gi: 15 },
+        { id: 'carrot', emoji: '🥕', label: { ru: 'Морковь', kz: 'Сәбіз', en: 'Carrot' }, kcal: 41, protein: 1, fat: 0, carbs: 10, gi: 47 },
+        { id: 'cabbage', emoji: '🥬', label: { ru: 'Капуста', kz: 'Қырыққабат', en: 'Cabbage' }, kcal: 25, protein: 1, fat: 0, carbs: 6, gi: 10 },
+        { id: 'broccoli', emoji: '🥦', label: { ru: 'Брокколи', kz: 'Брокколи', en: 'Broccoli' }, kcal: 34, protein: 3, fat: 0, carbs: 7, gi: 15 }
+    ]},
+    { cat: 'dairy', items: [
+        { id: 'milk', emoji: '🥛', label: { ru: 'Молоко', kz: 'Сүт', en: 'Milk' }, kcal: 60, protein: 3, fat: 3, carbs: 5, gi: 30 },
+        { id: 'yogurt', emoji: '🥛', label: { ru: 'Йогурт', kz: 'Йогурт', en: 'Yogurt' }, kcal: 90, protein: 5, fat: 3, carbs: 12, gi: 35 },
+        { id: 'kefir', emoji: '🥛', label: { ru: 'Кефир', kz: 'Кефир', en: 'Kefir' }, kcal: 51, protein: 3, fat: 2, carbs: 5, gi: 35 },
+        { id: 'cheese', emoji: '🧀', label: { ru: 'Сыр', kz: 'Ірімшік', en: 'Cheese' }, kcal: 350, protein: 25, fat: 27, carbs: 2, gi: 0 }
+    ]},
+    { cat: 'fruits', items: [
+        { id: 'apple', emoji: '🍎', label: { ru: 'Яблоки', kz: 'Алма', en: 'Apples' }, kcal: 52, protein: 0, fat: 0, carbs: 14, gi: 36 },
+        { id: 'banana', emoji: '🍌', label: { ru: 'Бананы', kz: 'Банан', en: 'Bananas' }, kcal: 89, protein: 1, fat: 0, carbs: 23, gi: 51 },
+        { id: 'berries', emoji: '🫐', label: { ru: 'Ягоды', kz: 'Жидектер', en: 'Berries' }, kcal: 50, protein: 1, fat: 0, carbs: 12, gi: 25 }
+    ]},
+    { cat: 'other', items: [
+        { id: 'bread', emoji: '🍞', label: { ru: 'Хлеб', kz: 'Нан', en: 'Bread' }, kcal: 250, protein: 8, fat: 3, carbs: 49, gi: 70 },
+        { id: 'oil', emoji: '🫒', label: { ru: 'Масло', kz: 'Май', en: 'Oil' }, kcal: 884, protein: 0, fat: 100, carbs: 0, gi: 0 },
+        { id: 'nuts', emoji: '🥜', label: { ru: 'Орехи', kz: 'Жаңғақ', en: 'Nuts' }, kcal: 600, protein: 20, fat: 50, carbs: 20, gi: 15 }
+    ]}
+];
+const fridgeItems = fridgeCatalog.flatMap(group => group.items.map(item => ({ ...item, cat: group.cat })));
+function fridgeLabel(item) { return item?.label?.[UserCtx.lang] || item?.label?.ru || item?.label?.en || item?.id || 'Food'; }
+function getFridgeItem(id) { return fridgeItems.find(item => item.id === id); }
+
+
 function saveAppState() {
     try {
         const state = {
@@ -1876,7 +2094,8 @@ function saveAppState() {
             routineState,
             selectedDate: selectedDate.toISOString(),
             forumWaitlist,
-            notificationsEnabled
+            notificationsEnabled,
+            menuState
         };
         localStorage.setItem(MVP_STORAGE_KEY, JSON.stringify(state));
     } catch (err) {
@@ -1903,6 +2122,7 @@ function loadSavedState() {
         if (state.selectedDate) selectedDate = new Date(state.selectedDate);
         forumWaitlist = !!state.forumWaitlist;
         notificationsEnabled = !!state.notificationsEnabled;
+        if (state.menuState) menuState = { ...menuState, ...state.menuState, loading: false };
     } catch (err) {
         console.warn('WellAI saved state was ignored:', err);
     }
@@ -2320,38 +2540,342 @@ document.getElementById('water-add-btn').addEventListener('click', () => {
     }
 });
 
-// ── PLANNER ───────────────────────────────────────────────
+// ── AI MENU / PLANNER ───────────────────────────────────
 function renderPlanner() {
     document.getElementById('planner-title').textContent = t('planner_title');
     document.getElementById('planner-sub').textContent   = t('planner_sub');
-
-    // Date strip
-    const strip = document.getElementById('date-strip');
-    strip.innerHTML = '';
-    const days = t('days');
-    const today = new Date();
-    for (let i = -3; i <= 3; i++) {
-        const d = new Date(today);
-        d.setDate(today.getDate() + i);
-        const isSelected = d.toDateString() === selectedDate.toDateString();
-        strip.innerHTML += `
-            <button class="date-chip ${isSelected?'active':''}" onclick="selectDate(${i})">
-                <span class="day-name">${days[d.getDay()]}</span>
-                <span class="day-num">${d.getDate()}</span>
-            </button>`;
-    }
-
-    renderMealsList('planner-meals-list');
+    renderMenuPage();
 }
 
-function selectDate(offset) {
-    const d = new Date();
-    d.setDate(d.getDate() + offset);
-    selectedDate = d;
+function renderMenuPage() {
+    const root = document.getElementById('menu-root');
+    if (!root) return;
+    if (menuState.loading) {
+        root.innerHTML = `
+            <div class="menu-loading fade-enter">
+                <div class="menu-loader"></div>
+                <div class="menu-plan-title">${mt('generating')}</div>
+                <div class="menu-empty-note">${mt('fallbackNote')}</div>
+            </div>`;
+        return;
+    }
+    if (!menuState.setupDone || !menuState.plan) renderMenuSetup(root);
+    else renderMenuPlan(root);
+}
+
+function renderMenuSetup(root) {
+    const selectedCount = menuState.selectedProducts.length;
+    const canGenerate = selectedCount >= 3;
+    root.innerHTML = `
+        <div class="menu-hero-card fade-enter">
+            <div class="menu-hero-kicker">${mt('heroKicker')}</div>
+            <div class="menu-hero-title">${mt('heroTitle')}</div>
+            <div class="menu-hero-sub">${mt('heroSub')}</div>
+        </div>
+        <div class="menu-section-card fade-enter" style="animation-delay:0.04s;">
+            <div class="menu-section-title">${mt('fridgeTitle')}</div>
+            <div class="menu-section-sub">${mt('fridgeSub')} · <strong>${selectedCount}</strong> ${mt('selected')}</div>
+            ${fridgeCatalog.map(group => `
+                <div class="menu-category">
+                    <div class="menu-category-title">${mt('categories')[group.cat]}</div>
+                    <div class="menu-chip-grid">
+                        ${group.items.map(item => `
+                            <button class="menu-chip ${menuState.selectedProducts.includes(item.id) ? 'active' : ''}" onclick="toggleFridgeProduct('${item.id}')">
+                                ${item.emoji} ${fridgeLabel(item)}
+                            </button>`).join('')}
+                    </div>
+                </div>`).join('')}
+        </div>
+        <div class="menu-section-card fade-enter" style="animation-delay:0.08s;">
+            <div class="menu-section-title">${mt('timeTitle')}</div>
+            <div class="menu-seg-grid">
+                ${['5','15','30'].map(time => `<button class="menu-seg-btn ${menuState.cookTime === time ? 'active' : ''}" onclick="setMenuOption('cookTime','${time}')">${mt('times')[time]}</button>`).join('')}
+            </div>
+        </div>
+        <div class="menu-section-card fade-enter" style="animation-delay:0.12s;">
+            <div class="menu-section-title">${mt('goalTitle')}</div>
+            <div class="menu-seg-grid">
+                ${['balance','lowCarb','highProtein'].map(goal => `<button class="menu-seg-btn ${menuState.menuGoal === goal ? 'active' : ''}" onclick="setMenuOption('menuGoal','${goal}')">${mt('goals')[goal]}</button>`).join('')}
+            </div>
+        </div>
+        <div class="menu-section-card fade-enter" style="animation-delay:0.16s;">
+            <div class="menu-section-title">${mt('restrictionsTitle')}</div>
+            <div class="menu-chip-grid">
+                ${['none','noMeat','noDairy','diabetes'].map(code => `<button class="menu-chip ${menuState.restrictions.includes(code) ? 'active' : ''}" onclick="toggleMenuRestriction('${code}')">${mt('restrictions')[code]}</button>`).join('')}
+            </div>
+            <div class="menu-actions-row">
+                <button class="menu-secondary-mini" onclick="clearFridgeSelection()">${mt('editProducts')}</button>
+                <button class="menu-primary-mini" ${canGenerate ? '' : 'disabled'} onclick="generateMenuPlan()">${canGenerate ? mt('generate') : mt('needMore')}</button>
+            </div>
+        </div>`;
+}
+
+function renderMenuPlan(root) {
+    const plan = normalizeMenuPlan(menuState.plan);
+    menuState.plan = plan;
+    const sourceLabel = menuState.source === 'ai' ? mt('aiGenerated') : mt('localGenerated');
+    const selectedNames = menuState.selectedProducts.map(id => fridgeLabel(getFridgeItem(id))).slice(0, 5).join(', ');
+    root.innerHTML = `
+        <div class="menu-section-card fade-enter">
+            <div class="menu-plan-header">
+                <div>
+                    <div class="menu-plan-title">${mt('planTitle')}</div>
+                    <div class="menu-plan-sub">${mt('planSub')} ${selectedNames ? `· ${selectedNames}` : ''}</div>
+                </div>
+                <div class="menu-ai-badge"><i class="fa-solid fa-wand-magic-sparkles"></i>${sourceLabel}</div>
+            </div>
+            <div class="menu-nutrition-grid" style="margin-top:0;">
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${plan.total.calories}</div><div class="menu-nutrition-label">${mt('kcal')}</div></div>
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${plan.total.protein_g}</div><div class="menu-nutrition-label">${mt('protein')}</div></div>
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${plan.total.fat_g}</div><div class="menu-nutrition-label">${mt('fat')}</div></div>
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${plan.total.carbs_g}</div><div class="menu-nutrition-label">${mt('carbs')}</div></div>
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${plan.total.gi}</div><div class="menu-nutrition-label">${mt('gi')}</div></div>
+            </div>
+            <div class="menu-actions-row">
+                <button class="menu-secondary-mini" onclick="editMenuProducts()">${mt('editProducts')}</button>
+                <button class="menu-primary-mini" onclick="generateMenuPlan(true)">${mt('regenerate')}</button>
+            </div>
+            <button class="btn-primary" style="margin-top:12px;" onclick="addAllMenuToDiary()">${mt('addAll')}</button>
+        </div>
+        ${plan.meals.map((meal, index) => renderMenuMealCard(meal, index)).join('')}`;
+}
+
+function renderMenuMealCard(meal, index) {
+    const typeLabel = mt(meal.type) || meal.type;
+    return `
+        <div class="menu-meal-card fade-enter" style="animation-delay:${Math.min(index * 0.05, 0.2)}s;">
+            <div class="menu-meal-top">
+                <div>
+                    <div class="menu-meal-type">${typeLabel}</div>
+                    <div class="menu-meal-name">${meal.name}</div>
+                </div>
+                <div class="menu-meal-grams">${meal.grams}${mt('grams')}</div>
+            </div>
+            <div class="menu-ingredients">
+                ${(meal.ingredients || []).map(ing => `<span class="menu-ingredient-pill">${ing}</span>`).join('')}
+            </div>
+            <div class="menu-nutrition-grid">
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${meal.calories}</div><div class="menu-nutrition-label">${mt('kcal')}</div></div>
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${meal.protein_g}</div><div class="menu-nutrition-label">${mt('protein')}</div></div>
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${meal.fat_g}</div><div class="menu-nutrition-label">${mt('fat')}</div></div>
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${meal.carbs_g}</div><div class="menu-nutrition-label">${mt('carbs')}</div></div>
+                <div class="menu-nutrition-cell"><div class="menu-nutrition-val">${meal.gi}</div><div class="menu-nutrition-label">${mt('gi')}</div></div>
+            </div>
+            <button class="menu-secondary-mini" style="width:100%;margin-top:12px;" onclick="addMenuMealToDiary(${index})">${mt('addMeal')}</button>
+        </div>`;
+}
+
+function clearFridgeSelection() {
+    menuState.selectedProducts = [];
+    menuState.plan = null;
+    menuState.setupDone = false;
     saveAppState();
     renderPlanner();
-    showToast(ux('todaySaved'));
 }
+
+function toggleFridgeProduct(id) {
+    if (menuState.selectedProducts.includes(id)) menuState.selectedProducts = menuState.selectedProducts.filter(x => x !== id);
+    else menuState.selectedProducts.push(id);
+    menuState.plan = null;
+    saveAppState();
+    renderPlanner();
+}
+
+function setMenuOption(field, value) {
+    menuState[field] = value;
+    menuState.plan = null;
+    saveAppState();
+    renderPlanner();
+}
+
+function toggleMenuRestriction(code) {
+    if (code === 'none') menuState.restrictions = ['none'];
+    else {
+        menuState.restrictions = menuState.restrictions.filter(x => x !== 'none');
+        if (menuState.restrictions.includes(code)) menuState.restrictions = menuState.restrictions.filter(x => x !== code);
+        else menuState.restrictions.push(code);
+        if (!menuState.restrictions.length) menuState.restrictions = ['none'];
+    }
+    if (code === 'diabetes' && menuState.restrictions.includes('diabetes')) UserCtx.diabetes = true;
+    menuState.plan = null;
+    saveAppState();
+    renderPlanner();
+}
+
+function editMenuProducts() {
+    menuState.setupDone = false;
+    menuState.plan = null;
+    saveAppState();
+    renderPlanner();
+}
+
+async function generateMenuPlan(force = false) {
+    if (menuState.selectedProducts.length < 3) {
+        showToast(mt('needMore'));
+        return;
+    }
+    menuState.loading = true;
+    menuState.setupDone = true;
+    renderPlanner();
+    try {
+        const aiPlan = await requestAiMenuPlan();
+        menuState.plan = normalizeMenuPlan(aiPlan);
+        menuState.source = 'ai';
+    } catch (err) {
+        console.warn('AI menu fallback:', err);
+        menuState.plan = generateLocalMenuPlan();
+        menuState.source = 'local';
+    }
+    menuState.loading = false;
+    menuState.lastGeneratedAt = new Date().toISOString();
+    saveAppState();
+    renderPlanner();
+}
+
+async function requestAiMenuPlan() {
+    const workerUrl = "https://wellai-worker.wellai.workers.dev";
+    const selected = menuState.selectedProducts.map(id => getFridgeItem(id)).filter(Boolean);
+    const response = await fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            action: 'generate_menu',
+            lang: UserCtx.lang || 'ru',
+            products: selected.map(item => ({ id: item.id, name: fridgeLabel(item), category: item.cat })),
+            cookTime: menuState.cookTime,
+            menuGoal: menuState.menuGoal,
+            restrictions: menuState.restrictions,
+            user: {
+                dailyKcal: UserCtx.dailyKcal,
+                dailyProtein: UserCtx.dailyProtein,
+                dailyFat: UserCtx.dailyFat,
+                dailyCarbs: UserCtx.dailyCarbs,
+                diabetes: UserCtx.diabetes,
+                goal: UserCtx.goal
+            }
+        })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data?.message || data?.error || 'AI menu failed');
+    return data;
+}
+
+function generateLocalMenuPlan() {
+    const selected = menuState.selectedProducts.map(id => getFridgeItem(id)).filter(Boolean);
+    const byCat = (cat) => selected.filter(item => item.cat === cat);
+    const pick = (...cats) => cats.flatMap(cat => byCat(cat))[0] || selected[0];
+    const protein = pick('protein');
+    const protein2 = byCat('protein')[1] || protein;
+    const carb = pick('carbs', 'other');
+    const veg = pick('vegetables');
+    const dairy = pick('dairy', 'protein');
+    const fruit = pick('fruits', 'vegetables');
+    const other = pick('other', 'fruits', 'dairy');
+
+    const meals = [];
+    if (carb?.id === 'oatmeal' || dairy?.cat === 'dairy') {
+        meals.push(buildMeal('breakfast', [portion(carb || dairy, 180), portion(dairy, 150), portion(fruit, 100)], menuName([carb || dairy, fruit])));
+    } else {
+        meals.push(buildMeal('breakfast', [portion(protein, 120), portion(veg, 100), portion(other, 40)], menuName([protein, veg])));
+    }
+    meals.push(buildMeal('lunch', [portion(protein, menuState.menuGoal === 'highProtein' ? 180 : 150), portion(carb, menuState.menuGoal === 'lowCarb' || UserCtx.diabetes ? 120 : 180), portion(veg, 120)], menuName([protein, carb, veg])));
+    meals.push(buildMeal('dinner', [portion(protein2, 160), portion(veg, 180), portion(carb, menuState.menuGoal === 'lowCarb' || UserCtx.diabetes ? 70 : 120)], menuName([protein2, veg])));
+    meals.push(buildMeal('snack', [portion(fruit, 130), portion(dairy || other, 120)], menuName([fruit, dairy || other])));
+    return normalizeMenuPlan({ meals });
+}
+
+function portion(item, grams) { return item ? { item, grams } : null; }
+function menuName(items) { return items.filter(Boolean).map(fridgeLabel).join(' + '); }
+function buildMeal(type, parts, name) {
+    const valid = parts.filter(Boolean);
+    let grams = 0, calories = 0, protein_g = 0, fat_g = 0, carbs_g = 0, giWeighted = 0, carbsForGi = 0;
+    valid.forEach(({ item, grams: g }) => {
+        grams += g;
+        const ratio = g / 100;
+        calories += item.kcal * ratio;
+        protein_g += item.protein * ratio;
+        fat_g += item.fat * ratio;
+        carbs_g += item.carbs * ratio;
+        if (item.carbs > 0) { giWeighted += item.gi * item.carbs * ratio; carbsForGi += item.carbs * ratio; }
+    });
+    return {
+        type,
+        name: name || type,
+        ingredients: valid.map(({ item }) => fridgeLabel(item)),
+        grams: Math.round(grams),
+        calories: Math.round(calories),
+        protein_g: Math.round(protein_g),
+        fat_g: Math.round(fat_g),
+        carbs_g: Math.round(carbs_g),
+        gi: Math.round(carbsForGi ? giWeighted / carbsForGi : 0)
+    };
+}
+
+function normalizeMenuPlan(plan) {
+    const rawMeals = Array.isArray(plan?.meals) ? plan.meals : [];
+    const mealOrder = ['breakfast','lunch','dinner','snack'];
+    const meals = rawMeals.slice(0, 4).map((meal, i) => ({
+        type: mealOrder.includes(meal.type) ? meal.type : mealOrder[i] || 'snack',
+        name: String(meal.name || mt(mealOrder[i] || 'snack')).trim(),
+        ingredients: Array.isArray(meal.ingredients) ? meal.ingredients.map(String).slice(0, 6) : [],
+        grams: Math.max(1, Math.round(Number(meal.grams || meal.weight_g || 250))),
+        calories: Math.max(1, Math.round(Number(meal.calories || meal.kcal || 300))),
+        protein_g: Math.max(0, Math.round(Number(meal.protein_g || meal.protein || 0))),
+        fat_g: Math.max(0, Math.round(Number(meal.fat_g || meal.fat || 0))),
+        carbs_g: Math.max(0, Math.round(Number(meal.carbs_g || meal.carbs || 0))),
+        gi: Math.min(100, Math.max(0, Math.round(Number(meal.gi || 45))))
+    }));
+    const total = meals.reduce((acc, meal) => {
+        acc.grams += meal.grams; acc.calories += meal.calories; acc.protein_g += meal.protein_g; acc.fat_g += meal.fat_g; acc.carbs_g += meal.carbs_g; acc.giSum += meal.gi * Math.max(1, meal.carbs_g); acc.giCarbs += Math.max(1, meal.carbs_g); return acc;
+    }, { grams: 0, calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, giSum: 0, giCarbs: 0 });
+    return { meals, total: { grams: total.grams, calories: total.calories, protein_g: total.protein_g, fat_g: total.fat_g, carbs_g: total.carbs_g, gi: Math.round(total.giSum / Math.max(1, total.giCarbs)) } };
+}
+
+function addMenuMealToDiary(index) {
+    const meal = normalizeMenuPlan(menuState.plan).meals[index];
+    if (!meal) return;
+    loggedFoods.push({
+        id: `menu-${Date.now()}-${index}`,
+        name: meal.name,
+        source: 'ai-menu',
+        mealType: meal.type,
+        grams: meal.grams,
+        kcal: meal.calories,
+        protein: meal.protein_g,
+        fat: meal.fat_g,
+        carbs: meal.carbs_g,
+        gi: meal.gi
+    });
+    recalcConsumed();
+    saveAppState();
+    refreshAllUI();
+    showToast(ux('added'));
+}
+
+function addAllMenuToDiary() {
+    const plan = normalizeMenuPlan(menuState.plan);
+    plan.meals.forEach((meal, index) => {
+        loggedFoods.push({
+            id: `menu-${Date.now()}-${index}-${Math.floor(Math.random()*1000)}`,
+            name: meal.name,
+            source: 'ai-menu',
+            mealType: meal.type,
+            grams: meal.grams,
+            kcal: meal.calories,
+            protein: meal.protein_g,
+            fat: meal.fat_g,
+            carbs: meal.carbs_g,
+            gi: meal.gi
+        });
+    });
+    recalcConsumed();
+    saveAppState();
+    refreshAllUI();
+    switchScreen('home');
+    showToast(mt('addedAll'));
+}
+
+function selectDate() { renderPlanner(); }
 
 // ── FORUM ─────────────────────────────────────────────────
 function renderForum() {
@@ -2881,6 +3405,7 @@ function switchScreen(screen) {
     if (el) { el.classList.add('active'); el.style.animation = 'fadeIn 0.3s ease'; }
     const nav = document.getElementById(`nav-${screen}`);
     if (nav) nav.classList.add('active');
+    if (screen === 'planner') renderPlanner();
 }
 
 // ── GEMINI AI INTEGRATION ─────────────────────────────────
