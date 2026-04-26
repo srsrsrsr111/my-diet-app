@@ -570,12 +570,15 @@
         .date-strip {
             display: flex;
             gap: 8px;
-            padding: 16px 24px;
+            padding: 18px 24px 26px;
+            margin-bottom: 10px;
             overflow-x: auto;
             scrollbar-width: none;
             background: rgba(255,255,255,0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            position: relative;
+            z-index: 2;
         }
         .date-strip::-webkit-scrollbar { display: none; }
         .date-chip {
@@ -640,6 +643,9 @@
         .metric-card-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
         .metric-card-val   { font-size: 26px; font-weight: 800; color: var(--text); margin-top: 4px; letter-spacing: -0.5px; }
         .metric-card-unit  { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+        .metric-card[data-field] { cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+        .metric-card[data-field]:active { transform: scale(0.98); }
+        .metric-edit-hint { font-size: 10px; font-weight: 700; color: var(--lime-dark); margin-top: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
 
         .settings-list { padding: 0 24px; }
         .settings-item {
@@ -892,7 +898,7 @@
         .result-food-sub  { font-size: 14px; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
 
         .result-stats {
-            display: grid; grid-template-columns: repeat(4, 1fr);
+            display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 8px; margin: 20px 0;
         }
         .result-stat {
@@ -900,7 +906,7 @@
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255,255,255,0.3);
             border-radius: 16px;
-            padding: 14px 10px;
+            padding: 13px 8px;
             text-align: center;
         }
         .result-stat-val  { font-size: 18px; font-weight: 800; color: var(--text); }
@@ -1212,7 +1218,7 @@
                     <div class="screen-header-sub" id="planner-sub">Ваш план питания на неделю</div>
                 </div>
                 <div class="date-strip" id="date-strip"></div>
-                <div id="planner-meals-list" style="padding-bottom:24px;"></div>
+                <div id="planner-meals-list" style="padding-top:4px;padding-bottom:24px;"></div>
             </div>
 
             <div class="screen" id="screen-forum">
@@ -1294,20 +1300,28 @@
 
             <div class="result-stats">
                 <div class="result-stat">
+                    <div class="result-stat-val" id="res-weight">0г</div>
+                    <div class="result-stat-unit" id="res-weight-label">грамм</div>
+                </div>
+                <div class="result-stat">
                     <div class="result-stat-val" id="res-kcal">450</div>
-                    <div class="result-stat-unit">ккал</div>
+                    <div class="result-stat-unit" id="res-kcal-label">ккал</div>
                 </div>
                 <div class="result-stat">
                     <div class="result-stat-val" id="res-carbs">35г</div>
-                    <div class="result-stat-unit">углев.</div>
+                    <div class="result-stat-unit" id="res-carbs-label">углев.</div>
                 </div>
                 <div class="result-stat">
-                    <div class="result-stat-val" style="color:var(--blue);" id="res-xe">2.9</div>
-                    <div class="result-stat-unit">XE</div>
+                    <div class="result-stat-val" id="res-protein">0г</div>
+                    <div class="result-stat-unit" id="res-protein-label">белки</div>
                 </div>
                 <div class="result-stat">
-                    <div class="result-stat-val" id="res-gl">24.5</div>
-                    <div class="result-stat-unit">ГН</div>
+                    <div class="result-stat-val" id="res-fat">0г</div>
+                    <div class="result-stat-unit" id="res-fat-label">жиры</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-val" id="res-gi-card">50</div>
+                    <div class="result-stat-unit" id="res-gi-label">ГИ</div>
                 </div>
             </div>
 
@@ -2378,17 +2392,20 @@ function renderProfile() {
 
     const grid = document.getElementById('metric-grid');
     grid.innerHTML = `
-        <div class="metric-card fade-enter">
+        <div class="metric-card fade-enter" data-field="weight" onclick="openMetricModal('weight')">
             <div class="metric-card-label">${t('weight_label')}</div>
             <div class="metric-card-val">${UserCtx.weight}<span class="metric-card-unit">кг</span></div>
+            <div class="metric-edit-hint">${UserCtx.lang==='en'?'Tap to edit':UserCtx.lang==='kz'?'Өзгерту':'Изменить'}</div>
         </div>
-        <div class="metric-card fade-enter" style="animation-delay:0.05s;">
+        <div class="metric-card fade-enter" data-field="height" onclick="openMetricModal('height')" style="animation-delay:0.05s;">
             <div class="metric-card-label">${t('height_label')}</div>
             <div class="metric-card-val">${UserCtx.height}<span class="metric-card-unit">см</span></div>
+            <div class="metric-edit-hint">${UserCtx.lang==='en'?'Tap to edit':UserCtx.lang==='kz'?'Өзгерту':'Изменить'}</div>
         </div>
-        <div class="metric-card fade-enter" style="animation-delay:0.1s;">
+        <div class="metric-card fade-enter" data-field="age" onclick="openMetricModal('age')" style="animation-delay:0.1s;">
             <div class="metric-card-label">${t('age_label')}</div>
             <div class="metric-card-val">${UserCtx.age}<span class="metric-card-unit">${UserCtx.lang==='en'?'y':'л'}</span></div>
+            <div class="metric-edit-hint">${UserCtx.lang==='en'?'Tap to edit':UserCtx.lang==='kz'?'Өзгерту':'Изменить'}</div>
         </div>
         <div class="metric-card fade-enter" style="animation-delay:0.15s;">
             <div class="metric-card-label">${t('bmi_label')}</div>
@@ -2559,6 +2576,79 @@ function cycleLang() {
 function toggleDiabetes() {
     UserCtx.diabetes = !UserCtx.diabetes;
     saveAppState();
+    refreshAllUI();
+    showToast(ux('saved'));
+}
+
+
+function openMetricModal(field) {
+    const config = {
+        weight: { label: t('weight_label'), unit: 'кг', min: 25, max: 250, value: UserCtx.weight },
+        height: { label: t('height_label'), unit: 'см', min: 80, max: 230, value: UserCtx.height },
+        age:    { label: t('age_label'), unit: UserCtx.lang === 'en' ? 'years' : 'лет', min: 10, max: 100, value: UserCtx.age }
+    }[field];
+    if (!config) return;
+
+    const title = UserCtx.lang === 'en' ? `Edit ${config.label}` : UserCtx.lang === 'kz' ? `${config.label} өзгерту` : `Изменить: ${config.label}`;
+    const sub = UserCtx.lang === 'en'
+        ? 'This updates your calorie norm and BMI automatically.'
+        : UserCtx.lang === 'kz'
+            ? 'Калория нормасы мен ИМТ автоматты түрде жаңарады.'
+            : 'После сохранения пересчитаются норма калорий и ИМТ.';
+
+    showMvpModal(`
+        <div class="mvp-modal-title">${title}</div>
+        <div class="mvp-modal-sub">${sub}</div>
+        <div class="form-group">
+            <label class="form-label">${config.label}, ${config.unit}</label>
+            <input class="input-field" id="mvp-metric-value" type="number" min="${config.min}" max="${config.max}" value="${config.value}" inputmode="numeric">
+            <div class="mvp-form-hint">${config.min}–${config.max} ${config.unit}</div>
+        </div>
+        <div class="mvp-summary-box" id="mvp-metric-preview"></div>
+        <div class="mvp-modal-actions">
+            <button class="btn-secondary" onclick="closeMvpModal()">${ux('cancel')}</button>
+            <button class="btn-primary" onclick="saveMetric('${field}')">${ux('saved')}</button>
+        </div>
+    `);
+    document.getElementById('mvp-metric-value')?.addEventListener('input', updateMetricPreview);
+    updateMetricPreview(field);
+}
+
+function updateMetricPreview() {
+    const input = document.getElementById('mvp-metric-value');
+    const box = document.getElementById('mvp-metric-preview');
+    if (!input || !box) return;
+    const temp = { ...UserCtx };
+    const field = document.querySelector('[onclick^="saveMetric"]')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+    if (field) temp[field] = Math.max(1, Number(input.value) || 1);
+    const bmi = (temp.weight / ((temp.height / 100) ** 2)).toFixed(1);
+    const bmr = temp.gender === 'male'
+        ? 10 * temp.weight + 6.25 * temp.height - 5 * temp.age + 5
+        : 10 * temp.weight + 6.25 * temp.height - 5 * temp.age - 161;
+    const approxKcal = Math.round(bmr * 1.55);
+    box.innerHTML = `
+        <div class="mvp-summary-row"><span>${t('bmi_label')}</span><strong>${bmi}</strong></div>
+        <div class="mvp-summary-row"><span>${UserCtx.lang==='en'?'Daily norm':UserCtx.lang==='kz'?'Күндік норма':'Дневная норма'}</span><strong>${approxKcal} ${t('kcal_unit')}</strong></div>
+    `;
+}
+
+function saveMetric(field) {
+    const config = {
+        weight: { min: 25, max: 250 },
+        height: { min: 80, max: 230 },
+        age:    { min: 10, max: 100 }
+    }[field];
+    const input = document.getElementById('mvp-metric-value');
+    if (!config || !input) return;
+    const value = Math.round(Number(input.value));
+    if (!Number.isFinite(value) || value < config.min || value > config.max) {
+        showToast(UserCtx.lang === 'en' ? 'Check the value' : UserCtx.lang === 'kz' ? 'Мәнді тексеріңіз' : 'Проверьте значение');
+        return;
+    }
+    UserCtx[field] = value;
+    calcMifflin();
+    saveAppState();
+    closeMvpModal();
     refreshAllUI();
     showToast(ux('saved'));
 }
@@ -2762,6 +2852,7 @@ function refreshAllUI() {
     document.getElementById('result-origin').textContent     = t('scan_origin');
     document.getElementById('result-add-btn').textContent    = t('scan_add');
     document.getElementById('result-cancel-btn').textContent = t('scan_cancel');
+    setScanStatLabels();
 }
 
 // ── EXTRA MVP BUTTON BINDINGS ─────────────────────────────
@@ -2814,6 +2905,47 @@ function fileToGenerativePart(file) {
     });
 }
 
+
+function setScanStatLabels() {
+    const labels = {
+        ru: { weight: 'грамм', kcal: 'ккал', carbs: 'углев.', protein: 'белки', fat: 'жиры', gi: 'ГИ' },
+        kz: { weight: 'грамм', kcal: 'ккал', carbs: 'көмірсу', protein: 'ақуыз', fat: 'май', gi: 'ГИ' },
+        en: { weight: 'grams', kcal: 'kcal', carbs: 'carbs', protein: 'protein', fat: 'fat', gi: 'GI' }
+    }[UserCtx.lang] || { weight: 'грамм', kcal: 'ккал', carbs: 'углев.', protein: 'белки', fat: 'жиры', gi: 'ГИ' };
+    const map = {
+        'res-weight-label': labels.weight,
+        'res-kcal-label': labels.kcal,
+        'res-carbs-label': labels.carbs,
+        'res-protein-label': labels.protein,
+        'res-fat-label': labels.fat,
+        'res-gi-label': labels.gi
+    };
+    Object.entries(map).forEach(([id, text]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    });
+}
+
+function normalizeScanResult(data) {
+    const grams = Number(data.weight_g ?? data.grams ?? data.portion_g ?? 0);
+    const calories = Number(data.calories ?? data.kcal ?? 0);
+    const protein = Number(data.protein_g ?? data.protein ?? 0);
+    const fat = Number(data.fat_g ?? data.fat ?? 0);
+    const carbs = Number(data.carbs_g ?? data.carbs ?? 0);
+    const gi = Number(data.gi ?? 50);
+    return {
+        dish_name: data.dish_name || data.name || 'AI food',
+        origin: data.origin || t('scan_origin'),
+        weight_g: Math.max(0, Math.round(grams)),
+        calories: Math.max(0, Math.round(calories)),
+        protein_g: Math.max(0, Math.round(protein)),
+        fat_g: Math.max(0, Math.round(fat)),
+        carbs_g: Math.max(0, Math.round(carbs)),
+        gi: Math.min(100, Math.max(0, Math.round(gi))),
+        confidence: Number(data.confidence ?? 0)
+    };
+}
+
 // Главная функция обращения к API Gemini
 async function analyzeFoodImage(imageFile) {
     const workerUrl = "https://wellai-worker.wellai.workers.dev";
@@ -2827,7 +2959,8 @@ async function analyzeFoodImage(imageFile) {
         },
         body: JSON.stringify({
             imageBase64: imagePart.inlineData.data,
-            mimeType: imagePart.inlineData.mimeType
+            mimeType: imagePart.inlineData.mimeType,
+            lang: UserCtx.lang || 'ru'
         })
     });
 
@@ -2861,7 +2994,6 @@ document.getElementById('cameraInput').addEventListener('change', async (event) 
 
     try {
         const result = await analyzeFoodImage(file);
-        currentScannedFood = result; // Сохраняем для добавления в дневник
         showDynamicScanResult(result);
     } catch (error) {
         console.error("Ошибка AI:", error);
@@ -2876,18 +3008,22 @@ document.getElementById('cameraInput').addEventListener('change', async (event) 
 function showDynamicScanResult(data) {
     document.getElementById('scan-loading').style.display = 'none';
 
-    const carbs = data.carbs_g;
-    const xe = calcXE(carbs);
-    const gi = data.gi || 50; 
-    const gl = calcGL(gi, carbs);
+    const normalized = normalizeScanResult(data);
+    currentScannedFood = normalized;
+    const carbs = normalized.carbs_g;
+    const gi = normalized.gi;
+
+    setScanStatLabels();
 
     // Подставляем данные от ИИ
-    document.getElementById('result-name').textContent   = data.dish_name;
-    document.getElementById('result-origin').textContent = data.origin || t('scan_origin');
-    document.getElementById('res-kcal').textContent  = data.calories;
-    document.getElementById('res-carbs').textContent = carbs + 'г';
-    document.getElementById('res-xe').textContent    = xe;
-    document.getElementById('res-gl').textContent    = gl;
+    document.getElementById('result-name').textContent   = normalized.dish_name;
+    document.getElementById('result-origin').textContent = normalized.origin || t('scan_origin');
+    document.getElementById('res-weight').textContent    = normalized.weight_g ? normalized.weight_g + 'г' : '—';
+    document.getElementById('res-kcal').textContent      = normalized.calories;
+    document.getElementById('res-carbs').textContent     = carbs + 'г';
+    document.getElementById('res-protein').textContent   = normalized.protein_g + 'г';
+    document.getElementById('res-fat').textContent       = normalized.fat_g + 'г';
+    document.getElementById('res-gi-card').textContent   = gi;
 
     // Гликемический индекс
     document.getElementById('result-gi-val').textContent  = `ГИ: ${gi}`;
@@ -2918,7 +3054,7 @@ document.getElementById('result-add-btn').addEventListener('click', () => {
         name: currentScannedFood.dish_name || 'AI food',
         source: 'ai',
         mealType: 'scan',
-        grams: currentScannedFood.grams || currentScannedFood.portion_g || null,
+        grams: Math.round(Number(currentScannedFood.weight_g) || Number(currentScannedFood.grams) || Number(currentScannedFood.portion_g) || 0),
         kcal: Math.round(Number(currentScannedFood.calories) || 0),
         protein: Math.round(Number(currentScannedFood.protein_g) || 0),
         fat: Math.round(Number(currentScannedFood.fat_g) || 0),
