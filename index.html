@@ -1024,6 +1024,85 @@
             color: var(--blue);
         }
 
+
+        /* ── MVP TEST-READY MODALS & CONTROLS ── */
+        .mvp-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            z-index: 450;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(15,23,42,0.28);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .mvp-modal-backdrop.open { display: flex; animation: fadeIn 0.18s ease forwards; }
+        .mvp-modal-sheet {
+            width: 100%;
+            max-height: 86dvh;
+            overflow-y: auto;
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.45);
+            border-radius: 28px;
+            padding: 22px;
+            box-shadow: 0 24px 80px rgba(15,23,42,0.22);
+            animation: slideUp 0.28s cubic-bezier(0.34,1.56,0.64,1) forwards;
+            scrollbar-width: none;
+        }
+        .mvp-modal-sheet::-webkit-scrollbar { display: none; }
+        .mvp-modal-close {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(240,249,255,0.9);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            cursor: pointer;
+        }
+        .mvp-modal-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-top: 4px; }
+        .mvp-modal-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin: 6px 0 18px; }
+        .mvp-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+        .mvp-modal-actions .btn-primary, .mvp-modal-actions .btn-secondary { margin-top: 0; }
+        .mvp-choice-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .mvp-choice-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 15px 16px;
+            border: 1.5px solid rgba(226,232,240,0.9);
+            border-radius: 18px;
+            background: rgba(255,255,255,0.72);
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .mvp-choice-card:active { transform: scale(0.98); }
+        .mvp-choice-card.active {
+            border-color: var(--text);
+            background: linear-gradient(135deg, #0F172A, #1E293B);
+            box-shadow: 0 10px 28px rgba(15,23,42,0.18);
+        }
+        .mvp-choice-card.active .mvp-choice-title { color: var(--lime); }
+        .mvp-choice-card.active .mvp-choice-sub { color: rgba(255,255,255,0.65); }
+        .mvp-choice-icon { width: 42px; height: 42px; border-radius: 14px; background: rgba(240,249,255,0.9); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .mvp-choice-title { font-size: 15px; font-weight: 800; color: var(--text); }
+        .mvp-choice-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.35; }
+        .mvp-inline-row { display: grid; grid-template-columns: 1fr 110px; gap: 10px; align-items: end; }
+        .mvp-form-hint { font-size: 12px; color: var(--text-tertiary); margin-top: 6px; line-height: 1.4; }
+        .mvp-summary-box { background: rgba(240,249,255,0.85); border: 1px solid rgba(255,255,255,0.45); border-radius: 18px; padding: 14px; margin-top: 12px; }
+        .mvp-summary-row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; font-size: 14px; color: var(--text-secondary); }
+        .mvp-summary-row strong { color: var(--text); }
+        .mvp-meal-footer { display: flex; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(226,232,240,0.7); }
+        .mvp-small-btn { flex: 1; border: none; background: rgba(240,249,255,0.9); border-radius: 12px; padding: 10px; font-size: 12px; font-weight: 700; font-family: 'Inter', sans-serif; color: var(--text); cursor: pointer; }
+        .mvp-danger-btn { background: rgba(248,113,113,0.12); color: #B91C1C; }
+
         /* ── RESPONSIVE DESKTOP CENTER ── */
         @media (min-width: 431px) {
             body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
@@ -1246,6 +1325,13 @@
     <div id="toast"></div>
     
     <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
+
+    <div id="mvp-modal-root" class="mvp-modal-backdrop" aria-hidden="true">
+        <div class="mvp-modal-sheet" role="dialog" aria-modal="true">
+            <button class="mvp-modal-close" id="mvp-modal-close" type="button" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            <div id="mvp-modal-content"></div>
+        </div>
+    </div>
 
 </div><script>
 // ══════════════════════════════════════════════════════════
@@ -1614,6 +1700,9 @@ let obStep = 0;
 let currentScreen = 'home';
 let selectedDate = new Date();
 let currentScannedFood = null; // Для сохранения результатов Gemini
+let loggedFoods = [];           // Manual + AI diary entries that should survive recalculation
+let forumWaitlist = false;      // Forum launch waitlist CTA state
+let notificationsEnabled = false;
 
 // Meal data
 const mealData = [
@@ -1685,17 +1774,23 @@ function recalcConsumed() {
     let kcal = 0, protein = 0, fat = 0, carbs = 0;
     mealData.forEach(meal => {
         if (meal.completed) {
-            const t = calcMealTotals(meal);
-            kcal    += t.kcal;
-            protein += t.protein;
-            fat     += t.fat;
-            carbs   += t.carbs;
+            const total = calcMealTotals(meal);
+            kcal    += total.kcal;
+            protein += total.protein;
+            fat     += total.fat;
+            carbs   += total.carbs;
         }
     });
-    UserCtx.consumedKcal    = kcal;
-    UserCtx.consumedProtein = protein;
-    UserCtx.consumedFat     = fat;
-    UserCtx.consumedCarbs   = carbs;
+    loggedFoods.forEach(item => {
+        kcal    += Number(item.kcal) || 0;
+        protein += Number(item.protein) || 0;
+        fat     += Number(item.fat) || 0;
+        carbs   += Number(item.carbs) || 0;
+    });
+    UserCtx.consumedKcal    = Math.round(kcal);
+    UserCtx.consumedProtein = Math.round(protein);
+    UserCtx.consumedFat     = Math.round(fat);
+    UserCtx.consumedCarbs   = Math.round(carbs);
 }
 
 function showToast(msg) {
@@ -1710,6 +1805,133 @@ function getGreeting() {
     if (h < 12) return t('greeting_morning');
     if (h < 18) return t('greeting_afternoon');
     return t('greeting_evening');
+}
+
+
+// ── MVP STATE + MODAL HELPERS ─────────────────────────────
+const MVP_STORAGE_KEY = 'wellai_mvp_state_v3';
+const mvpText = {
+    ru: {
+        saved: 'Сохранено', added: 'Добавлено в дневник', removed: 'Удалено из дневника', choose: 'Выберите вариант',
+        addMealTitle: 'Добавить еду вручную', addMealSub: 'Для тестов: блюдо попадёт в дневник, пересчитает калории, БЖУ, XE и сохранится после перезагрузки.',
+        mealType: 'Приём пищи', food: 'Блюдо', portion: 'Порция, г', addFood: 'Добавить', cancel: 'Отмена',
+        languageTitle: 'Язык приложения', languageSub: 'Все основные экраны обновятся сразу после выбора.',
+        diabetesTitle: 'Режим диабета', diabetesSub: 'Включает отображение XE, GI и диабет-баннер на главном экране.',
+        goalTitle: 'Цель питания', goalSub: 'После выбора пересчитается дневная норма калорий и макронутриентов.',
+        notifyTitle: 'Уведомления', notifySub: 'MVP-режим: мы сохраняем выбор пользователя и показываем статус в профиле.',
+        notifyOn: 'Уведомления включены', notifyOff: 'Уведомления выключены',
+        forumJoined: 'Вы в списке ожидания', forumJoinToast: 'Мы уведомим вас о запуске форума',
+        aboutTitle: 'О WellAI', aboutSub: 'WellAI — MVP для Казахстана: трекинг питания, диабет-режим, XE/GI и AI scan еды через бэкенд.',
+        aiEntry: 'AI scan', manualEntry: 'Вручную', delete: 'Удалить', details: 'Детали', loggedTitle: 'Добавлено в дневник', todaySaved: 'Дата выбрана'
+    },
+    kz: {
+        saved: 'Сақталды', added: 'Күнделікке қосылды', removed: 'Күнделіктен өшірілді', choose: 'Таңдаңыз',
+        addMealTitle: 'Тағамды қолмен қосу', addMealSub: 'Тест үшін: тағам күнделікке түседі, калория, БЖУ, XE есептеледі және қайта жүктегеннен кейін сақталады.',
+        mealType: 'Тамақтану', food: 'Тағам', portion: 'Порция, г', addFood: 'Қосу', cancel: 'Болдырмау',
+        languageTitle: 'Қолданба тілі', languageSub: 'Таңдаудан кейін негізгі экрандар бірден жаңарады.',
+        diabetesTitle: 'Диабет режимі', diabetesSub: 'XE, GI және басты экрандағы диабет баннерін қосады.',
+        goalTitle: 'Тамақтану мақсаты', goalSub: 'Таңдаудан кейін күндік калория мен макронутриент нормасы қайта есептеледі.',
+        notifyTitle: 'Хабарландырулар', notifySub: 'MVP режимі: пайдаланушы таңдауы сақталады және профильде көрсетіледі.',
+        notifyOn: 'Хабарландырулар қосылды', notifyOff: 'Хабарландырулар өшірілді',
+        forumJoined: 'Күту тізіміндесіз', forumJoinToast: 'Форум іске қосылғанда хабарлаймыз',
+        aboutTitle: 'WellAI туралы', aboutSub: 'WellAI — Қазақстанға арналған MVP: тамақ трекингі, диабет режимі, XE/GI және бэкенд арқылы AI scan.',
+        aiEntry: 'AI scan', manualEntry: 'Қолмен', delete: 'Өшіру', details: 'Толығырақ', loggedTitle: 'Күнделікке қосылды', todaySaved: 'Күн таңдалды'
+    },
+    en: {
+        saved: 'Saved', added: 'Added to diary', removed: 'Removed from diary', choose: 'Choose an option',
+        addMealTitle: 'Add food manually', addMealSub: 'For testing: the dish is added to the diary, recalculates calories/macros/XE and stays after reload.',
+        mealType: 'Meal', food: 'Food', portion: 'Portion, g', addFood: 'Add food', cancel: 'Cancel',
+        languageTitle: 'App language', languageSub: 'Main screens update immediately after selection.',
+        diabetesTitle: 'Diabetes mode', diabetesSub: 'Shows XE, GI and the diabetes banner on the home screen.',
+        goalTitle: 'Nutrition goal', goalSub: 'Daily calories and macros are recalculated after selection.',
+        notifyTitle: 'Notifications', notifySub: 'MVP mode: the choice is saved and visible in profile.',
+        notifyOn: 'Notifications on', notifyOff: 'Notifications off',
+        forumJoined: 'You are on the waitlist', forumJoinToast: 'We will notify you when the forum launches',
+        aboutTitle: 'About WellAI', aboutSub: 'WellAI is a Kazakhstan-focused MVP: nutrition tracking, diabetes mode, XE/GI and backend-powered AI food scan.',
+        aiEntry: 'AI scan', manualEntry: 'Manual', delete: 'Delete', details: 'Details', loggedTitle: 'Added to diary', todaySaved: 'Date selected'
+    }
+};
+const ux = (key) => (mvpText[UserCtx.lang] || mvpText.ru)[key] || key;
+
+function saveAppState() {
+    try {
+        const state = {
+            user: { ...UserCtx, onboarded: true },
+            meals: mealData.map(meal => ({ id: meal.id, completed: meal.completed, items: meal.items })),
+            loggedFoods,
+            routineState,
+            selectedDate: selectedDate.toISOString(),
+            forumWaitlist,
+            notificationsEnabled
+        };
+        localStorage.setItem(MVP_STORAGE_KEY, JSON.stringify(state));
+    } catch (err) {
+        console.warn('WellAI state was not saved:', err);
+    }
+}
+
+function loadSavedState() {
+    try {
+        const raw = localStorage.getItem(MVP_STORAGE_KEY);
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        if (state.user) Object.assign(UserCtx, state.user);
+        if (Array.isArray(state.meals)) {
+            state.meals.forEach(savedMeal => {
+                const target = mealData.find(meal => meal.id === savedMeal.id);
+                if (!target) return;
+                target.completed = !!savedMeal.completed;
+                if (Array.isArray(savedMeal.items)) target.items = savedMeal.items;
+            });
+        }
+        if (Array.isArray(state.loggedFoods)) loggedFoods = state.loggedFoods;
+        if (state.routineState) Object.assign(routineState, state.routineState);
+        if (state.selectedDate) selectedDate = new Date(state.selectedDate);
+        forumWaitlist = !!state.forumWaitlist;
+        notificationsEnabled = !!state.notificationsEnabled;
+    } catch (err) {
+        console.warn('WellAI saved state was ignored:', err);
+    }
+}
+
+function showMvpModal(html) {
+    const root = document.getElementById('mvp-modal-root');
+    const content = document.getElementById('mvp-modal-content');
+    if (!root || !content) return;
+    content.innerHTML = html;
+    root.classList.add('open');
+    root.setAttribute('aria-hidden', 'false');
+}
+
+function closeMvpModal() {
+    const root = document.getElementById('mvp-modal-root');
+    if (!root) return;
+    root.classList.remove('open');
+    root.setAttribute('aria-hidden', 'true');
+}
+
+function localFoodName(food) {
+    return food?.name?.[UserCtx.lang] || food?.name?.ru || food?.name?.en || 'Food';
+}
+
+function getFoodById(foodId) {
+    return foodDB.find(food => String(food.id) === String(foodId));
+}
+
+function diaryEntryFromFood(food, grams, source, mealType) {
+    const ratio = grams / 100;
+    return {
+        id: `${source}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        name: localFoodName(food),
+        source,
+        mealType,
+        grams,
+        kcal: Math.round(food.kcal * ratio),
+        protein: Math.round(food.protein * ratio),
+        fat: Math.round(food.fat * ratio),
+        carbs: Math.round(food.carbs * ratio),
+        gi: Number(food.gi) || 0
+    };
 }
 
 // ── ONBOARDING ────────────────────────────────────────────
@@ -1872,6 +2094,8 @@ document.getElementById('ob-next-btn').addEventListener('click', () => {
     } else {
         // Finish onboarding
         calcMifflin();
+        UserCtx.onboarded = true;
+        saveAppState();
         launchApp();
     }
 });
@@ -1995,7 +2219,6 @@ function renderMealsList(containerId) {
                     const ratio = item.grams / 100;
                     const itemCarbs = Math.round(food.carbs * ratio);
                     const itemXE    = calcXE(itemCarbs);
-                    const gl        = calcGL(food.gi, itemCarbs);
                     return `
                         <div class="meal-item-row">
                             <div class="gi-dot ${getGIClass(food.gi)}"></div>
@@ -2004,8 +2227,42 @@ function renderMealsList(containerId) {
                             ${UserCtx.diabetes ? `<div class="meal-item-xe">${itemXE} XE</div>` : ''}
                         </div>`;
                 }).join('')}
+                <div class="mvp-meal-footer">
+                    <button class="mvp-small-btn" onclick="openAddMealModal('${meal.type}')"><i class="fa-solid fa-plus"></i> ${t('add')}</button>
+                    <button class="mvp-small-btn" onclick="toggleMeal('${meal.id}')">${meal.completed ? (UserCtx.lang==='en'?'Undo':UserCtx.lang==='kz'?'Қайтару':'Отменить') : (UserCtx.lang==='en'?'Done':UserCtx.lang==='kz'?'Дайын':'Готово')}</button>
+                </div>
             </div>`;
     });
+
+    if (loggedFoods.length) {
+        const recentEntries = [...loggedFoods].reverse();
+        container.innerHTML += recentEntries.map(entry => `
+            <div class="meal-card fade-enter" id="logged-food-${entry.id}">
+                <div class="meal-card-header">
+                    <div class="meal-type-badge">${ux('loggedTitle')} · ${entry.source === 'ai' ? ux('aiEntry') : ux('manualEntry')}</div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        ${UserCtx.diabetes ? `<span class="meal-item-xe">${calcXE(entry.carbs)} XE</span>` : ''}
+                        <span class="meal-kcal">${entry.kcal} ${t('kcal_unit')}</span>
+                        <button class="meal-complete-btn done" onclick="removeLoggedFood('${entry.id}')" title="${ux('delete')}">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="meal-item-row">
+                    <div class="gi-dot ${getGIClass(entry.gi)}"></div>
+                    <div class="meal-item-name">${entry.name}</div>
+                    <div class="meal-item-meta">${entry.grams ? entry.grams + 'г · ' : ''}${entry.carbs}г ${t('carbs').toLowerCase()}</div>
+                </div>
+            </div>`).join('');
+    }
+}
+
+function removeLoggedFood(entryId) {
+    loggedFoods = loggedFoods.filter(entry => entry.id !== entryId);
+    recalcConsumed();
+    saveAppState();
+    refreshAllUI();
+    showToast(ux('removed'));
 }
 
 function toggleMeal(mealId) {
@@ -2013,6 +2270,7 @@ function toggleMeal(mealId) {
     if (!meal) return;
     meal.completed = !meal.completed;
     recalcConsumed();
+    saveAppState();
     renderHome();
     renderMealsList('planner-meals-list');
 }
@@ -2034,13 +2292,17 @@ function renderWater() {
 
 function toggleWater(idx) {
     UserCtx.waterGlasses = idx < UserCtx.waterGlasses ? idx : idx + 1;
+    saveAppState();
     renderWater();
+    renderProfile();
 }
 
 document.getElementById('water-add-btn').addEventListener('click', () => {
     if (UserCtx.waterGlasses < 8) {
         UserCtx.waterGlasses++;
+        saveAppState();
         renderWater();
+        renderProfile();
     }
 });
 
@@ -2057,9 +2319,9 @@ function renderPlanner() {
     for (let i = -3; i <= 3; i++) {
         const d = new Date(today);
         d.setDate(today.getDate() + i);
-        const isToday = i === 0;
+        const isSelected = d.toDateString() === selectedDate.toDateString();
         strip.innerHTML += `
-            <button class="date-chip ${isToday?'active':''}" onclick="selectDate(${i})">
+            <button class="date-chip ${isSelected?'active':''}" onclick="selectDate(${i})">
                 <span class="day-name">${days[d.getDay()]}</span>
                 <span class="day-num">${d.getDate()}</span>
             </button>`;
@@ -2072,7 +2334,9 @@ function selectDate(offset) {
     const d = new Date();
     d.setDate(d.getDate() + offset);
     selectedDate = d;
+    saveAppState();
     renderPlanner();
+    showToast(ux('todaySaved'));
 }
 
 // ── FORUM ─────────────────────────────────────────────────
@@ -2086,7 +2350,21 @@ function renderForum() {
     const cs = document.getElementById('forum-coming-sub');
     if (cs) cs.textContent = t('forum_coming_sub');
     const cp = document.getElementById('forum-pill');
-    if (cp) cp.textContent = t('forum_pill');
+    if (cp) {
+        cp.textContent = forumWaitlist ? ux('forumJoined') : t('forum_pill');
+        cp.onclick = joinForumWaitlist;
+        cp.style.cursor = 'pointer';
+        cp.style.background = forumWaitlist ? 'rgba(52,211,153,0.18)' : 'rgba(167,243,208,0.25)';
+    }
+}
+
+function joinForumWaitlist() {
+    forumWaitlist = true;
+    notificationsEnabled = true;
+    saveAppState();
+    renderForum();
+    renderProfile();
+    showToast(ux('forumJoinToast'));
 }
 
 // ── PROFILE ───────────────────────────────────────────────
@@ -2213,7 +2491,7 @@ function renderProfile() {
         <div id="profile-achievements">${achievementsHTML}</div>
         <div id="profile-routine">${routineHTML}</div>
         <div style="padding:0 24px;">
-        <div class="settings-item" onclick="cycleLang()">
+        <div class="settings-item" onclick="openLanguageModal()">
             <div class="settings-item-left">
                 <div class="settings-icon"><i class="fa-solid fa-globe"></i></div>
                 <div class="settings-label">${t('settings_lang')}</div>
@@ -2223,7 +2501,7 @@ function renderProfile() {
                 <i class="fa-solid fa-chevron-right settings-arrow"></i>
             </div>
         </div>
-        <div class="settings-item" onclick="toggleDiabetes()">
+        <div class="settings-item" onclick="openDiabetesModal()">
             <div class="settings-item-left">
                 <div class="settings-icon"><i class="fa-solid fa-syringe"></i></div>
                 <div class="settings-label">${t('settings_diabetes')}</div>
@@ -2233,7 +2511,7 @@ function renderProfile() {
                 <div class="toggle-switch ${UserCtx.diabetes?'on':''}" style="width:40px;height:24px;" onclick="event.stopPropagation();toggleDiabetes()"></div>
             </div>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openGoalModal()">
             <div class="settings-item-left">
                 <div class="settings-icon"><i class="fa-solid fa-bullseye"></i></div>
                 <div class="settings-label">${t('settings_goal')}</div>
@@ -2243,14 +2521,17 @@ function renderProfile() {
                 <i class="fa-solid fa-chevron-right settings-arrow"></i>
             </div>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openNotifyModal()">
             <div class="settings-item-left">
                 <div class="settings-icon"><i class="fa-solid fa-bell"></i></div>
                 <div class="settings-label">${t('settings_notify')}</div>
             </div>
-            <i class="fa-solid fa-chevron-right settings-arrow"></i>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="settings-value">${notificationsEnabled ? t('on') : t('off')}</span>
+                <i class="fa-solid fa-chevron-right settings-arrow"></i>
+            </div>
         </div>
-        <div class="settings-item">
+        <div class="settings-item" onclick="openAboutModal()">
             <div class="settings-item-left">
                 <div class="settings-icon"><i class="fa-solid fa-circle-info"></i></div>
                 <div class="settings-label">${t('settings_about')}</div>
@@ -2263,6 +2544,7 @@ function renderProfile() {
 
 function toggleRoutine(key) {
     routineState[key] = !routineState[key];
+    saveAppState();
     renderProfile();
 }
 
@@ -2270,12 +2552,196 @@ function cycleLang() {
     const langs = ['ru', 'kz', 'en'];
     const idx = langs.indexOf(UserCtx.lang);
     UserCtx.lang = langs[(idx + 1) % langs.length];
+    saveAppState();
     refreshAllUI();
 }
 
 function toggleDiabetes() {
     UserCtx.diabetes = !UserCtx.diabetes;
+    saveAppState();
     refreshAllUI();
+    showToast(ux('saved'));
+}
+
+
+function openAddMealModal(defaultType = 'lunch') {
+    const foodOptions = foodDB.map(food => `<option value="${food.id}">${localFoodName(food)} · ${food.kcal} ${t('kcal_unit')}/100г</option>`).join('');
+    showMvpModal(`
+        <div class="mvp-modal-title">${ux('addMealTitle')}</div>
+        <div class="mvp-modal-sub">${ux('addMealSub')}</div>
+        <div class="form-group">
+            <label class="form-label">${ux('mealType')}</label>
+            <select class="input-field" id="mvp-meal-type">
+                ${['breakfast','lunch','dinner','snack'].map(type => `<option value="${type}" ${type===defaultType?'selected':''}>${t(type)}</option>`).join('')}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">${ux('food')}</label>
+            <select class="input-field" id="mvp-food-id">${foodOptions}</select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">${ux('portion')}</label>
+            <input class="input-field" id="mvp-food-grams" type="number" min="1" max="1500" value="150" inputmode="numeric">
+            <div class="mvp-form-hint">XE рассчитывается автоматически: 1 XE = 12г углеводов.</div>
+        </div>
+        <div class="mvp-summary-box" id="mvp-food-preview"></div>
+        <div class="mvp-modal-actions">
+            <button class="btn-secondary" onclick="closeMvpModal()">${ux('cancel')}</button>
+            <button class="btn-primary" onclick="submitManualFood()">${ux('addFood')}</button>
+        </div>
+    `);
+    const foodSelect = document.getElementById('mvp-food-id');
+    const gramsInput = document.getElementById('mvp-food-grams');
+    if (foodSelect && gramsInput) {
+        foodSelect.addEventListener('change', updateManualFoodPreview);
+        gramsInput.addEventListener('input', updateManualFoodPreview);
+        updateManualFoodPreview();
+    }
+}
+
+function updateManualFoodPreview() {
+    const food = getFoodById(document.getElementById('mvp-food-id')?.value);
+    const grams = Math.max(1, Number(document.getElementById('mvp-food-grams')?.value) || 1);
+    const box = document.getElementById('mvp-food-preview');
+    if (!food || !box) return;
+    const entry = diaryEntryFromFood(food, grams, 'manual', document.getElementById('mvp-meal-type')?.value || 'lunch');
+    box.innerHTML = `
+        <div class="mvp-summary-row"><span>${t('kcal_unit')}</span><strong>${entry.kcal}</strong></div>
+        <div class="mvp-summary-row"><span>${t('protein')} / ${t('fat')} / ${t('carbs')}</span><strong>${entry.protein}г / ${entry.fat}г / ${entry.carbs}г</strong></div>
+        <div class="mvp-summary-row"><span>XE / GI</span><strong>${calcXE(entry.carbs)} / ${entry.gi}</strong></div>
+    `;
+}
+
+function submitManualFood() {
+    const food = getFoodById(document.getElementById('mvp-food-id')?.value);
+    const grams = Math.max(1, Math.min(1500, Number(document.getElementById('mvp-food-grams')?.value) || 1));
+    const mealType = document.getElementById('mvp-meal-type')?.value || 'lunch';
+    if (!food) return;
+    loggedFoods.push(diaryEntryFromFood(food, grams, 'manual', mealType));
+    recalcConsumed();
+    saveAppState();
+    closeMvpModal();
+    refreshAllUI();
+    switchScreen('home');
+    showToast(ux('added'));
+}
+
+function openLanguageModal() {
+    const langs = [
+        { code: 'ru', icon: '🇷🇺', title: 'Русский', sub: 'Основной язык демо' },
+        { code: 'kz', icon: '🇰🇿', title: 'Қазақша', sub: 'Локализация для Казахстана' },
+        { code: 'en', icon: '🇬🇧', title: 'English', sub: 'International pitch mode' }
+    ];
+    showMvpModal(`
+        <div class="mvp-modal-title">${ux('languageTitle')}</div>
+        <div class="mvp-modal-sub">${ux('languageSub')}</div>
+        <div class="mvp-choice-grid">
+            ${langs.map(lang => `
+                <div class="mvp-choice-card ${UserCtx.lang===lang.code?'active':''}" onclick="setLanguage('${lang.code}')">
+                    <div class="mvp-choice-icon">${lang.icon}</div>
+                    <div><div class="mvp-choice-title">${lang.title}</div><div class="mvp-choice-sub">${lang.sub}</div></div>
+                </div>`).join('')}
+        </div>
+    `);
+}
+
+function setLanguage(lang) {
+    UserCtx.lang = lang;
+    saveAppState();
+    closeMvpModal();
+    refreshAllUI();
+    showToast(ux('saved'));
+}
+
+function openDiabetesModal() {
+    showMvpModal(`
+        <div class="mvp-modal-title">${ux('diabetesTitle')}</div>
+        <div class="mvp-modal-sub">${ux('diabetesSub')}</div>
+        <div class="mvp-choice-grid">
+            <div class="mvp-choice-card ${UserCtx.diabetes?'active':''}" onclick="setDiabetesMode(true)">
+                <div class="mvp-choice-icon">🩺</div><div><div class="mvp-choice-title">${t('on')}</div><div class="mvp-choice-sub">XE, GI, GL, диабет-баннер</div></div>
+            </div>
+            <div class="mvp-choice-card ${!UserCtx.diabetes?'active':''}" onclick="setDiabetesMode(false)">
+                <div class="mvp-choice-icon">🥗</div><div><div class="mvp-choice-title">${t('off')}</div><div class="mvp-choice-sub">Обычный nutrition tracker</div></div>
+            </div>
+        </div>
+    `);
+}
+
+function setDiabetesMode(enabled) {
+    UserCtx.diabetes = enabled;
+    saveAppState();
+    closeMvpModal();
+    refreshAllUI();
+    showToast(ux('saved'));
+}
+
+function openGoalModal() {
+    const goals = [
+        { code: 'loss', icon: '🔥', title: t('goal_loss'), sub: t('goal_loss_sub') },
+        { code: 'maintain', icon: '🥗', title: t('goal_maintain'), sub: t('goal_maintain_sub') },
+        { code: 'diabetes', icon: '🩺', title: t('goal_diabetes'), sub: t('goal_diabetes_sub') },
+        { code: 'gain', icon: '💪', title: t('goal_gain'), sub: t('goal_gain_sub') }
+    ];
+    showMvpModal(`
+        <div class="mvp-modal-title">${ux('goalTitle')}</div>
+        <div class="mvp-modal-sub">${ux('goalSub')}</div>
+        <div class="mvp-choice-grid">
+            ${goals.map(goal => `
+                <div class="mvp-choice-card ${UserCtx.goal===goal.code?'active':''}" onclick="setGoal('${goal.code}')">
+                    <div class="mvp-choice-icon">${goal.icon}</div>
+                    <div><div class="mvp-choice-title">${goal.title}</div><div class="mvp-choice-sub">${goal.sub}</div></div>
+                </div>`).join('')}
+        </div>
+    `);
+}
+
+function setGoal(goal) {
+    UserCtx.goal = goal;
+    if (goal === 'diabetes') UserCtx.diabetes = true;
+    calcMifflin();
+    saveAppState();
+    closeMvpModal();
+    refreshAllUI();
+    showToast(ux('saved'));
+}
+
+function openNotifyModal() {
+    showMvpModal(`
+        <div class="mvp-modal-title">${ux('notifyTitle')}</div>
+        <div class="mvp-modal-sub">${ux('notifySub')}</div>
+        <div class="mvp-choice-grid">
+            <div class="mvp-choice-card ${notificationsEnabled?'active':''}" onclick="setNotifications(true)">
+                <div class="mvp-choice-icon">🔔</div><div><div class="mvp-choice-title">${ux('notifyOn')}</div><div class="mvp-choice-sub">Forum launch, meal reminders, water reminders</div></div>
+            </div>
+            <div class="mvp-choice-card ${!notificationsEnabled?'active':''}" onclick="setNotifications(false)">
+                <div class="mvp-choice-icon">🌙</div><div><div class="mvp-choice-title">${ux('notifyOff')}</div><div class="mvp-choice-sub">No push notifications in MVP demo</div></div>
+            </div>
+        </div>
+    `);
+}
+
+function setNotifications(enabled) {
+    notificationsEnabled = enabled;
+    saveAppState();
+    closeMvpModal();
+    renderProfile();
+    renderForum();
+    showToast(ux('saved'));
+}
+
+function openAboutModal() {
+    showMvpModal(`
+        <div class="mvp-modal-title">${ux('aboutTitle')}</div>
+        <div class="mvp-modal-sub">${ux('aboutSub')}</div>
+        <div class="mvp-summary-box">
+            <div class="mvp-summary-row"><span>AI scan</span><strong>Backend connected</strong></div>
+            <div class="mvp-summary-row"><span>Languages</span><strong>RU / KZ / EN</strong></div>
+            <div class="mvp-summary-row"><span>Storage</span><strong>localStorage MVP</strong></div>
+            <div class="mvp-summary-row"><span>Focus</span><strong>Kazakhstan HealthTech</strong></div>
+        </div>
+        <button class="btn-primary" style="margin-top:18px;" onclick="closeMvpModal()">OK</button>
+    `);
 }
 
 function refreshAllUI() {
@@ -2297,6 +2763,16 @@ function refreshAllUI() {
     document.getElementById('result-add-btn').textContent    = t('scan_add');
     document.getElementById('result-cancel-btn').textContent = t('scan_cancel');
 }
+
+// ── EXTRA MVP BUTTON BINDINGS ─────────────────────────────
+document.getElementById('meals-section-link')?.addEventListener('click', () => openAddMealModal('lunch'));
+document.getElementById('mvp-modal-close')?.addEventListener('click', closeMvpModal);
+document.getElementById('mvp-modal-root')?.addEventListener('click', (event) => {
+    if (event.target?.id === 'mvp-modal-root') closeMvpModal();
+});
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeMvpModal();
+});
 
 // ── NAVIGATION ────────────────────────────────────────────
 document.querySelectorAll('.nav-item[data-screen]').forEach(btn => {
@@ -2437,14 +2913,23 @@ function showDynamicScanResult(data) {
 document.getElementById('result-add-btn').addEventListener('click', () => {
     if (!currentScannedFood) return;
 
-    // Прибавляем распознанные макронутриенты
-    UserCtx.consumedKcal    += currentScannedFood.calories;
-    UserCtx.consumedProtein += currentScannedFood.protein_g;
-    UserCtx.consumedFat     += currentScannedFood.fat_g;
-    UserCtx.consumedCarbs   += currentScannedFood.carbs_g;
+    loggedFoods.push({
+        id: `ai-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        name: currentScannedFood.dish_name || 'AI food',
+        source: 'ai',
+        mealType: 'scan',
+        grams: currentScannedFood.grams || currentScannedFood.portion_g || null,
+        kcal: Math.round(Number(currentScannedFood.calories) || 0),
+        protein: Math.round(Number(currentScannedFood.protein_g) || 0),
+        fat: Math.round(Number(currentScannedFood.fat_g) || 0),
+        carbs: Math.round(Number(currentScannedFood.carbs_g) || 0),
+        gi: Number(currentScannedFood.gi) || 50
+    });
 
+    recalcConsumed();
+    saveAppState();
     closeScan();
-    renderHome();
+    refreshAllUI();
     showToast(t('added_toast'));
     switchScreen('home');
     
@@ -2461,6 +2946,7 @@ function closeScan() {
 }
 
 // ── INIT ──────────────────────────────────────────────────
+loadSavedState();
 renderObStep(0);
 
 // Init water glasses
@@ -2471,6 +2957,12 @@ renderObStep(0);
         container.innerHTML += `<button class="water-glass" onclick="toggleWater(${i})"><i class="fa-solid fa-droplet"></i></button>`;
     }
 })();
+
+if (UserCtx.onboarded) {
+    calcMifflin();
+    recalcConsumed();
+    launchApp();
+}
 
 </script>
 </body>
