@@ -780,6 +780,135 @@
             color: var(--lime-dark);
         }
 
+
+        /* ── AI CONSULTANT SCREEN ── */
+        .ai-consultant-root {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100dvh - 172px);
+            padding: 16px 18px 18px;
+            gap: 12px;
+        }
+        .ai-context-card {
+            margin: 0 6px;
+            background: linear-gradient(135deg, #0F172A, #1E293B);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: 0 16px 42px rgba(15,23,42,0.18);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .ai-context-card::after {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -58px;
+            top: -72px;
+            border-radius: 50%;
+            background: rgba(167,243,208,0.16);
+        }
+        .ai-context-kicker { font-size: 11px; font-weight: 800; color: var(--lime); letter-spacing: 0.7px; text-transform: uppercase; }
+        .ai-context-title { font-size: 20px; font-weight: 800; letter-spacing: -0.45px; margin-top: 6px; }
+        .ai-context-sub { font-size: 13px; color: rgba(255,255,255,0.68); line-height: 1.45; margin-top: 6px; max-width: 310px; }
+        .ai-context-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 14px; position: relative; z-index: 1; }
+        .ai-context-stat { background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 10px 8px; text-align: center; }
+        .ai-context-stat-val { color: white; font-size: 15px; font-weight: 900; }
+        .ai-context-stat-label { color: rgba(255,255,255,0.58); font-size: 9px; font-weight: 800; text-transform: uppercase; margin-top: 2px; }
+        .ai-quick-row { display: flex; overflow-x: auto; gap: 8px; padding: 0 6px 2px; scrollbar-width: none; }
+        .ai-quick-row::-webkit-scrollbar { display:none; }
+        .ai-quick-btn {
+            border: none;
+            flex-shrink: 0;
+            border-radius: 999px;
+            padding: 10px 13px;
+            background: rgba(255,255,255,0.82);
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 800;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 16px rgba(15,23,42,0.06);
+            cursor: pointer;
+        }
+        .ai-chat-card {
+            flex: 1;
+            margin: 0 6px;
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(15,23,42,0.07);
+            display: flex;
+            flex-direction: column;
+            min-height: 330px;
+            overflow: hidden;
+        }
+        .ai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: none;
+        }
+        .ai-messages::-webkit-scrollbar { display:none; }
+        .ai-message {
+            max-width: 84%;
+            padding: 12px 14px;
+            border-radius: 18px;
+            font-size: 13px;
+            line-height: 1.45;
+            font-weight: 500;
+            animation: fadeIn 0.22s ease forwards;
+        }
+        .ai-message.bot {
+            align-self: flex-start;
+            background: rgba(240,249,255,0.92);
+            color: var(--text);
+            border-bottom-left-radius: 7px;
+        }
+        .ai-message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #0F172A, #1E293B);
+            color: white;
+            border-bottom-right-radius: 7px;
+        }
+        .ai-message-meta { font-size: 10px; font-weight: 800; color: var(--text-tertiary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+        .ai-input-row {
+            display: grid;
+            grid-template-columns: 1fr 46px;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid rgba(226,232,240,0.8);
+            background: rgba(255,255,255,0.55);
+        }
+        .ai-input {
+            border: 1.5px solid rgba(226,232,240,0.95);
+            background: rgba(240,249,255,0.82);
+            border-radius: 16px;
+            padding: 13px 14px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            outline: none;
+        }
+        .ai-send-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, #0F172A, #1E293B);
+            color: var(--lime);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(15,23,42,0.18);
+        }
+
         /* ── HEALTH TRENDS IN PROFILE ── */
         .trend-bar-row { display: flex; gap: 4px; margin-top: 14px; }
         .trend-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -1224,31 +1353,23 @@
         .menu-empty-note { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-top: 10px; }
 
 
-
-        /* ── REVIEW FIXES: REPORTS, EDITABLE DIARY, MENU EXPORT ── */
-        .review-report-root { padding: 18px 24px 28px; }
-        .review-report-hero { background: linear-gradient(135deg,#0F172A,#1E293B); color:white; border-radius:26px; padding:22px; box-shadow:0 18px 46px rgba(15,23,42,.20); margin-bottom:16px; }
-        .review-kicker { font-size:12px; font-weight:800; color:var(--lime); text-transform:uppercase; letter-spacing:.8px; }
-        .review-title { font-size:24px; font-weight:800; letter-spacing:-.6px; line-height:1.15; margin-top:8px; }
-        .review-sub { font-size:14px; color:rgba(255,255,255,.68); line-height:1.5; margin-top:9px; }
-        .report-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:14px; }
-        .report-card { background:rgba(255,255,255,.86); border:1px solid rgba(255,255,255,.42); border-radius:22px; padding:16px; box-shadow:0 8px 32px rgba(15,23,42,.07); }
-        .report-label { font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.45px; }
-        .report-value { font-size:25px; font-weight:900; color:var(--text); margin-top:5px; letter-spacing:-.5px; }
-        .report-bar-wrap { height:8px; background:rgba(240,249,255,.9); border-radius:999px; overflow:hidden; margin-top:11px; }
-        .report-bar { height:100%; border-radius:999px; background:var(--lime-dark); width:0%; transition:width .5s ease; }
-        .report-week-card { background:rgba(255,255,255,.86); border:1px solid rgba(255,255,255,.42); border-radius:24px; padding:18px; box-shadow:0 8px 32px rgba(15,23,42,.07); margin-bottom:14px; }
-        .week-bars { display:flex; gap:6px; align-items:end; height:112px; margin-top:14px; }
-        .week-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end; }
-        .week-fill { width:100%; min-height:8px; border-radius:8px 8px 3px 3px; background:var(--border-solid); }
-        .week-fill.today { background:var(--lime-dark); }
-        .week-day { font-size:10px; font-weight:800; color:var(--text-tertiary); }
-        .meal-inline-tools { display:flex; gap:6px; margin-left:auto; }
-        .meal-icon-btn { width:28px; height:28px; border:none; border-radius:10px; background:rgba(240,249,255,.9); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
-        .meal-icon-btn.danger { background:rgba(248,113,113,.12); color:#B91C1C; }
-        .scan-adjust-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:-8px; margin-bottom:14px; }
-        .scan-adjust-btn { border:none; border-radius:15px; padding:13px 10px; font-size:13px; font-weight:800; font-family:'Inter',sans-serif; background:rgba(240,249,255,.9); color:var(--text); cursor:pointer; }
-        .download-note { font-size:12px; color:var(--text-secondary); line-height:1.45; margin-top:8px; }
+        /* ── FIX PACK: DIARY EDITING + SCAN CLARIFICATION ── */
+        .meal-inline-tools { display:flex; align-items:center; gap:6px; margin-left:6px; }
+        .meal-icon-btn {
+            width:28px; height:28px; border:none; border-radius:10px;
+            background:rgba(240,249,255,0.95); color:var(--text-secondary);
+            display:flex; align-items:center; justify-content:center; cursor:pointer;
+            transition:transform .15s ease, background .15s ease;
+        }
+        .meal-icon-btn:active { transform:scale(.94); }
+        .meal-icon-btn.danger { background:rgba(248,113,113,0.12); color:#B91C1C; }
+        .scan-clarify-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 12px; }
+        .scan-clarify-btn {
+            border:none; border-radius:14px; padding:12px 10px;
+            background:rgba(240,249,255,0.9); color:var(--text);
+            font-size:12px; font-weight:800; font-family:'Inter',sans-serif; cursor:pointer;
+        }
+        .profile-recalc-note { font-size:11px; color:var(--lime-dark); font-weight:800; margin-top:6px; }
 
         /* ── RESPONSIVE DESKTOP CENTER ── */
         @media (min-width: 431px) {
@@ -1363,17 +1484,10 @@
 
             <div class="screen" id="screen-forum">
                 <div class="screen-header">
-                    <div class="screen-header-title" id="forum-title">Форум</div>
-                    <div class="screen-header-sub" id="forum-sub">Сообщество WellAI</div>
+                    <div class="screen-header-title" id="forum-title">AI-консультант</div>
+                    <div class="screen-header-sub" id="forum-sub">Персональный помощник по питанию</div>
                 </div>
-                <div class="forum-coming-soon fade-enter">
-                    <div class="forum-icon-wrap">
-                        <i class="fa-solid fa-comments"></i>
-                    </div>
-                    <div class="forum-coming-title" id="forum-coming-title">Скоро!</div>
-                    <div class="forum-coming-sub" id="forum-coming-sub">Сообщество WellAI — место для обмена советами, рецептами и поддержки</div>
-                    <div class="forum-pill" id="forum-pill">Уведомить меня</div>
-                </div>
+                <div id="ai-consultant-root" class="ai-consultant-root"></div>
             </div>
 
             <div class="screen" id="screen-profile">
@@ -1401,8 +1515,8 @@
                 <i class="fa-solid fa-camera"></i>
             </button>
             <button class="nav-item" data-screen="forum" id="nav-forum">
-                <i class="fa-solid fa-comments"></i>
-                <span id="nav-label-forum">Форум</span>
+                <i class="fa-solid fa-robot"></i>
+                <span id="nav-label-forum">AI</span>
             </button>
             <button class="nav-item" data-screen="profile" id="nav-profile">
                 <i class="fa-solid fa-user"></i>
@@ -1471,6 +1585,10 @@
                 <div class="result-gi-val" id="result-gi-val">ГИ: 70</div>
             </div>
 
+            <div class="scan-clarify-row">
+                <button class="scan-clarify-btn" type="button" onclick="openScanClarifyModal()">Уточнить состав</button>
+                <button class="scan-clarify-btn" type="button" onclick="applyScanPreset('broth')">Жирный бульон</button>
+            </div>
             <button class="btn-primary" id="result-add-btn">Добавить в дневник</button>
             <button class="btn-secondary" id="result-cancel-btn">Отмена</button>
         </div>
@@ -1826,6 +1944,17 @@ const foodDB = [
     { id: 8,  name: { ru: 'Гречка',        kz: 'Қарақұмық',  en: 'Buckwheat'     }, kcal: 343, protein: 13, fat: 3,  carbs: 71, gi: 50,  origin: { ru: 'Крупа', kz: 'Жарма', en: 'Grain' } },
     { id: 9,  name: { ru: 'Яблоко',        kz: 'Алма',       en: 'Apple'         }, kcal: 52,  protein: 0,  fat: 0,  carbs: 14, gi: 36,  origin: { ru: 'Фрукт', kz: 'Жеміс', en: 'Fruit' } },
     { id: 10, name: { ru: 'Кефир',         kz: 'Кефир',      en: 'Kefir'         }, kcal: 51,  protein: 3,  fat: 2,  carbs: 5,  gi: 35,  origin: { ru: 'Молочный продукт', kz: 'Сүт өнімі', en: 'Dairy' } },
+    { id: 11, name: { ru: 'Рис варёный',    kz: 'Піскен күріш', en: 'Cooked rice' }, kcal: 130, protein: 3,  fat: 0,  carbs: 28, gi: 64, origin: { ru: 'Гарнир', kz: 'Гарнир', en: 'Side dish' } },
+    { id: 12, name: { ru: 'Макароны',       kz: 'Макарон', en: 'Pasta' }, kcal: 158, protein: 6, fat: 1, carbs: 31, gi: 55, origin: { ru: 'Гарнир', kz: 'Гарнир', en: 'Side dish' } },
+    { id: 13, name: { ru: 'Картофель',      kz: 'Картоп', en: 'Potato' }, kcal: 87, protein: 2, fat: 0, carbs: 20, gi: 78, origin: { ru: 'Овощ', kz: 'Көкөніс', en: 'Vegetable' } },
+    { id: 14, name: { ru: 'Яйца',           kz: 'Жұмыртқа', en: 'Eggs' }, kcal: 155, protein: 13, fat: 11, carbs: 1, gi: 0, origin: { ru: 'Белковое блюдо', kz: 'Ақуызды тағам', en: 'Protein dish' } },
+    { id: 15, name: { ru: 'Творог',         kz: 'Сүзбе', en: 'Cottage cheese' }, kcal: 121, protein: 17, fat: 5, carbs: 3, gi: 30, origin: { ru: 'Молочный продукт', kz: 'Сүт өнімі', en: 'Dairy' } },
+    { id: 16, name: { ru: 'Греческий салат', kz: 'Грек салаты', en: 'Greek salad' }, kcal: 160, protein: 4, fat: 12, carbs: 7, gi: 15, origin: { ru: 'Салат', kz: 'Салат', en: 'Salad' } },
+    { id: 17, name: { ru: 'Овощной салат',  kz: 'Көкөніс салаты', en: 'Vegetable salad' }, kcal: 70, protein: 2, fat: 4, carbs: 8, gi: 25, origin: { ru: 'Салат', kz: 'Салат', en: 'Salad' } },
+    { id: 18, name: { ru: 'Рыба запечённая', kz: 'Пісірілген балық', en: 'Baked fish' }, kcal: 180, protein: 24, fat: 8, carbs: 0, gi: 0, origin: { ru: 'Белковое блюдо', kz: 'Ақуызды тағам', en: 'Protein dish' } },
+    { id: 19, name: { ru: 'Говядина',       kz: 'Сиыр еті', en: 'Beef' }, kcal: 250, protein: 26, fat: 15, carbs: 0, gi: 0, origin: { ru: 'Белковое блюдо', kz: 'Ақуызды тағам', en: 'Protein dish' } },
+    { id: 20, name: { ru: 'Банан',          kz: 'Банан', en: 'Banana' }, kcal: 89, protein: 1, fat: 0, carbs: 23, gi: 51, origin: { ru: 'Фрукт', kz: 'Жеміс', en: 'Fruit' } },
+    { id: 21, name: { ru: 'Йогурт',         kz: 'Йогурт', en: 'Yogurt' }, kcal: 63, protein: 5, fat: 2, carbs: 7, gi: 35, origin: { ru: 'Молочный продукт', kz: 'Сүт өнімі', en: 'Dairy' } },
 ];
 
 // ── USER CONTEXT ───────────────────────────────────────────
@@ -1855,7 +1984,8 @@ let currentScreen = 'home';
 let selectedDate = new Date();
 let currentScannedFood = null; // Для сохранения результатов Gemini
 let loggedFoods = [];           // Manual + AI diary entries that should survive recalculation
-let forumWaitlist = false;      // Forum launch waitlist CTA state
+let forumWaitlist = false;      // Legacy flag kept for compatibility
+let assistantChatMessages = [];   // Local MVP AI consultant messages
 let notificationsEnabled = false;
 let menuState = {
     setupDone: false,
@@ -1933,6 +2063,14 @@ function calcMifflin() {
     UserCtx.dailyProtein = Math.round(tdee * 0.30 / 4);
     UserCtx.dailyFat     = Math.round(tdee * 0.30 / 9);
     UserCtx.dailyCarbs   = Math.round(tdee * 0.40 / 4);
+}
+
+function recalcTargetsFromProfile() {
+    calcMifflin();
+    if (!Number.isFinite(UserCtx.dailyKcal) || UserCtx.dailyKcal < 800) UserCtx.dailyKcal = 2000;
+    if (!Number.isFinite(UserCtx.dailyProtein) || UserCtx.dailyProtein < 1) UserCtx.dailyProtein = 150;
+    if (!Number.isFinite(UserCtx.dailyFat) || UserCtx.dailyFat < 1) UserCtx.dailyFat = 67;
+    if (!Number.isFinite(UserCtx.dailyCarbs) || UserCtx.dailyCarbs < 1) UserCtx.dailyCarbs = 250;
 }
 
 function recalcConsumed() {
@@ -2121,6 +2259,7 @@ function saveAppState() {
             routineState,
             selectedDate: selectedDate.toISOString(),
             forumWaitlist,
+            assistantChatMessages,
             notificationsEnabled,
             menuState
         };
@@ -2148,8 +2287,10 @@ function loadSavedState() {
         if (state.routineState) Object.assign(routineState, state.routineState);
         if (state.selectedDate) selectedDate = new Date(state.selectedDate);
         forumWaitlist = !!state.forumWaitlist;
+        if (Array.isArray(state.assistantChatMessages)) assistantChatMessages = state.assistantChatMessages.slice(-24);
         notificationsEnabled = !!state.notificationsEnabled;
         if (state.menuState) menuState = { ...menuState, ...state.menuState, loading: false };
+        recalcTargetsFromProfile();
     } catch (err) {
         console.warn('WellAI saved state was ignored:', err);
     }
@@ -2381,6 +2522,7 @@ function launchApp() {
     app.style.display = 'flex';
     app.style.animation = 'fadeIn 0.5s ease';
 
+    recalcTargetsFromProfile();
     recalcConsumed();
     renderHome();
     renderPlanner();
@@ -2486,6 +2628,10 @@ function renderMealsList(containerId) {
                             <div class="meal-item-name">${food.name[UserCtx.lang] || food.name.ru}</div>
                             <div class="meal-item-meta">${item.grams}г · ${Math.round(food.kcal * ratio)} ${t('kcal_unit')}</div>
                             ${UserCtx.diabetes ? `<div class="meal-item-xe">${itemXE} XE</div>` : ''}
+                            <div class="meal-inline-tools">
+                                <button class="meal-icon-btn" onclick="openEditMealDataItemModal('${meal.id}', ${meal.items.indexOf(item)})" title="${ux('edit') || 'Edit'}"><i class="fa-solid fa-pen"></i></button>
+                                <button class="meal-icon-btn danger" onclick="removeMealDataItem('${meal.id}', ${meal.items.indexOf(item)})" title="${ux('delete') || 'Delete'}"><i class="fa-solid fa-trash"></i></button>
+                            </div>
                         </div>`;
                 }).join('')}
                 <div class="mvp-meal-footer">
@@ -2512,7 +2658,11 @@ function renderMealsList(containerId) {
                 <div class="meal-item-row">
                     <div class="gi-dot ${getGIClass(entry.gi)}"></div>
                     <div class="meal-item-name">${entry.name}</div>
-                    <div class="meal-item-meta">${entry.grams ? entry.grams + 'г · ' : ''}${entry.carbs}г ${t('carbs').toLowerCase()}</div>
+                    <div class="meal-item-meta">${entry.grams ? entry.grams + 'г · ' : ''}${entry.protein || 0}г ${t('protein').toLowerCase()} · ${entry.fat || 0}г ${t('fat').toLowerCase()} · ${entry.carbs || 0}г ${t('carbs').toLowerCase()}</div>
+                    <div class="meal-inline-tools">
+                        <button class="meal-icon-btn" onclick="openEditDiaryEntryModal('${entry.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="meal-icon-btn danger" onclick="removeLoggedFood('${entry.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 </div>
             </div>`).join('');
     }
@@ -2524,6 +2674,77 @@ function removeLoggedFood(entryId) {
     saveAppState();
     refreshAllUI();
     showToast(ux('removed'));
+}
+
+function openEditMealDataItemModal(mealId, index) {
+    const meal = mealData.find(m => m.id === mealId);
+    const item = meal?.items?.[index];
+    const food = item ? getFoodById(item.foodId) : null;
+    if (!meal || !item || !food) return;
+    showMvpModal(`
+        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Edit meal':UserCtx.lang==='kz'?'Тағамды өзгерту':'Изменить блюдо'}</div>
+        <div class="mvp-modal-sub">${localFoodName(food)} · ${t(meal.type)}</div>
+        <div class="form-group">
+            <label class="form-label">${ux('portion')}</label>
+            <input class="input-field" id="edit-meal-grams" type="number" min="1" max="1500" value="${item.grams}" inputmode="numeric">
+        </div>
+        <div class="mvp-modal-actions">
+            <button class="btn-secondary" onclick="closeMvpModal()">${ux('cancel')}</button>
+            <button class="btn-primary" onclick="saveMealDataItem('${mealId}', ${index})">${ux('saved')}</button>
+        </div>
+    `);
+}
+
+function saveMealDataItem(mealId, index) {
+    const meal = mealData.find(m => m.id === mealId);
+    const item = meal?.items?.[index];
+    if (!item) return;
+    const grams = Math.max(1, Math.min(1500, Number(document.getElementById('edit-meal-grams')?.value) || item.grams));
+    item.grams = Math.round(grams);
+    recalcConsumed();
+    saveAppState();
+    closeMvpModal();
+    refreshAllUI();
+    showToast(ux('saved'));
+}
+
+function removeMealDataItem(mealId, index) {
+    const meal = mealData.find(m => m.id === mealId);
+    if (!meal || !meal.items?.[index]) return;
+    meal.items.splice(index, 1);
+    recalcConsumed();
+    saveAppState();
+    refreshAllUI();
+    showToast(ux('removed'));
+}
+
+function openEditDiaryEntryModal(entryId) {
+    const entry = loggedFoods.find(e => e.id === entryId);
+    if (!entry) return;
+    showMvpModal(`
+        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Edit diary entry':UserCtx.lang==='kz'?'Күнделік жазбасын өзгерту':'Изменить запись'}</div>
+        <div class="mvp-modal-sub">${entry.name}</div>
+        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${ux('portion')}</label><input class="input-field" id="edit-entry-grams" type="number" min="1" max="1500" value="${entry.grams || 100}"></div><div class="form-group"><label class="form-label">${t('kcal_unit')}</label><input class="input-field" id="edit-entry-kcal" type="number" min="0" value="${entry.kcal || 0}"></div></div>
+        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${t('protein')}</label><input class="input-field" id="edit-entry-protein" type="number" min="0" value="${entry.protein || 0}"></div><div class="form-group"><label class="form-label">${t('fat')}</label><input class="input-field" id="edit-entry-fat" type="number" min="0" value="${entry.fat || 0}"></div></div>
+        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${t('carbs')}</label><input class="input-field" id="edit-entry-carbs" type="number" min="0" value="${entry.carbs || 0}"></div><div class="form-group"><label class="form-label">GI</label><input class="input-field" id="edit-entry-gi" type="number" min="0" max="100" value="${entry.gi || 0}"></div></div>
+        <div class="mvp-modal-actions"><button class="btn-secondary" onclick="closeMvpModal()">${ux('cancel')}</button><button class="btn-primary" onclick="saveDiaryEntry('${entryId}')">${ux('saved')}</button></div>
+    `);
+}
+
+function saveDiaryEntry(entryId) {
+    const entry = loggedFoods.find(e => e.id === entryId);
+    if (!entry) return;
+    entry.grams = Math.round(Number(document.getElementById('edit-entry-grams')?.value) || entry.grams || 0);
+    entry.kcal = Math.round(Number(document.getElementById('edit-entry-kcal')?.value) || 0);
+    entry.protein = Math.round(Number(document.getElementById('edit-entry-protein')?.value) || 0);
+    entry.fat = Math.round(Number(document.getElementById('edit-entry-fat')?.value) || 0);
+    entry.carbs = Math.round(Number(document.getElementById('edit-entry-carbs')?.value) || 0);
+    entry.gi = Math.max(0, Math.min(100, Math.round(Number(document.getElementById('edit-entry-gi')?.value) || 0)));
+    recalcConsumed();
+    saveAppState();
+    closeMvpModal();
+    refreshAllUI();
+    showToast(ux('saved'));
 }
 
 function toggleMeal(mealId) {
@@ -2904,32 +3125,186 @@ function addAllMenuToDiary() {
 
 function selectDate() { renderPlanner(); }
 
-// ── FORUM ─────────────────────────────────────────────────
-function renderForum() {
-    const el = document.getElementById('forum-title');
-    if (el) el.textContent = t('forum_title');
-    const sub = document.getElementById('forum-sub');
-    if (sub) sub.textContent = t('forum_sub');
-    const ct = document.getElementById('forum-coming-title');
-    if (ct) ct.textContent = t('forum_coming_title');
-    const cs = document.getElementById('forum-coming-sub');
-    if (cs) cs.textContent = t('forum_coming_sub');
-    const cp = document.getElementById('forum-pill');
-    if (cp) {
-        cp.textContent = forumWaitlist ? ux('forumJoined') : t('forum_pill');
-        cp.onclick = joinForumWaitlist;
-        cp.style.cursor = 'pointer';
-        cp.style.background = forumWaitlist ? 'rgba(52,211,153,0.18)' : 'rgba(167,243,208,0.25)';
-    }
+// ── AI CONSULTANT ──────────────────────────────────────────
+function aiText(key) {
+    const dict = {
+        ru: {
+            title: 'AI-консультант',
+            sub: 'Персональный помощник по питанию',
+            kicker: 'На основе ваших данных',
+            heroTitle: 'Спросите про рацион, КБЖУ, ГИ или ужин',
+            heroSub: 'Пока это MVP-оболочка: помощник отвечает по данным профиля, дневника питания и диабет-режима без отдельного backend.',
+            left: 'ккал осталось', protein: 'белки', carbs: 'углев.', placeholder: 'Напишите вопрос...', send: 'Отправить',
+            bot: 'WellAI AI', you: 'Вы',
+            welcome: 'Привет! Я могу подсказать, что съесть дальше, оценить день по калориям и БЖУ, объяснить ГИ или помочь снизить углеводы.',
+            quickDinner: 'Что съесть на ужин?', quickDay: 'Оцени мой день', quickGi: 'Почему высокий ГИ?', quickCarbs: 'Как снизить углеводы?',
+            empty: 'Пока в дневнике мало данных. Добавьте блюдо через AI Scan или вручную, и мои советы станут точнее.'
+        },
+        kz: {
+            title: 'AI-кеңесші',
+            sub: 'Тамақтану бойынша жеке көмекші',
+            kicker: 'Сіздің деректеріңіз бойынша',
+            heroTitle: 'Рацион, КБЖУ, ГИ немесе кешкі ас туралы сұраңыз',
+            heroSub: 'Бұл MVP-қабықша: көмекші профиль, күнделік және диабет режимі бойынша жауап береді.',
+            left: 'ккал қалды', protein: 'ақуыз', carbs: 'көмірсу', placeholder: 'Сұрақ жазыңыз...', send: 'Жіберу',
+            bot: 'WellAI AI', you: 'Сіз',
+            welcome: 'Сәлем! Мен не жеуге болатынын, күндік рационды, ГИ мен көмірсуды түсіндіруге көмектесемін.',
+            quickDinner: 'Кешкі асқа не жеймін?', quickDay: 'Күнімді бағала', quickGi: 'Неге ГИ жоғары?', quickCarbs: 'Көмірсуды қалай азайтамын?',
+            empty: 'Күнделікте дерек аз. AI Scan арқылы немесе қолмен тағам қоссаңыз, кеңестер дәлірек болады.'
+        },
+        en: {
+            title: 'AI Consultant',
+            sub: 'Personal nutrition assistant',
+            kicker: 'Based on your data',
+            heroTitle: 'Ask about meals, macros, GI or dinner',
+            heroSub: 'MVP assistant: it uses your profile, diary and diabetes mode without a separate backend yet.',
+            left: 'kcal left', protein: 'protein', carbs: 'carbs', placeholder: 'Ask a question...', send: 'Send',
+            bot: 'WellAI AI', you: 'You',
+            welcome: 'Hi! I can suggest your next meal, review your day, explain GI, or help reduce carbs.',
+            quickDinner: 'What for dinner?', quickDay: 'Review my day', quickGi: 'Why high GI?', quickCarbs: 'How to reduce carbs?',
+            empty: 'There is not much diary data yet. Add meals via AI Scan or manually for better advice.'
+        }
+    };
+    return (dict[UserCtx.lang] || dict.ru)[key] || key;
 }
 
-function joinForumWaitlist() {
-    forumWaitlist = true;
-    notificationsEnabled = true;
+function getAssistantContext() {
+    recalcTargetsFromProfile();
+    recalcConsumed();
+    const kcalLeft = Math.max(0, UserCtx.dailyKcal - UserCtx.consumedKcal);
+    const proteinLeft = Math.max(0, UserCtx.dailyProtein - UserCtx.consumedProtein);
+    const carbsLeft = Math.max(0, UserCtx.dailyCarbs - UserCtx.consumedCarbs);
+    const foodNames = loggedFoods.slice(-5).map(x => x.name).filter(Boolean);
+    mealData.forEach(meal => {
+        if (!meal.completed) return;
+        meal.items.forEach(item => {
+            const food = getFoodById(item.foodId);
+            if (food) foodNames.push(localFoodName(food));
+        });
+    });
+    return { kcalLeft, proteinLeft, carbsLeft, foodNames: foodNames.slice(-7) };
+}
+
+function renderForum() {
+    const title = document.getElementById('forum-title');
+    const sub = document.getElementById('forum-sub');
+    if (title) title.textContent = aiText('title');
+    if (sub) sub.textContent = aiText('sub');
+    const navLabel = document.getElementById('nav-label-forum');
+    if (navLabel) navLabel.textContent = UserCtx.lang === 'en' ? 'AI' : 'AI';
+
+    const root = document.getElementById('ai-consultant-root');
+    if (!root) return;
+    const ctx = getAssistantContext();
+    if (!assistantChatMessages.length) {
+        assistantChatMessages = [{ role: 'bot', text: aiText('welcome') }];
+    }
+    root.innerHTML = `
+        <div class="ai-context-card fade-enter">
+            <div class="ai-context-kicker">${aiText('kicker')}</div>
+            <div class="ai-context-title">${aiText('heroTitle')}</div>
+            <div class="ai-context-sub">${aiText('heroSub')}</div>
+            <div class="ai-context-stats">
+                <div class="ai-context-stat"><div class="ai-context-stat-val">${ctx.kcalLeft}</div><div class="ai-context-stat-label">${aiText('left')}</div></div>
+                <div class="ai-context-stat"><div class="ai-context-stat-val">${ctx.proteinLeft}г</div><div class="ai-context-stat-label">${aiText('protein')}</div></div>
+                <div class="ai-context-stat"><div class="ai-context-stat-val">${ctx.carbsLeft}г</div><div class="ai-context-stat-label">${aiText('carbs')}</div></div>
+            </div>
+        </div>
+        <div class="ai-quick-row">
+            <button class="ai-quick-btn" onclick="sendAssistantQuick('${aiText('quickDinner').replace(/'/g, '&#39;')}')">${aiText('quickDinner')}</button>
+            <button class="ai-quick-btn" onclick="sendAssistantQuick('${aiText('quickDay').replace(/'/g, '&#39;')}')">${aiText('quickDay')}</button>
+            <button class="ai-quick-btn" onclick="sendAssistantQuick('${aiText('quickGi').replace(/'/g, '&#39;')}')">${aiText('quickGi')}</button>
+            <button class="ai-quick-btn" onclick="sendAssistantQuick('${aiText('quickCarbs').replace(/'/g, '&#39;')}')">${aiText('quickCarbs')}</button>
+        </div>
+        <div class="ai-chat-card">
+            <div class="ai-messages" id="ai-messages">
+                ${assistantChatMessages.map(msg => `
+                    <div class="ai-message ${msg.role === 'user' ? 'user' : 'bot'}">
+                        ${msg.role === 'bot' ? `<div class="ai-message-meta">${aiText('bot')}</div>` : ''}
+                        ${escapeHtml(msg.text)}
+                    </div>
+                `).join('')}
+            </div>
+            <form class="ai-input-row" id="ai-chat-form">
+                <input class="ai-input" id="ai-chat-input" autocomplete="off" placeholder="${aiText('placeholder')}">
+                <button class="ai-send-btn" type="submit" aria-label="${aiText('send')}"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+        </div>
+    `;
+    const form = document.getElementById('ai-chat-form');
+    if (form) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const input = document.getElementById('ai-chat-input');
+            const value = input?.value?.trim();
+            if (!value) return;
+            input.value = '';
+            sendAssistantMessage(value);
+        });
+    }
+    scrollAssistantToBottom();
+}
+
+function escapeHtml(value) {
+    return String(value || '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+}
+
+function scrollAssistantToBottom() {
+    const box = document.getElementById('ai-messages');
+    if (box) box.scrollTop = box.scrollHeight;
+}
+
+function sendAssistantQuick(text) { sendAssistantMessage(text); }
+
+function sendAssistantMessage(text) {
+    assistantChatMessages.push({ role: 'user', text });
+    assistantChatMessages.push({ role: 'bot', text: buildAssistantReply(text) });
+    assistantChatMessages = assistantChatMessages.slice(-24);
     saveAppState();
     renderForum();
-    renderProfile();
-    showToast(ux('forumJoinToast'));
+}
+
+function buildAssistantReply(question) {
+    const q = String(question || '').toLowerCase();
+    const ctx = getAssistantContext();
+    const mealsText = ctx.foodNames.length ? ctx.foodNames.join(', ') : aiText('empty');
+    const diabetesLine = UserCtx.diabetes || UserCtx.goal === 'diabetes'
+        ? (UserCtx.lang === 'en' ? 'Since diabetes mode is enabled, keep fast carbs and high-GI foods moderate.' : UserCtx.lang === 'kz' ? 'Диабет режимі қосулы, сондықтан тез көмірсулар мен жоғары ГИ өнімдерін азайтыңыз.' : 'Так как включён диабет-режим, лучше держать быстрые углеводы и высокий ГИ умеренно.')
+        : '';
+
+    if (q.includes('ужин') || q.includes('dinner') || q.includes('кеш')) {
+        return UserCtx.lang === 'en'
+            ? `You have about ${ctx.kcalLeft} kcal left. A good dinner: lean protein + vegetables, for example chicken/fish with salad. Try to keep carbs around ${Math.min(ctx.carbsLeft, 45)}g. ${diabetesLine}`
+            : UserCtx.lang === 'kz'
+            ? `Сізде шамамен ${ctx.kcalLeft} ккал қалды. Кешкі асқа ақуыз + көкөніс таңдаңыз: тауық/балық және салат. Көмірсуды ${Math.min(ctx.carbsLeft, 45)}г шамасында ұстаған дұрыс. ${diabetesLine}`
+            : `У вас осталось примерно ${ctx.kcalLeft} ккал. На ужин лучше выбрать белок + овощи: курица/рыба с салатом. Углеводы держите примерно до ${Math.min(ctx.carbsLeft, 45)}г. ${diabetesLine}`;
+    }
+    if (q.includes('ги') || q.includes('gi') || q.includes('глик')) {
+        return UserCtx.lang === 'en'
+            ? `GI shows how quickly carbs can raise blood glucose. To lower the meal impact, combine carbs with protein, vegetables and healthy fats. ${diabetesLine}`
+            : UserCtx.lang === 'kz'
+            ? `ГИ көмірсудың қандағы қантты қаншалықты тез көтеретінін көрсетеді. Әсерді азайту үшін көмірсуды ақуыз, көкөніс және пайдалы маймен бірге жеңіз. ${diabetesLine}`
+            : `ГИ показывает, насколько быстро углеводы могут повышать сахар в крови. Чтобы снизить эффект, сочетайте углеводы с белком, овощами и полезными жирами. ${diabetesLine}`;
+    }
+    if (q.includes('углев') || q.includes('carb') || q.includes('көмір')) {
+        return UserCtx.lang === 'en'
+            ? `You have around ${ctx.carbsLeft}g carbs left today. To reduce carbs, choose eggs, cottage cheese, chicken, fish, cucumbers, tomatoes or leafy salad instead of bread/rice/pasta.`
+            : UserCtx.lang === 'kz'
+            ? `Бүгін шамамен ${ctx.carbsLeft}г көмірсу қалды. Азайту үшін нан/күріш/макарон орнына жұмыртқа, сүзбе, тауық, балық, қияр, қызанақ немесе салат таңдаңыз.`
+            : `Сегодня у вас осталось примерно ${ctx.carbsLeft}г углеводов. Чтобы снизить углеводы, выбирайте яйца, творог, курицу, рыбу, огурцы, помидоры или листовой салат вместо хлеба/риса/макарон.`;
+    }
+    if (q.includes('день') || q.includes('оцени') || q.includes('review') || q.includes('бағала')) {
+        return UserCtx.lang === 'en'
+            ? `Today: ${UserCtx.consumedKcal}/${UserCtx.dailyKcal} kcal, protein ${UserCtx.consumedProtein}/${UserCtx.dailyProtein}g, carbs ${UserCtx.consumedCarbs}/${UserCtx.dailyCarbs}g. Recent meals: ${mealsText}. ${diabetesLine}`
+            : UserCtx.lang === 'kz'
+            ? `Бүгін: ${UserCtx.consumedKcal}/${UserCtx.dailyKcal} ккал, ақуыз ${UserCtx.consumedProtein}/${UserCtx.dailyProtein}г, көмірсу ${UserCtx.consumedCarbs}/${UserCtx.dailyCarbs}г. Соңғы тағамдар: ${mealsText}. ${diabetesLine}`
+            : `Сегодня: ${UserCtx.consumedKcal}/${UserCtx.dailyKcal} ккал, белки ${UserCtx.consumedProtein}/${UserCtx.dailyProtein}г, углеводы ${UserCtx.consumedCarbs}/${UserCtx.dailyCarbs}г. Последние блюда: ${mealsText}. ${diabetesLine}`;
+    }
+    return UserCtx.lang === 'en'
+        ? `Based on your profile: ${UserCtx.weight}kg, ${UserCtx.height}cm, goal: ${UserCtx.goal}. You have ${ctx.kcalLeft} kcal left today. Ask me about dinner, carbs, GI, or today's progress. ${diabetesLine}`
+        : UserCtx.lang === 'kz'
+        ? `Профиль бойынша: ${UserCtx.weight}кг, ${UserCtx.height}см, мақсат: ${UserCtx.goal}. Бүгін ${ctx.kcalLeft} ккал қалды. Кешкі ас, көмірсу, ГИ немесе күндік прогресс туралы сұраңыз. ${diabetesLine}`
+        : `По вашим данным: ${UserCtx.weight}кг, ${UserCtx.height}см, цель: ${UserCtx.goal}. Сегодня осталось ${ctx.kcalLeft} ккал. Можете спросить про ужин, углеводы, ГИ или оценку дня. ${diabetesLine}`;
 }
 
 // ── PROFILE ───────────────────────────────────────────────
@@ -3197,7 +3572,8 @@ function saveMetric(field) {
         return;
     }
     UserCtx[field] = value;
-    calcMifflin();
+    recalcTargetsFromProfile();
+    recalcConsumed();
     saveAppState();
     closeMvpModal();
     refreshAllUI();
@@ -3340,7 +3716,8 @@ function openGoalModal() {
 function setGoal(goal) {
     UserCtx.goal = goal;
     if (goal === 'diabetes') UserCtx.diabetes = true;
-    calcMifflin();
+    recalcTargetsFromProfile();
+    recalcConsumed();
     saveAppState();
     closeMvpModal();
     refreshAllUI();
@@ -3394,7 +3771,7 @@ function refreshAllUI() {
     // Update nav labels
     document.getElementById('nav-label-home').textContent    = t('nav_home');
     document.getElementById('nav-label-planner').textContent = t('nav_planner');
-    document.getElementById('nav-label-forum').textContent   = t('nav_forum');
+    document.getElementById('nav-label-forum').textContent   = 'AI';
     document.getElementById('nav-label-profile').textContent = t('nav_profile');
     // Update scan modal
     document.getElementById('scan-hint').textContent         = t('scan_hint');
@@ -3433,6 +3810,7 @@ function switchScreen(screen) {
     const nav = document.getElementById(`nav-${screen}`);
     if (nav) nav.classList.add('active');
     if (screen === 'planner') renderPlanner();
+    if (screen === 'forum') renderForum();
 }
 
 // ── GEMINI AI INTEGRATION ─────────────────────────────────
@@ -3597,6 +3975,62 @@ function showDynamicScanResult(data) {
     document.getElementById('result-modal').classList.add('open');
 }
 
+function refreshScanResultView() {
+    if (!currentScannedFood) return;
+    const normalized = currentScannedFood;
+    document.getElementById('res-weight').textContent    = normalized.weight_g ? normalized.weight_g + 'г' : '—';
+    document.getElementById('res-kcal').textContent      = normalized.calories;
+    document.getElementById('res-carbs').textContent     = normalized.carbs_g + 'г';
+    document.getElementById('res-protein').textContent   = normalized.protein_g + 'г';
+    document.getElementById('res-fat').textContent       = normalized.fat_g + 'г';
+    document.getElementById('res-gi-card').textContent   = normalized.gi;
+    document.getElementById('result-gi-val').textContent = `ГИ: ${normalized.gi}`;
+    document.getElementById('result-gi-text').textContent = getGILabel(normalized.gi);
+}
+
+function applyScanPreset(type) {
+    if (!currentScannedFood) return;
+    if (type === 'broth') {
+        currentScannedFood.calories += 90;
+        currentScannedFood.fat_g += 10;
+        currentScannedFood.dish_name += UserCtx.lang === 'en' ? ' + rich broth' : ' + жирный бульон';
+    }
+    refreshScanResultView();
+    showToast(UserCtx.lang === 'en' ? 'Composition updated' : UserCtx.lang === 'kz' ? 'Құрамы жаңартылды' : 'Состав уточнён');
+}
+
+function openScanClarifyModal() {
+    if (!currentScannedFood) return;
+    showMvpModal(`
+        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Clarify ingredients':UserCtx.lang==='kz'?'Құрамын нақтылау':'Уточнить состав'}</div>
+        <div class="mvp-modal-sub">${UserCtx.lang==='en'?'Add hidden ingredients that camera may miss.':UserCtx.lang==='kz'?'Камера байқамауы мүмкін ингредиенттерді қосыңыз.':'Добавьте то, что камера могла не увидеть: масло, сахар, соус, бульон.'}</div>
+        <div class="mvp-choice-grid">
+            <div class="mvp-choice-card" onclick="applyScanAdjustment('oil')"><div class="mvp-choice-icon">🫒</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Oil / dressing':UserCtx.lang==='kz'?'Май / тұздық':'Масло / заправка'}</div><div class="mvp-choice-sub">+90 kcal, +10g fat</div></div></div>
+            <div class="mvp-choice-card" onclick="applyScanAdjustment('sugar')"><div class="mvp-choice-icon">🍯</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Sugar / honey':UserCtx.lang==='kz'?'Қант / бал':'Сахар / мёд'}</div><div class="mvp-choice-sub">+40 kcal, +10g carbs</div></div></div>
+            <div class="mvp-choice-card" onclick="applyScanAdjustment('sauce')"><div class="mvp-choice-icon">🥫</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Sauce':UserCtx.lang==='kz'?'Тұздық':'Соус'}</div><div class="mvp-choice-sub">+55 kcal</div></div></div>
+            <div class="mvp-choice-card" onclick="applyScanAdjustment('broth')"><div class="mvp-choice-icon">🍲</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Rich broth':UserCtx.lang==='kz'?'Майлы сорпа':'Жирный бульон'}</div><div class="mvp-choice-sub">+90 kcal, +10g fat</div></div></div>
+        </div>
+    `);
+}
+
+function applyScanAdjustment(type) {
+    if (!currentScannedFood) return;
+    const add = {
+        oil: { calories: 90, fat_g: 10, carbs_g: 0 },
+        sugar: { calories: 40, fat_g: 0, carbs_g: 10 },
+        sauce: { calories: 55, fat_g: 3, carbs_g: 5 },
+        broth: { calories: 90, fat_g: 10, carbs_g: 0 }
+    }[type];
+    if (!add) return;
+    currentScannedFood.calories += add.calories;
+    currentScannedFood.fat_g += add.fat_g;
+    currentScannedFood.carbs_g += add.carbs_g;
+    currentScannedFood.gi = Math.max(currentScannedFood.gi, add.carbs_g ? 50 : currentScannedFood.gi);
+    closeMvpModal();
+    refreshScanResultView();
+    showToast(UserCtx.lang === 'en' ? 'Composition updated' : UserCtx.lang === 'kz' ? 'Құрамы жаңартылды' : 'Состав уточнён');
+}
+
 // 4. Кнопка "Добавить в дневник" (теперь использует данные от ИИ)
 document.getElementById('result-add-btn').addEventListener('click', () => {
     if (!currentScannedFood) return;
@@ -3632,325 +4066,6 @@ function closeScan() {
     document.getElementById('scan-modal').classList.remove('open');
     document.getElementById('result-modal').classList.remove('open');
 }
-
-
-
-// ══════════════════════════════════════════════════════════
-//  REVIEW FIXES PACK — diary, reports, menu export, scan clarifications
-// ══════════════════════════════════════════════════════════
-
-(function expandFoodDatabaseForMvpReview(){
-    const extraFoods = [
-        { id: 11, name:{ru:'Рис варёный',kz:'Піскен күріш',en:'Cooked rice'}, kcal:130, protein:3, fat:0, carbs:28, gi:64, origin:{ru:'Гарнир',kz:'Гарнир',en:'Side dish'} },
-        { id: 12, name:{ru:'Макароны',kz:'Макарон',en:'Pasta'}, kcal:157, protein:6, fat:1, carbs:31, gi:55, origin:{ru:'Гарнир',kz:'Гарнир',en:'Side dish'} },
-        { id: 13, name:{ru:'Картофель отварной',kz:'Піскен картоп',en:'Boiled potato'}, kcal:87, protein:2, fat:0, carbs:20, gi:78, origin:{ru:'Гарнир',kz:'Гарнир',en:'Side dish'} },
-        { id: 14, name:{ru:'Яйцо варёное',kz:'Піскен жұмыртқа',en:'Boiled egg'}, kcal:155, protein:13, fat:11, carbs:1, gi:0, origin:{ru:'Белковый продукт',kz:'Ақуыз',en:'Protein'} },
-        { id: 15, name:{ru:'Омлет',kz:'Омлет',en:'Omelette'}, kcal:154, protein:11, fat:12, carbs:2, gi:0, origin:{ru:'Завтрак',kz:'Таңғы ас',en:'Breakfast'} },
-        { id: 16, name:{ru:'Греческий салат',kz:'Грек салаты',en:'Greek salad'}, kcal:160, protein:4, fat:12, carbs:8, gi:15, origin:{ru:'Салат',kz:'Салат',en:'Salad'} },
-        { id: 17, name:{ru:'Овощной салат',kz:'Көкөніс салаты',en:'Vegetable salad'}, kcal:65, protein:2, fat:3, carbs:8, gi:20, origin:{ru:'Салат',kz:'Салат',en:'Salad'} },
-        { id: 18, name:{ru:'Творог',kz:'Сүзбе',en:'Cottage cheese'}, kcal:121, protein:17, fat:5, carbs:3, gi:30, origin:{ru:'Молочный продукт',kz:'Сүт өнімі',en:'Dairy'} },
-        { id: 19, name:{ru:'Йогурт',kz:'Йогурт',en:'Yogurt'}, kcal:90, protein:5, fat:3, carbs:12, gi:35, origin:{ru:'Молочный продукт',kz:'Сүт өнімі',en:'Dairy'} },
-        { id: 20, name:{ru:'Рыба запечённая',kz:'Пісірілген балық',en:'Baked fish'}, kcal:145, protein:22, fat:6, carbs:0, gi:0, origin:{ru:'Белковое блюдо',kz:'Ақуызды тағам',en:'Protein dish'} },
-        { id: 21, name:{ru:'Суп куриный',kz:'Тауық сорпасы',en:'Chicken soup'}, kcal:75, protein:6, fat:3, carbs:6, gi:35, origin:{ru:'Суп',kz:'Сорпа',en:'Soup'} },
-        { id: 22, name:{ru:'Хлеб цельнозерновой',kz:'Дәнді нан',en:'Wholegrain bread'}, kcal:247, protein:13, fat:4, carbs:41, gi:50, origin:{ru:'Хлеб',kz:'Нан',en:'Bread'} },
-        { id: 23, name:{ru:'Банан',kz:'Банан',en:'Banana'}, kcal:89, protein:1, fat:0, carbs:23, gi:51, origin:{ru:'Фрукт',kz:'Жеміс',en:'Fruit'} },
-        { id: 24, name:{ru:'Говядина тушёная',kz:'Бұқтырылған сиыр еті',en:'Stewed beef'}, kcal:220, protein:26, fat:13, carbs:0, gi:0, origin:{ru:'Белковое блюдо',kz:'Ақуызды тағам',en:'Protein dish'} },
-        { id: 25, name:{ru:'Чечевица',kz:'Жасымық',en:'Lentils'}, kcal:116, protein:9, fat:0, carbs:20, gi:32, origin:{ru:'Бобовые',kz:'Бұршақ',en:'Legumes'} }
-    ];
-    extraFoods.forEach(food => { if (!foodDB.some(x => x.id === food.id)) foodDB.push(food); });
-})();
-
-function todayKey(offset = 0) {
-    const d = new Date();
-    d.setHours(0,0,0,0);
-    d.setDate(d.getDate() + offset);
-    return d.toISOString().slice(0,10);
-}
-function getReportHistory() {
-    try { return JSON.parse(localStorage.getItem('wellai_report_history_v1') || '{}'); }
-    catch { return {}; }
-}
-function saveReportSnapshot() {
-    try {
-        const h = getReportHistory();
-        h[todayKey()] = {
-            kcal: UserCtx.consumedKcal || 0,
-            protein: UserCtx.consumedProtein || 0,
-            fat: UserCtx.consumedFat || 0,
-            carbs: UserCtx.consumedCarbs || 0,
-            water: UserCtx.waterGlasses || 0,
-            goal: UserCtx.dailyKcal || 2000,
-            updatedAt: new Date().toISOString()
-        };
-        localStorage.setItem('wellai_report_history_v1', JSON.stringify(h));
-    } catch (e) { console.warn('Report snapshot not saved', e); }
-}
-const __wellaiOriginalSaveAppState = saveAppState;
-saveAppState = function patchedSaveAppState() {
-    __wellaiOriginalSaveAppState();
-    saveReportSnapshot();
-};
-
-function getReportText(key) {
-    const dict = {
-        ru: { title:'Отчёт', sub:'Динамика питания и воды за день и неделю', today:'Сегодня', week:'Неделя', kcal:'Калории', protein:'Белки', fat:'Жиры', carbs:'Углеводы', water:'Вода', goal:'Цель', balance:'Баланс', noData:'Данных пока мало — добавьте блюда в дневник или сделайте AI Scan.', download:'Скачать отчёт' },
-        kz: { title:'Есеп', sub:'Күн және апта бойынша тамақ пен су динамикасы', today:'Бүгін', week:'Апта', kcal:'Калория', protein:'Ақуыз', fat:'Май', carbs:'Көмірсу', water:'Су', goal:'Мақсат', balance:'Баланс', noData:'Дерек әзірге аз — күнделікке тағам қосыңыз немесе AI Scan жасаңыз.', download:'Есепті жүктеу' },
-        en: { title:'Report', sub:'Daily and weekly nutrition and water dynamics', today:'Today', week:'Week', kcal:'Calories', protein:'Protein', fat:'Fat', carbs:'Carbs', water:'Water', goal:'Goal', balance:'Balance', noData:'Not much data yet — add meals to the diary or use AI Scan.', download:'Download report' }
-    };
-    return (dict[UserCtx.lang] || dict.ru)[key] || key;
-}
-
-function reportCard(label, value, max, suffix='') {
-    const pct = Math.max(0, Math.min(100, max ? (value / max) * 100 : 0));
-    return `<div class="report-card fade-enter"><div class="report-label">${label}</div><div class="report-value">${value}${suffix}</div><div class="report-bar-wrap"><div class="report-bar" style="width:${pct}%;"></div></div></div>`;
-}
-
-function renderForum() {
-    const title = document.getElementById('forum-title');
-    const sub = document.getElementById('forum-sub');
-    const nav = document.getElementById('nav-label-forum');
-    if (title) title.textContent = getReportText('title');
-    if (sub) sub.textContent = getReportText('sub');
-    if (nav) nav.textContent = getReportText('title');
-
-    const screen = document.getElementById('screen-forum');
-    if (!screen) return;
-    const history = getReportHistory();
-    saveReportSnapshot();
-    const days = t('days') || ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-    const week = [];
-    for (let i = -6; i <= 0; i++) {
-        const key = todayKey(i);
-        const d = new Date(key + 'T00:00:00');
-        const saved = history[key] || (i === 0 ? { kcal: UserCtx.consumedKcal, protein: UserCtx.consumedProtein, fat: UserCtx.consumedFat, carbs: UserCtx.consumedCarbs, water: UserCtx.waterGlasses, goal: UserCtx.dailyKcal } : null);
-        const demo = saved || { kcal: Math.max(0, Math.round((UserCtx.dailyKcal || 2000) * (0.62 + (i + 6) * 0.035))), water: Math.max(1, Math.min(8, 3 + i + 6)), goal: UserCtx.dailyKcal };
-        week.push({ key, label: days[d.getDay()], ...demo });
-    }
-    const maxKcal = Math.max(UserCtx.dailyKcal || 2000, ...week.map(x => x.kcal || 0));
-    const avgKcal = Math.round(week.reduce((a,b)=>a+(b.kcal||0),0)/week.length);
-    const avgWater = (week.reduce((a,b)=>a+(b.water||0),0)/week.length).toFixed(1);
-    const today = week[week.length-1];
-    const content = `
-        <div class="screen-header">
-            <div class="screen-header-title">${getReportText('title')}</div>
-            <div class="screen-header-sub">${getReportText('sub')}</div>
-        </div>
-        <div class="review-report-root">
-            <div class="review-report-hero fade-enter">
-                <div class="review-kicker">WellAI Analytics</div>
-                <div class="review-title">${getReportText('today')}</div>
-                <div class="review-sub">${getReportText('kcal')}: ${today.kcal || 0} / ${UserCtx.dailyKcal} ${t('kcal_unit')} · ${getReportText('water')}: ${UserCtx.waterGlasses}/8</div>
-            </div>
-            <div class="report-grid">
-                ${reportCard(getReportText('kcal'), UserCtx.consumedKcal, UserCtx.dailyKcal, '')}
-                ${reportCard(getReportText('water'), UserCtx.waterGlasses, 8, '/8')}
-                ${reportCard(getReportText('protein'), UserCtx.consumedProtein, UserCtx.dailyProtein, 'г')}
-                ${reportCard(getReportText('carbs'), UserCtx.consumedCarbs, UserCtx.dailyCarbs, 'г')}
-            </div>
-            <div class="report-week-card fade-enter">
-                <div class="menu-plan-header">
-                    <div><div class="menu-plan-title">${getReportText('week')}</div><div class="menu-plan-sub">${getReportText('kcal')}: ${avgKcal} ${t('kcal_unit')} · ${getReportText('water')}: ${avgWater}/8</div></div>
-                    <div class="menu-ai-badge"><i class="fa-solid fa-chart-line"></i>${getReportText('balance')}</div>
-                </div>
-                <div class="week-bars">
-                    ${week.map((day, i) => `<div class="week-col"><div class="week-fill ${i===6?'today':''}" style="height:${Math.max(8, Math.round((day.kcal || 0)/maxKcal*100))}%"></div><div class="week-day">${day.label}</div></div>`).join('')}
-                </div>
-            </div>
-            <button class="btn-primary" onclick="downloadReport()"><i class="fa-solid fa-download"></i> ${getReportText('download')}</button>
-            <div class="download-note">${getReportText('noData')}</div>
-        </div>`;
-    screen.innerHTML = content;
-}
-
-function downloadBlob(filename, text) {
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-}
-
-function downloadReport() {
-    saveReportSnapshot();
-    const h = getReportHistory();
-    const lines = [
-        'WellAI report',
-        `Date: ${todayKey()}`,
-        `Calories: ${UserCtx.consumedKcal}/${UserCtx.dailyKcal}`,
-        `Protein: ${UserCtx.consumedProtein}/${UserCtx.dailyProtein} g`,
-        `Fat: ${UserCtx.consumedFat}/${UserCtx.dailyFat} g`,
-        `Carbs: ${UserCtx.consumedCarbs}/${UserCtx.dailyCarbs} g`,
-        `Water: ${UserCtx.waterGlasses}/8`,
-        '',
-        'Weekly snapshots:',
-        ...Object.entries(h).slice(-7).map(([date, v]) => `${date}: ${v.kcal || 0} kcal, P ${v.protein || 0}g, F ${v.fat || 0}g, C ${v.carbs || 0}g, water ${v.water || 0}/8`)
-    ];
-    downloadBlob(`wellai_report_${todayKey()}.txt`, lines.join('\n'));
-}
-
-function openEditMealDataItemModal(mealId, index) {
-    const meal = mealData.find(m => m.id === mealId);
-    const item = meal?.items?.[index];
-    const food = item ? getFoodById(item.foodId) : null;
-    if (!meal || !item || !food) return;
-    showMvpModal(`
-        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Edit meal':UserCtx.lang==='kz'?'Тағамды өзгерту':'Изменить блюдо'}</div>
-        <div class="mvp-modal-sub">${localFoodName(food)} · ${t(meal.type)}</div>
-        <div class="form-group"><label class="form-label">${ux('portion')}</label><input class="input-field" id="edit-meal-grams" type="number" min="1" max="1500" value="${item.grams}" inputmode="numeric"></div>
-        <div class="mvp-modal-actions"><button class="btn-secondary" onclick="closeMvpModal()">${ux('cancel')}</button><button class="btn-primary" onclick="saveMealDataItem('${mealId}',${index})">${ux('saved')}</button></div>
-    `);
-}
-function saveMealDataItem(mealId, index) {
-    const meal = mealData.find(m => m.id === mealId);
-    const item = meal?.items?.[index];
-    const grams = Math.max(1, Math.min(1500, Number(document.getElementById('edit-meal-grams')?.value) || 1));
-    if (!item) return;
-    item.grams = Math.round(grams);
-    recalcConsumed(); saveAppState(); closeMvpModal(); refreshAllUI(); showToast(ux('saved'));
-}
-function removeMealDataItem(mealId, index) {
-    const meal = mealData.find(m => m.id === mealId);
-    if (!meal) return;
-    meal.items.splice(index,1);
-    recalcConsumed(); saveAppState(); refreshAllUI(); showToast(ux('removed'));
-}
-function openEditDiaryEntryModal(entryId) {
-    const entry = loggedFoods.find(e => e.id === entryId);
-    if (!entry) return;
-    showMvpModal(`
-        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Edit diary entry':UserCtx.lang==='kz'?'Күнделік жазбасын өзгерту':'Изменить запись'}</div>
-        <div class="mvp-modal-sub">${entry.name}</div>
-        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${ux('portion')}</label><input class="input-field" id="edit-entry-grams" type="number" min="1" max="1500" value="${entry.grams || 100}"></div><div class="form-group"><label class="form-label">${t('kcal_unit')}</label><input class="input-field" id="edit-entry-kcal" type="number" min="0" value="${entry.kcal || 0}"></div></div>
-        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${t('protein')}</label><input class="input-field" id="edit-entry-protein" type="number" min="0" value="${entry.protein || 0}"></div><div class="form-group"><label class="form-label">${t('fat')}</label><input class="input-field" id="edit-entry-fat" type="number" min="0" value="${entry.fat || 0}"></div></div>
-        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${t('carbs')}</label><input class="input-field" id="edit-entry-carbs" type="number" min="0" value="${entry.carbs || 0}"></div><div class="form-group"><label class="form-label">GI</label><input class="input-field" id="edit-entry-gi" type="number" min="0" max="100" value="${entry.gi || 0}"></div></div>
-        <div class="mvp-modal-actions"><button class="btn-secondary" onclick="closeMvpModal()">${ux('cancel')}</button><button class="btn-primary" onclick="saveDiaryEntry('${entryId}')">${ux('saved')}</button></div>
-    `);
-}
-function saveDiaryEntry(entryId) {
-    const entry = loggedFoods.find(e => e.id === entryId);
-    if (!entry) return;
-    entry.grams = Math.round(Number(document.getElementById('edit-entry-grams')?.value) || entry.grams || 0);
-    entry.kcal = Math.round(Number(document.getElementById('edit-entry-kcal')?.value) || 0);
-    entry.protein = Math.round(Number(document.getElementById('edit-entry-protein')?.value) || 0);
-    entry.fat = Math.round(Number(document.getElementById('edit-entry-fat')?.value) || 0);
-    entry.carbs = Math.round(Number(document.getElementById('edit-entry-carbs')?.value) || 0);
-    entry.gi = Math.max(0, Math.min(100, Math.round(Number(document.getElementById('edit-entry-gi')?.value) || 0)));
-    recalcConsumed(); saveAppState(); closeMvpModal(); refreshAllUI(); showToast(ux('saved'));
-}
-
-function renderMealsList(containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    container.innerHTML = '';
-    mealData.forEach(meal => {
-        const totals = calcMealTotals(meal);
-        const xe = calcXE(totals.carbs);
-        const mealTypeLabel = t(meal.type);
-        container.innerHTML += `
-            <div class="meal-card fade-enter" id="meal-card-${meal.id}">
-                <div class="meal-card-header">
-                    <div class="meal-type-badge">${mealTypeLabel}</div>
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        ${UserCtx.diabetes ? `<span class="meal-item-xe">${xe} XE</span>` : ''}
-                        <span class="meal-kcal">${totals.kcal} ${t('kcal_unit')}</span>
-                        <button class="meal-complete-btn ${meal.completed?'done':''}" onclick="toggleMeal('${meal.id}')"><i class="fa-solid fa-check"></i></button>
-                    </div>
-                </div>
-                ${meal.items.map((item, idx) => {
-                    const food = foodDB.find(f => f.id === item.foodId);
-                    if (!food) return '';
-                    const ratio = item.grams / 100;
-                    const itemCarbs = Math.round(food.carbs * ratio);
-                    return `<div class="meal-item-row"><div class="gi-dot ${getGIClass(food.gi)}"></div><div class="meal-item-name">${food.name[UserCtx.lang] || food.name.ru}</div><div class="meal-item-meta">${item.grams}г · ${Math.round(food.kcal * ratio)} ${t('kcal_unit')}</div>${UserCtx.diabetes ? `<div class="meal-item-xe">${calcXE(itemCarbs)} XE</div>` : ''}<div class="meal-inline-tools"><button class="meal-icon-btn" onclick="openEditMealDataItemModal('${meal.id}',${idx})"><i class="fa-solid fa-pen"></i></button><button class="meal-icon-btn danger" onclick="removeMealDataItem('${meal.id}',${idx})"><i class="fa-solid fa-xmark"></i></button></div></div>`;
-                }).join('') || `<div class="empty-sub" style="padding:10px 0;">${UserCtx.lang==='en'?'No dishes yet':UserCtx.lang==='kz'?'Әзірге тағам жоқ':'Пока нет блюд'}</div>`}
-                <div class="mvp-meal-footer"><button class="mvp-small-btn" onclick="openAddMealModal('${meal.type}')"><i class="fa-solid fa-plus"></i> ${t('add')}</button><button class="mvp-small-btn" onclick="toggleMeal('${meal.id}')">${meal.completed ? (UserCtx.lang==='en'?'Undo':UserCtx.lang==='kz'?'Қайтару':'Отменить') : (UserCtx.lang==='en'?'Done':UserCtx.lang==='kz'?'Дайын':'Готово')}</button></div>
-            </div>`;
-    });
-
-    if (loggedFoods.length) {
-        container.innerHTML += [...loggedFoods].reverse().map(entry => `
-            <div class="meal-card fade-enter" id="logged-food-${entry.id}">
-                <div class="meal-card-header"><div class="meal-type-badge">${ux('loggedTitle')} · ${entry.source === 'ai' ? ux('aiEntry') : entry.source === 'ai-menu' ? 'AI menu' : ux('manualEntry')}</div><div style="display:flex;align-items:center;gap:10px;">${UserCtx.diabetes ? `<span class="meal-item-xe">${calcXE(entry.carbs)} XE</span>` : ''}<span class="meal-kcal">${entry.kcal} ${t('kcal_unit')}</span><button class="meal-complete-btn done" onclick="removeLoggedFood('${entry.id}')" title="${ux('delete')}"><i class="fa-solid fa-xmark"></i></button></div></div>
-                <div class="meal-item-row"><div class="gi-dot ${getGIClass(entry.gi)}"></div><div class="meal-item-name">${entry.name}</div><div class="meal-item-meta">${entry.grams ? entry.grams + 'г · ' : ''}${entry.protein || 0}г ${t('protein').toLowerCase()} · ${entry.fat || 0}г ${t('fat').toLowerCase()} · ${entry.carbs || 0}г ${t('carbs').toLowerCase()}</div><div class="meal-inline-tools"><button class="meal-icon-btn" onclick="openEditDiaryEntryModal('${entry.id}')"><i class="fa-solid fa-pen"></i></button><button class="meal-icon-btn danger" onclick="removeLoggedFood('${entry.id}')"><i class="fa-solid fa-trash"></i></button></div></div>
-            </div>`).join('');
-    }
-}
-
-const __wellaiOriginalRenderMenuPlan = renderMenuPlan;
-function renderMenuPlan(root) {
-    __wellaiOriginalRenderMenuPlan(root);
-    const firstCard = root?.querySelector?.('.menu-section-card');
-    if (!firstCard || document.getElementById('menu-download-btn')) return;
-    firstCard.insertAdjacentHTML('beforeend', `
-        <div class="menu-actions-row">
-            <button class="menu-secondary-mini" id="menu-download-btn" onclick="downloadMenuPlan()"><i class="fa-solid fa-download"></i> ${UserCtx.lang==='en'?'Download':UserCtx.lang==='kz'?'Жүктеу':'Скачать'}</button>
-            <button class="menu-secondary-mini" onclick="openMenuSummaryModal()"><i class="fa-solid fa-eye"></i> ${UserCtx.lang==='en'?'View':UserCtx.lang==='kz'?'Көру':'Посмотреть'}</button>
-        </div>`);
-}
-function menuPlanAsText() {
-    const plan = normalizeMenuPlan(menuState.plan);
-    const lines = ['WellAI menu plan', `Generated: ${menuState.lastGeneratedAt || new Date().toISOString()}`, ''];
-    plan.meals.forEach(m => lines.push(`${mt(m.type)}: ${m.name}`, `${m.grams}g · ${m.calories} kcal · P ${m.protein_g}g · F ${m.fat_g}g · C ${m.carbs_g}g · GI ${m.gi}`, `Ingredients: ${(m.ingredients||[]).join(', ')}`, ''));
-    lines.push(`TOTAL: ${plan.total.calories} kcal · P ${plan.total.protein_g}g · F ${plan.total.fat_g}g · C ${plan.total.carbs_g}g`);
-    return lines.join('\n');
-}
-function downloadMenuPlan() { downloadBlob(`wellai_menu_${todayKey()}.txt`, menuPlanAsText()); }
-function openMenuSummaryModal() {
-    showMvpModal(`<div class="mvp-modal-title">${mt('planTitle')}</div><div class="mvp-modal-sub">${mt('planSub')}</div><pre style="white-space:pre-wrap;background:rgba(240,249,255,.9);border-radius:18px;padding:14px;font-size:12px;line-height:1.5;color:var(--text-secondary);max-height:48dvh;overflow:auto;">${menuPlanAsText().replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]))}</pre><button class="btn-primary" style="margin-top:14px" onclick="downloadMenuPlan()">${UserCtx.lang==='en'?'Download':UserCtx.lang==='kz'?'Жүктеу':'Скачать'}</button>`);
-}
-
-const __wellaiOriginalShowDynamicScanResult = showDynamicScanResult;
-function showDynamicScanResult(data) {
-    __wellaiOriginalShowDynamicScanResult(data);
-    const modal = document.getElementById('result-modal');
-    const giRow = document.getElementById('result-gi-row');
-    if (!modal || !giRow || document.getElementById('scan-adjust-row')) return;
-    giRow.insertAdjacentHTML('afterend', `
-        <div class="scan-adjust-row" id="scan-adjust-row">
-            <button class="scan-adjust-btn" onclick="openScanAdjustModal()"><i class="fa-solid fa-sliders"></i> ${UserCtx.lang==='en'?'Clarify':UserCtx.lang==='kz'?'Нақтылау':'Уточнить состав'}</button>
-            <button class="scan-adjust-btn" onclick="applyQuickBrothAdjust()"><i class="fa-solid fa-bowl-food"></i> ${UserCtx.lang==='en'?'Fat broth':UserCtx.lang==='kz'?'Майлы сорпа':'Жирный бульон'}</button>
-        </div>`);
-}
-function openScanAdjustModal() {
-    if (!currentScannedFood) return;
-    showMvpModal(`
-        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Clarify composition':UserCtx.lang==='kz'?'Құрамын нақтылау':'Уточнить состав'}</div>
-        <div class="mvp-modal-sub">${UserCtx.lang==='en'?'Add hidden ingredients that camera may miss.':UserCtx.lang==='kz'?'Камера байқамауы мүмкін ингредиенттерді қосыңыз.':'Добавьте ингредиенты, которые камера могла не увидеть: масло, сахар, соус или жирный бульон.'}</div>
-        <div class="mvp-choice-grid">
-            <div class="mvp-choice-card" onclick="applyScanPreset('oil')"><div class="mvp-choice-icon">🫒</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Oil / dressing':UserCtx.lang==='kz'?'Май / тұздық':'Масло / заправка'}</div><div class="mvp-choice-sub">+90 kcal · +10g fat</div></div></div>
-            <div class="mvp-choice-card" onclick="applyScanPreset('sugar')"><div class="mvp-choice-icon">🍯</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Sugar / honey':UserCtx.lang==='kz'?'Қант / бал':'Сахар / мёд'}</div><div class="mvp-choice-sub">+48 kcal · +12g carbs</div></div></div>
-            <div class="mvp-choice-card" onclick="applyScanPreset('broth')"><div class="mvp-choice-icon">🍲</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Fat broth':UserCtx.lang==='kz'?'Майлы сорпа':'Жирный бульон'}</div><div class="mvp-choice-sub">+80 kcal · +8g fat</div></div></div>
-            <div class="mvp-choice-card" onclick="applyScanPreset('portionPlus')"><div class="mvp-choice-icon">➕</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Larger portion':UserCtx.lang==='kz'?'Үлкен порция':'Порция больше'}</div><div class="mvp-choice-sub">+20% to grams and nutrition</div></div></div>
-        </div>`);
-}
-function rerenderCurrentScan() {
-    const data = { ...currentScannedFood };
-    document.getElementById('mvp-modal-root')?.classList.remove('open');
-    __wellaiOriginalShowDynamicScanResult(data);
-    const giRow = document.getElementById('result-gi-row');
-    document.getElementById('scan-adjust-row')?.remove();
-    if (giRow) giRow.insertAdjacentHTML('afterend', `<div class="scan-adjust-row" id="scan-adjust-row"><button class="scan-adjust-btn" onclick="openScanAdjustModal()"><i class="fa-solid fa-sliders"></i> ${UserCtx.lang==='en'?'Clarify':UserCtx.lang==='kz'?'Нақтылау':'Уточнить состав'}</button><button class="scan-adjust-btn" onclick="applyQuickBrothAdjust()"><i class="fa-solid fa-bowl-food"></i> ${UserCtx.lang==='en'?'Fat broth':UserCtx.lang==='kz'?'Майлы сорпа':'Жирный бульон'}</button></div>`);
-}
-function applyScanPreset(type) {
-    if (!currentScannedFood) return;
-    if (type === 'oil') { currentScannedFood.calories += 90; currentScannedFood.fat_g += 10; }
-    if (type === 'sugar') { currentScannedFood.calories += 48; currentScannedFood.carbs_g += 12; currentScannedFood.gi = Math.max(currentScannedFood.gi, 60); }
-    if (type === 'broth') { currentScannedFood.calories += 80; currentScannedFood.fat_g += 8; currentScannedFood.weight_g += 120; }
-    if (type === 'portionPlus') { ['weight_g','calories','protein_g','fat_g','carbs_g'].forEach(k => currentScannedFood[k] = Math.round((currentScannedFood[k] || 0) * 1.2)); }
-    rerenderCurrentScan();
-    showToast(ux('saved'));
-}
-function applyQuickBrothAdjust() { applyScanPreset('broth'); }
-
-const __wellaiOriginalRefreshAllUI = refreshAllUI;
-function refreshAllUI() {
-    calcMifflin();
-    recalcConsumed();
-    __wellaiOriginalRefreshAllUI();
-    const nav = document.getElementById('nav-label-forum');
-    if (nav) nav.textContent = getReportText('title');
-}
-
 
 // ── INIT ──────────────────────────────────────────────────
 loadSavedState();
