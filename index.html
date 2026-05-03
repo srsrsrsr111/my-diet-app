@@ -1223,6 +1223,33 @@
         }
         .menu-empty-note { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-top: 10px; }
 
+
+
+        /* ── REVIEW FIXES: REPORTS, EDITABLE DIARY, MENU EXPORT ── */
+        .review-report-root { padding: 18px 24px 28px; }
+        .review-report-hero { background: linear-gradient(135deg,#0F172A,#1E293B); color:white; border-radius:26px; padding:22px; box-shadow:0 18px 46px rgba(15,23,42,.20); margin-bottom:16px; }
+        .review-kicker { font-size:12px; font-weight:800; color:var(--lime); text-transform:uppercase; letter-spacing:.8px; }
+        .review-title { font-size:24px; font-weight:800; letter-spacing:-.6px; line-height:1.15; margin-top:8px; }
+        .review-sub { font-size:14px; color:rgba(255,255,255,.68); line-height:1.5; margin-top:9px; }
+        .report-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:14px; }
+        .report-card { background:rgba(255,255,255,.86); border:1px solid rgba(255,255,255,.42); border-radius:22px; padding:16px; box-shadow:0 8px 32px rgba(15,23,42,.07); }
+        .report-label { font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.45px; }
+        .report-value { font-size:25px; font-weight:900; color:var(--text); margin-top:5px; letter-spacing:-.5px; }
+        .report-bar-wrap { height:8px; background:rgba(240,249,255,.9); border-radius:999px; overflow:hidden; margin-top:11px; }
+        .report-bar { height:100%; border-radius:999px; background:var(--lime-dark); width:0%; transition:width .5s ease; }
+        .report-week-card { background:rgba(255,255,255,.86); border:1px solid rgba(255,255,255,.42); border-radius:24px; padding:18px; box-shadow:0 8px 32px rgba(15,23,42,.07); margin-bottom:14px; }
+        .week-bars { display:flex; gap:6px; align-items:end; height:112px; margin-top:14px; }
+        .week-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end; }
+        .week-fill { width:100%; min-height:8px; border-radius:8px 8px 3px 3px; background:var(--border-solid); }
+        .week-fill.today { background:var(--lime-dark); }
+        .week-day { font-size:10px; font-weight:800; color:var(--text-tertiary); }
+        .meal-inline-tools { display:flex; gap:6px; margin-left:auto; }
+        .meal-icon-btn { width:28px; height:28px; border:none; border-radius:10px; background:rgba(240,249,255,.9); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+        .meal-icon-btn.danger { background:rgba(248,113,113,.12); color:#B91C1C; }
+        .scan-adjust-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:-8px; margin-bottom:14px; }
+        .scan-adjust-btn { border:none; border-radius:15px; padding:13px 10px; font-size:13px; font-weight:800; font-family:'Inter',sans-serif; background:rgba(240,249,255,.9); color:var(--text); cursor:pointer; }
+        .download-note { font-size:12px; color:var(--text-secondary); line-height:1.45; margin-top:8px; }
+
         /* ── RESPONSIVE DESKTOP CENTER ── */
         @media (min-width: 431px) {
             body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
@@ -3605,6 +3632,325 @@ function closeScan() {
     document.getElementById('scan-modal').classList.remove('open');
     document.getElementById('result-modal').classList.remove('open');
 }
+
+
+
+// ══════════════════════════════════════════════════════════
+//  REVIEW FIXES PACK — diary, reports, menu export, scan clarifications
+// ══════════════════════════════════════════════════════════
+
+(function expandFoodDatabaseForMvpReview(){
+    const extraFoods = [
+        { id: 11, name:{ru:'Рис варёный',kz:'Піскен күріш',en:'Cooked rice'}, kcal:130, protein:3, fat:0, carbs:28, gi:64, origin:{ru:'Гарнир',kz:'Гарнир',en:'Side dish'} },
+        { id: 12, name:{ru:'Макароны',kz:'Макарон',en:'Pasta'}, kcal:157, protein:6, fat:1, carbs:31, gi:55, origin:{ru:'Гарнир',kz:'Гарнир',en:'Side dish'} },
+        { id: 13, name:{ru:'Картофель отварной',kz:'Піскен картоп',en:'Boiled potato'}, kcal:87, protein:2, fat:0, carbs:20, gi:78, origin:{ru:'Гарнир',kz:'Гарнир',en:'Side dish'} },
+        { id: 14, name:{ru:'Яйцо варёное',kz:'Піскен жұмыртқа',en:'Boiled egg'}, kcal:155, protein:13, fat:11, carbs:1, gi:0, origin:{ru:'Белковый продукт',kz:'Ақуыз',en:'Protein'} },
+        { id: 15, name:{ru:'Омлет',kz:'Омлет',en:'Omelette'}, kcal:154, protein:11, fat:12, carbs:2, gi:0, origin:{ru:'Завтрак',kz:'Таңғы ас',en:'Breakfast'} },
+        { id: 16, name:{ru:'Греческий салат',kz:'Грек салаты',en:'Greek salad'}, kcal:160, protein:4, fat:12, carbs:8, gi:15, origin:{ru:'Салат',kz:'Салат',en:'Salad'} },
+        { id: 17, name:{ru:'Овощной салат',kz:'Көкөніс салаты',en:'Vegetable salad'}, kcal:65, protein:2, fat:3, carbs:8, gi:20, origin:{ru:'Салат',kz:'Салат',en:'Salad'} },
+        { id: 18, name:{ru:'Творог',kz:'Сүзбе',en:'Cottage cheese'}, kcal:121, protein:17, fat:5, carbs:3, gi:30, origin:{ru:'Молочный продукт',kz:'Сүт өнімі',en:'Dairy'} },
+        { id: 19, name:{ru:'Йогурт',kz:'Йогурт',en:'Yogurt'}, kcal:90, protein:5, fat:3, carbs:12, gi:35, origin:{ru:'Молочный продукт',kz:'Сүт өнімі',en:'Dairy'} },
+        { id: 20, name:{ru:'Рыба запечённая',kz:'Пісірілген балық',en:'Baked fish'}, kcal:145, protein:22, fat:6, carbs:0, gi:0, origin:{ru:'Белковое блюдо',kz:'Ақуызды тағам',en:'Protein dish'} },
+        { id: 21, name:{ru:'Суп куриный',kz:'Тауық сорпасы',en:'Chicken soup'}, kcal:75, protein:6, fat:3, carbs:6, gi:35, origin:{ru:'Суп',kz:'Сорпа',en:'Soup'} },
+        { id: 22, name:{ru:'Хлеб цельнозерновой',kz:'Дәнді нан',en:'Wholegrain bread'}, kcal:247, protein:13, fat:4, carbs:41, gi:50, origin:{ru:'Хлеб',kz:'Нан',en:'Bread'} },
+        { id: 23, name:{ru:'Банан',kz:'Банан',en:'Banana'}, kcal:89, protein:1, fat:0, carbs:23, gi:51, origin:{ru:'Фрукт',kz:'Жеміс',en:'Fruit'} },
+        { id: 24, name:{ru:'Говядина тушёная',kz:'Бұқтырылған сиыр еті',en:'Stewed beef'}, kcal:220, protein:26, fat:13, carbs:0, gi:0, origin:{ru:'Белковое блюдо',kz:'Ақуызды тағам',en:'Protein dish'} },
+        { id: 25, name:{ru:'Чечевица',kz:'Жасымық',en:'Lentils'}, kcal:116, protein:9, fat:0, carbs:20, gi:32, origin:{ru:'Бобовые',kz:'Бұршақ',en:'Legumes'} }
+    ];
+    extraFoods.forEach(food => { if (!foodDB.some(x => x.id === food.id)) foodDB.push(food); });
+})();
+
+function todayKey(offset = 0) {
+    const d = new Date();
+    d.setHours(0,0,0,0);
+    d.setDate(d.getDate() + offset);
+    return d.toISOString().slice(0,10);
+}
+function getReportHistory() {
+    try { return JSON.parse(localStorage.getItem('wellai_report_history_v1') || '{}'); }
+    catch { return {}; }
+}
+function saveReportSnapshot() {
+    try {
+        const h = getReportHistory();
+        h[todayKey()] = {
+            kcal: UserCtx.consumedKcal || 0,
+            protein: UserCtx.consumedProtein || 0,
+            fat: UserCtx.consumedFat || 0,
+            carbs: UserCtx.consumedCarbs || 0,
+            water: UserCtx.waterGlasses || 0,
+            goal: UserCtx.dailyKcal || 2000,
+            updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem('wellai_report_history_v1', JSON.stringify(h));
+    } catch (e) { console.warn('Report snapshot not saved', e); }
+}
+const __wellaiOriginalSaveAppState = saveAppState;
+saveAppState = function patchedSaveAppState() {
+    __wellaiOriginalSaveAppState();
+    saveReportSnapshot();
+};
+
+function getReportText(key) {
+    const dict = {
+        ru: { title:'Отчёт', sub:'Динамика питания и воды за день и неделю', today:'Сегодня', week:'Неделя', kcal:'Калории', protein:'Белки', fat:'Жиры', carbs:'Углеводы', water:'Вода', goal:'Цель', balance:'Баланс', noData:'Данных пока мало — добавьте блюда в дневник или сделайте AI Scan.', download:'Скачать отчёт' },
+        kz: { title:'Есеп', sub:'Күн және апта бойынша тамақ пен су динамикасы', today:'Бүгін', week:'Апта', kcal:'Калория', protein:'Ақуыз', fat:'Май', carbs:'Көмірсу', water:'Су', goal:'Мақсат', balance:'Баланс', noData:'Дерек әзірге аз — күнделікке тағам қосыңыз немесе AI Scan жасаңыз.', download:'Есепті жүктеу' },
+        en: { title:'Report', sub:'Daily and weekly nutrition and water dynamics', today:'Today', week:'Week', kcal:'Calories', protein:'Protein', fat:'Fat', carbs:'Carbs', water:'Water', goal:'Goal', balance:'Balance', noData:'Not much data yet — add meals to the diary or use AI Scan.', download:'Download report' }
+    };
+    return (dict[UserCtx.lang] || dict.ru)[key] || key;
+}
+
+function reportCard(label, value, max, suffix='') {
+    const pct = Math.max(0, Math.min(100, max ? (value / max) * 100 : 0));
+    return `<div class="report-card fade-enter"><div class="report-label">${label}</div><div class="report-value">${value}${suffix}</div><div class="report-bar-wrap"><div class="report-bar" style="width:${pct}%;"></div></div></div>`;
+}
+
+function renderForum() {
+    const title = document.getElementById('forum-title');
+    const sub = document.getElementById('forum-sub');
+    const nav = document.getElementById('nav-label-forum');
+    if (title) title.textContent = getReportText('title');
+    if (sub) sub.textContent = getReportText('sub');
+    if (nav) nav.textContent = getReportText('title');
+
+    const screen = document.getElementById('screen-forum');
+    if (!screen) return;
+    const history = getReportHistory();
+    saveReportSnapshot();
+    const days = t('days') || ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+    const week = [];
+    for (let i = -6; i <= 0; i++) {
+        const key = todayKey(i);
+        const d = new Date(key + 'T00:00:00');
+        const saved = history[key] || (i === 0 ? { kcal: UserCtx.consumedKcal, protein: UserCtx.consumedProtein, fat: UserCtx.consumedFat, carbs: UserCtx.consumedCarbs, water: UserCtx.waterGlasses, goal: UserCtx.dailyKcal } : null);
+        const demo = saved || { kcal: Math.max(0, Math.round((UserCtx.dailyKcal || 2000) * (0.62 + (i + 6) * 0.035))), water: Math.max(1, Math.min(8, 3 + i + 6)), goal: UserCtx.dailyKcal };
+        week.push({ key, label: days[d.getDay()], ...demo });
+    }
+    const maxKcal = Math.max(UserCtx.dailyKcal || 2000, ...week.map(x => x.kcal || 0));
+    const avgKcal = Math.round(week.reduce((a,b)=>a+(b.kcal||0),0)/week.length);
+    const avgWater = (week.reduce((a,b)=>a+(b.water||0),0)/week.length).toFixed(1);
+    const today = week[week.length-1];
+    const content = `
+        <div class="screen-header">
+            <div class="screen-header-title">${getReportText('title')}</div>
+            <div class="screen-header-sub">${getReportText('sub')}</div>
+        </div>
+        <div class="review-report-root">
+            <div class="review-report-hero fade-enter">
+                <div class="review-kicker">WellAI Analytics</div>
+                <div class="review-title">${getReportText('today')}</div>
+                <div class="review-sub">${getReportText('kcal')}: ${today.kcal || 0} / ${UserCtx.dailyKcal} ${t('kcal_unit')} · ${getReportText('water')}: ${UserCtx.waterGlasses}/8</div>
+            </div>
+            <div class="report-grid">
+                ${reportCard(getReportText('kcal'), UserCtx.consumedKcal, UserCtx.dailyKcal, '')}
+                ${reportCard(getReportText('water'), UserCtx.waterGlasses, 8, '/8')}
+                ${reportCard(getReportText('protein'), UserCtx.consumedProtein, UserCtx.dailyProtein, 'г')}
+                ${reportCard(getReportText('carbs'), UserCtx.consumedCarbs, UserCtx.dailyCarbs, 'г')}
+            </div>
+            <div class="report-week-card fade-enter">
+                <div class="menu-plan-header">
+                    <div><div class="menu-plan-title">${getReportText('week')}</div><div class="menu-plan-sub">${getReportText('kcal')}: ${avgKcal} ${t('kcal_unit')} · ${getReportText('water')}: ${avgWater}/8</div></div>
+                    <div class="menu-ai-badge"><i class="fa-solid fa-chart-line"></i>${getReportText('balance')}</div>
+                </div>
+                <div class="week-bars">
+                    ${week.map((day, i) => `<div class="week-col"><div class="week-fill ${i===6?'today':''}" style="height:${Math.max(8, Math.round((day.kcal || 0)/maxKcal*100))}%"></div><div class="week-day">${day.label}</div></div>`).join('')}
+                </div>
+            </div>
+            <button class="btn-primary" onclick="downloadReport()"><i class="fa-solid fa-download"></i> ${getReportText('download')}</button>
+            <div class="download-note">${getReportText('noData')}</div>
+        </div>`;
+    screen.innerHTML = content;
+}
+
+function downloadBlob(filename, text) {
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+}
+
+function downloadReport() {
+    saveReportSnapshot();
+    const h = getReportHistory();
+    const lines = [
+        'WellAI report',
+        `Date: ${todayKey()}`,
+        `Calories: ${UserCtx.consumedKcal}/${UserCtx.dailyKcal}`,
+        `Protein: ${UserCtx.consumedProtein}/${UserCtx.dailyProtein} g`,
+        `Fat: ${UserCtx.consumedFat}/${UserCtx.dailyFat} g`,
+        `Carbs: ${UserCtx.consumedCarbs}/${UserCtx.dailyCarbs} g`,
+        `Water: ${UserCtx.waterGlasses}/8`,
+        '',
+        'Weekly snapshots:',
+        ...Object.entries(h).slice(-7).map(([date, v]) => `${date}: ${v.kcal || 0} kcal, P ${v.protein || 0}g, F ${v.fat || 0}g, C ${v.carbs || 0}g, water ${v.water || 0}/8`)
+    ];
+    downloadBlob(`wellai_report_${todayKey()}.txt`, lines.join('\n'));
+}
+
+function openEditMealDataItemModal(mealId, index) {
+    const meal = mealData.find(m => m.id === mealId);
+    const item = meal?.items?.[index];
+    const food = item ? getFoodById(item.foodId) : null;
+    if (!meal || !item || !food) return;
+    showMvpModal(`
+        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Edit meal':UserCtx.lang==='kz'?'Тағамды өзгерту':'Изменить блюдо'}</div>
+        <div class="mvp-modal-sub">${localFoodName(food)} · ${t(meal.type)}</div>
+        <div class="form-group"><label class="form-label">${ux('portion')}</label><input class="input-field" id="edit-meal-grams" type="number" min="1" max="1500" value="${item.grams}" inputmode="numeric"></div>
+        <div class="mvp-modal-actions"><button class="btn-secondary" onclick="closeMvpModal()">${ux('cancel')}</button><button class="btn-primary" onclick="saveMealDataItem('${mealId}',${index})">${ux('saved')}</button></div>
+    `);
+}
+function saveMealDataItem(mealId, index) {
+    const meal = mealData.find(m => m.id === mealId);
+    const item = meal?.items?.[index];
+    const grams = Math.max(1, Math.min(1500, Number(document.getElementById('edit-meal-grams')?.value) || 1));
+    if (!item) return;
+    item.grams = Math.round(grams);
+    recalcConsumed(); saveAppState(); closeMvpModal(); refreshAllUI(); showToast(ux('saved'));
+}
+function removeMealDataItem(mealId, index) {
+    const meal = mealData.find(m => m.id === mealId);
+    if (!meal) return;
+    meal.items.splice(index,1);
+    recalcConsumed(); saveAppState(); refreshAllUI(); showToast(ux('removed'));
+}
+function openEditDiaryEntryModal(entryId) {
+    const entry = loggedFoods.find(e => e.id === entryId);
+    if (!entry) return;
+    showMvpModal(`
+        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Edit diary entry':UserCtx.lang==='kz'?'Күнделік жазбасын өзгерту':'Изменить запись'}</div>
+        <div class="mvp-modal-sub">${entry.name}</div>
+        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${ux('portion')}</label><input class="input-field" id="edit-entry-grams" type="number" min="1" max="1500" value="${entry.grams || 100}"></div><div class="form-group"><label class="form-label">${t('kcal_unit')}</label><input class="input-field" id="edit-entry-kcal" type="number" min="0" value="${entry.kcal || 0}"></div></div>
+        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${t('protein')}</label><input class="input-field" id="edit-entry-protein" type="number" min="0" value="${entry.protein || 0}"></div><div class="form-group"><label class="form-label">${t('fat')}</label><input class="input-field" id="edit-entry-fat" type="number" min="0" value="${entry.fat || 0}"></div></div>
+        <div class="mvp-inline-row"><div class="form-group"><label class="form-label">${t('carbs')}</label><input class="input-field" id="edit-entry-carbs" type="number" min="0" value="${entry.carbs || 0}"></div><div class="form-group"><label class="form-label">GI</label><input class="input-field" id="edit-entry-gi" type="number" min="0" max="100" value="${entry.gi || 0}"></div></div>
+        <div class="mvp-modal-actions"><button class="btn-secondary" onclick="closeMvpModal()">${ux('cancel')}</button><button class="btn-primary" onclick="saveDiaryEntry('${entryId}')">${ux('saved')}</button></div>
+    `);
+}
+function saveDiaryEntry(entryId) {
+    const entry = loggedFoods.find(e => e.id === entryId);
+    if (!entry) return;
+    entry.grams = Math.round(Number(document.getElementById('edit-entry-grams')?.value) || entry.grams || 0);
+    entry.kcal = Math.round(Number(document.getElementById('edit-entry-kcal')?.value) || 0);
+    entry.protein = Math.round(Number(document.getElementById('edit-entry-protein')?.value) || 0);
+    entry.fat = Math.round(Number(document.getElementById('edit-entry-fat')?.value) || 0);
+    entry.carbs = Math.round(Number(document.getElementById('edit-entry-carbs')?.value) || 0);
+    entry.gi = Math.max(0, Math.min(100, Math.round(Number(document.getElementById('edit-entry-gi')?.value) || 0)));
+    recalcConsumed(); saveAppState(); closeMvpModal(); refreshAllUI(); showToast(ux('saved'));
+}
+
+function renderMealsList(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    mealData.forEach(meal => {
+        const totals = calcMealTotals(meal);
+        const xe = calcXE(totals.carbs);
+        const mealTypeLabel = t(meal.type);
+        container.innerHTML += `
+            <div class="meal-card fade-enter" id="meal-card-${meal.id}">
+                <div class="meal-card-header">
+                    <div class="meal-type-badge">${mealTypeLabel}</div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        ${UserCtx.diabetes ? `<span class="meal-item-xe">${xe} XE</span>` : ''}
+                        <span class="meal-kcal">${totals.kcal} ${t('kcal_unit')}</span>
+                        <button class="meal-complete-btn ${meal.completed?'done':''}" onclick="toggleMeal('${meal.id}')"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                </div>
+                ${meal.items.map((item, idx) => {
+                    const food = foodDB.find(f => f.id === item.foodId);
+                    if (!food) return '';
+                    const ratio = item.grams / 100;
+                    const itemCarbs = Math.round(food.carbs * ratio);
+                    return `<div class="meal-item-row"><div class="gi-dot ${getGIClass(food.gi)}"></div><div class="meal-item-name">${food.name[UserCtx.lang] || food.name.ru}</div><div class="meal-item-meta">${item.grams}г · ${Math.round(food.kcal * ratio)} ${t('kcal_unit')}</div>${UserCtx.diabetes ? `<div class="meal-item-xe">${calcXE(itemCarbs)} XE</div>` : ''}<div class="meal-inline-tools"><button class="meal-icon-btn" onclick="openEditMealDataItemModal('${meal.id}',${idx})"><i class="fa-solid fa-pen"></i></button><button class="meal-icon-btn danger" onclick="removeMealDataItem('${meal.id}',${idx})"><i class="fa-solid fa-xmark"></i></button></div></div>`;
+                }).join('') || `<div class="empty-sub" style="padding:10px 0;">${UserCtx.lang==='en'?'No dishes yet':UserCtx.lang==='kz'?'Әзірге тағам жоқ':'Пока нет блюд'}</div>`}
+                <div class="mvp-meal-footer"><button class="mvp-small-btn" onclick="openAddMealModal('${meal.type}')"><i class="fa-solid fa-plus"></i> ${t('add')}</button><button class="mvp-small-btn" onclick="toggleMeal('${meal.id}')">${meal.completed ? (UserCtx.lang==='en'?'Undo':UserCtx.lang==='kz'?'Қайтару':'Отменить') : (UserCtx.lang==='en'?'Done':UserCtx.lang==='kz'?'Дайын':'Готово')}</button></div>
+            </div>`;
+    });
+
+    if (loggedFoods.length) {
+        container.innerHTML += [...loggedFoods].reverse().map(entry => `
+            <div class="meal-card fade-enter" id="logged-food-${entry.id}">
+                <div class="meal-card-header"><div class="meal-type-badge">${ux('loggedTitle')} · ${entry.source === 'ai' ? ux('aiEntry') : entry.source === 'ai-menu' ? 'AI menu' : ux('manualEntry')}</div><div style="display:flex;align-items:center;gap:10px;">${UserCtx.diabetes ? `<span class="meal-item-xe">${calcXE(entry.carbs)} XE</span>` : ''}<span class="meal-kcal">${entry.kcal} ${t('kcal_unit')}</span><button class="meal-complete-btn done" onclick="removeLoggedFood('${entry.id}')" title="${ux('delete')}"><i class="fa-solid fa-xmark"></i></button></div></div>
+                <div class="meal-item-row"><div class="gi-dot ${getGIClass(entry.gi)}"></div><div class="meal-item-name">${entry.name}</div><div class="meal-item-meta">${entry.grams ? entry.grams + 'г · ' : ''}${entry.protein || 0}г ${t('protein').toLowerCase()} · ${entry.fat || 0}г ${t('fat').toLowerCase()} · ${entry.carbs || 0}г ${t('carbs').toLowerCase()}</div><div class="meal-inline-tools"><button class="meal-icon-btn" onclick="openEditDiaryEntryModal('${entry.id}')"><i class="fa-solid fa-pen"></i></button><button class="meal-icon-btn danger" onclick="removeLoggedFood('${entry.id}')"><i class="fa-solid fa-trash"></i></button></div></div>
+            </div>`).join('');
+    }
+}
+
+const __wellaiOriginalRenderMenuPlan = renderMenuPlan;
+function renderMenuPlan(root) {
+    __wellaiOriginalRenderMenuPlan(root);
+    const firstCard = root?.querySelector?.('.menu-section-card');
+    if (!firstCard || document.getElementById('menu-download-btn')) return;
+    firstCard.insertAdjacentHTML('beforeend', `
+        <div class="menu-actions-row">
+            <button class="menu-secondary-mini" id="menu-download-btn" onclick="downloadMenuPlan()"><i class="fa-solid fa-download"></i> ${UserCtx.lang==='en'?'Download':UserCtx.lang==='kz'?'Жүктеу':'Скачать'}</button>
+            <button class="menu-secondary-mini" onclick="openMenuSummaryModal()"><i class="fa-solid fa-eye"></i> ${UserCtx.lang==='en'?'View':UserCtx.lang==='kz'?'Көру':'Посмотреть'}</button>
+        </div>`);
+}
+function menuPlanAsText() {
+    const plan = normalizeMenuPlan(menuState.plan);
+    const lines = ['WellAI menu plan', `Generated: ${menuState.lastGeneratedAt || new Date().toISOString()}`, ''];
+    plan.meals.forEach(m => lines.push(`${mt(m.type)}: ${m.name}`, `${m.grams}g · ${m.calories} kcal · P ${m.protein_g}g · F ${m.fat_g}g · C ${m.carbs_g}g · GI ${m.gi}`, `Ingredients: ${(m.ingredients||[]).join(', ')}`, ''));
+    lines.push(`TOTAL: ${plan.total.calories} kcal · P ${plan.total.protein_g}g · F ${plan.total.fat_g}g · C ${plan.total.carbs_g}g`);
+    return lines.join('\n');
+}
+function downloadMenuPlan() { downloadBlob(`wellai_menu_${todayKey()}.txt`, menuPlanAsText()); }
+function openMenuSummaryModal() {
+    showMvpModal(`<div class="mvp-modal-title">${mt('planTitle')}</div><div class="mvp-modal-sub">${mt('planSub')}</div><pre style="white-space:pre-wrap;background:rgba(240,249,255,.9);border-radius:18px;padding:14px;font-size:12px;line-height:1.5;color:var(--text-secondary);max-height:48dvh;overflow:auto;">${menuPlanAsText().replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]))}</pre><button class="btn-primary" style="margin-top:14px" onclick="downloadMenuPlan()">${UserCtx.lang==='en'?'Download':UserCtx.lang==='kz'?'Жүктеу':'Скачать'}</button>`);
+}
+
+const __wellaiOriginalShowDynamicScanResult = showDynamicScanResult;
+function showDynamicScanResult(data) {
+    __wellaiOriginalShowDynamicScanResult(data);
+    const modal = document.getElementById('result-modal');
+    const giRow = document.getElementById('result-gi-row');
+    if (!modal || !giRow || document.getElementById('scan-adjust-row')) return;
+    giRow.insertAdjacentHTML('afterend', `
+        <div class="scan-adjust-row" id="scan-adjust-row">
+            <button class="scan-adjust-btn" onclick="openScanAdjustModal()"><i class="fa-solid fa-sliders"></i> ${UserCtx.lang==='en'?'Clarify':UserCtx.lang==='kz'?'Нақтылау':'Уточнить состав'}</button>
+            <button class="scan-adjust-btn" onclick="applyQuickBrothAdjust()"><i class="fa-solid fa-bowl-food"></i> ${UserCtx.lang==='en'?'Fat broth':UserCtx.lang==='kz'?'Майлы сорпа':'Жирный бульон'}</button>
+        </div>`);
+}
+function openScanAdjustModal() {
+    if (!currentScannedFood) return;
+    showMvpModal(`
+        <div class="mvp-modal-title">${UserCtx.lang==='en'?'Clarify composition':UserCtx.lang==='kz'?'Құрамын нақтылау':'Уточнить состав'}</div>
+        <div class="mvp-modal-sub">${UserCtx.lang==='en'?'Add hidden ingredients that camera may miss.':UserCtx.lang==='kz'?'Камера байқамауы мүмкін ингредиенттерді қосыңыз.':'Добавьте ингредиенты, которые камера могла не увидеть: масло, сахар, соус или жирный бульон.'}</div>
+        <div class="mvp-choice-grid">
+            <div class="mvp-choice-card" onclick="applyScanPreset('oil')"><div class="mvp-choice-icon">🫒</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Oil / dressing':UserCtx.lang==='kz'?'Май / тұздық':'Масло / заправка'}</div><div class="mvp-choice-sub">+90 kcal · +10g fat</div></div></div>
+            <div class="mvp-choice-card" onclick="applyScanPreset('sugar')"><div class="mvp-choice-icon">🍯</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Sugar / honey':UserCtx.lang==='kz'?'Қант / бал':'Сахар / мёд'}</div><div class="mvp-choice-sub">+48 kcal · +12g carbs</div></div></div>
+            <div class="mvp-choice-card" onclick="applyScanPreset('broth')"><div class="mvp-choice-icon">🍲</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Fat broth':UserCtx.lang==='kz'?'Майлы сорпа':'Жирный бульон'}</div><div class="mvp-choice-sub">+80 kcal · +8g fat</div></div></div>
+            <div class="mvp-choice-card" onclick="applyScanPreset('portionPlus')"><div class="mvp-choice-icon">➕</div><div><div class="mvp-choice-title">${UserCtx.lang==='en'?'Larger portion':UserCtx.lang==='kz'?'Үлкен порция':'Порция больше'}</div><div class="mvp-choice-sub">+20% to grams and nutrition</div></div></div>
+        </div>`);
+}
+function rerenderCurrentScan() {
+    const data = { ...currentScannedFood };
+    document.getElementById('mvp-modal-root')?.classList.remove('open');
+    __wellaiOriginalShowDynamicScanResult(data);
+    const giRow = document.getElementById('result-gi-row');
+    document.getElementById('scan-adjust-row')?.remove();
+    if (giRow) giRow.insertAdjacentHTML('afterend', `<div class="scan-adjust-row" id="scan-adjust-row"><button class="scan-adjust-btn" onclick="openScanAdjustModal()"><i class="fa-solid fa-sliders"></i> ${UserCtx.lang==='en'?'Clarify':UserCtx.lang==='kz'?'Нақтылау':'Уточнить состав'}</button><button class="scan-adjust-btn" onclick="applyQuickBrothAdjust()"><i class="fa-solid fa-bowl-food"></i> ${UserCtx.lang==='en'?'Fat broth':UserCtx.lang==='kz'?'Майлы сорпа':'Жирный бульон'}</button></div>`);
+}
+function applyScanPreset(type) {
+    if (!currentScannedFood) return;
+    if (type === 'oil') { currentScannedFood.calories += 90; currentScannedFood.fat_g += 10; }
+    if (type === 'sugar') { currentScannedFood.calories += 48; currentScannedFood.carbs_g += 12; currentScannedFood.gi = Math.max(currentScannedFood.gi, 60); }
+    if (type === 'broth') { currentScannedFood.calories += 80; currentScannedFood.fat_g += 8; currentScannedFood.weight_g += 120; }
+    if (type === 'portionPlus') { ['weight_g','calories','protein_g','fat_g','carbs_g'].forEach(k => currentScannedFood[k] = Math.round((currentScannedFood[k] || 0) * 1.2)); }
+    rerenderCurrentScan();
+    showToast(ux('saved'));
+}
+function applyQuickBrothAdjust() { applyScanPreset('broth'); }
+
+const __wellaiOriginalRefreshAllUI = refreshAllUI;
+function refreshAllUI() {
+    calcMifflin();
+    recalcConsumed();
+    __wellaiOriginalRefreshAllUI();
+    const nav = document.getElementById('nav-label-forum');
+    if (nav) nav.textContent = getReportText('title');
+}
+
 
 // ── INIT ──────────────────────────────────────────────────
 loadSavedState();
